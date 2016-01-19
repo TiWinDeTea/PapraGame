@@ -24,7 +24,7 @@
 		 * @brief Destroy the class Map
 		 */
 		 
-		~Map();		
+		~Map(){delete map;}		
 	 
 		/**
 		 * @brief Creation of Map by default.
@@ -41,7 +41,7 @@
 		 * @param egg_texture Contain the texture of the egg.
 		 */
 		
-		Map(unsigned char x, unsigned char y, Area smap[x][y], const String& texture[NB_TEXTURE], const String& egg_texture); 
+		Map(unsigned char x, unsigned char y, Area smap[x][y], sf::Texture texture[NB_TEXTURE], sf::Texture egg_texture); 
 			
 		/**
 		 * @brief Change the coordinates of the egg and print him.
@@ -67,12 +67,12 @@
 		
 		unsigned char x_size;
 		unsigned char y_size;
-		sf::Texture sprites[NB_TEXTURE];
+		sf::Sprite sprites[NB_TEXTURE];
 		Coord coordinate_egg;
-		sf::Texture egg_sprite;
-		Area map [] [];
+		sf::Sprite egg_sprite;
+		Area** map;
  };
  
- #endif /* MAPP_HPP_INCLUDED*/
+ #endif /* MAPP_HPP_INCLUDED */
  
  
