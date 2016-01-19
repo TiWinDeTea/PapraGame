@@ -11,14 +11,13 @@
  * @file Ducky.hpp
  * @author Lucas LAZARE
  * @version 0.0
- * @license Mozilla Public License, v. .2.0
+ * @license Mozilla Public License, v. 2.0
  * @brief Defines the Ducky Class
  */
 
 #include <vector>
 #include <Coord>
 #include <SFML/Graphics>
-#include <string>
 #include <enum>
 
 /**
@@ -31,19 +30,27 @@ public:
 
 	/**
 	 * @brief Ducky destructor
-	 * 	just closes the textures
 	 */
-	~Ducky();
+	~Ducky(){};
 	/**
 	 * @brief Default Ducky constructor
 	 */
 	Ducky(){};
 	/**
 	 * @brief Ducky constructor with path to sprites and starting_coordinates
-	 * @param sprites_path         Path to the sprites. Order : Up, Down, Left, Right
-	 * @param starting_coordinates Coordinates of the ducky departure
+	 * @param textures             Textures of the ducky. Order : Up, Down, Left, Right
+	 * @param starting_coordinates Coordinates of the ducky spawn
 	 */
-	Ducky(string sprites_path[4], Coord starting_coordinates);
+	Ducky(sf::Texture textures[4], Coord starting_coordinates);
+
+	/**
+	 * @brief Ducky constructor with path to sprites
+	 * @param textures             Textures of the ducky. Order : Up, Down, Left, Right
+	 * @param act_coordinates      Coordinates of the ducky
+	 * @param starting_coordinates Coordinates of the ducky spawn
+	 * @param dir                  Direction of the ducky.
+	 */
+	Ducky(sf::Texture textures[4], Coord act_coordinates, Coord starting_coordinates, Direction dir);
 
 	/**
 	 * @brief Prints the ducky
@@ -74,9 +81,9 @@ public:
 
 private:
 
-	Coord coordinates;
+	Coord coordinates, st_coordinates;
 	Direction direction;
-	sf::Texture sprites[4];
+	sf::Sprite sprite[4];
 };
 
 #endif /* DUCKY_HPP_INCLUDED */
