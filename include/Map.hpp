@@ -1,9 +1,9 @@
 /*******************************************************************************************
- * This file is created to implement the class Duck for our game called PapraGame.       *
- * This file will allow us to have all the method to control the duck for the game.            *
- * This file are under licence Mozilla Public License Version 2.0                                      *
- * Author : Barbier Julien, julien.barbier@utbm.fr                                                           *	
- * Date of creation : 01/19/2016                                                                                       *
+ * This file is created to implement the class Duck for our game called PapraGame.         *
+ * This file will allow us to have all the method to control the duck for the game.        *
+ * This file are under licence Mozilla Public License Version 2.0                          *
+ * Author : Barbier Julien, julien.barbier@utbm.fr                                         *	
+ * Date of creation : 01/19/2016                                                           *
  * *****************************************************************************************/
  
  #ifndef MAP_HPP_INCLUDED
