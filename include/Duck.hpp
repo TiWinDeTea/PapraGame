@@ -32,7 +32,7 @@ class Duck : public Duck{
 		 * @param duckies_textures     Textures of the duckies. Order : Up, Down, Left, Right
 		 * @param starting_coordinates Coordinates of the ducky spawn
 		 */
-		void Duck(sf::Window& game_window, sf::Texture duck_textures[4], sf::Texture duckies_textures[4], Coord starting_coordinates);
+		Duck(sf::Window& game_window, sf::Texture duck_textures[4], sf::Texture duckies_textures[4], Coord starting_coordinates);
 
 		/**
 		 * @brief Default constructor
