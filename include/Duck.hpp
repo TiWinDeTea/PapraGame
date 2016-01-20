@@ -26,12 +26,13 @@ class Duck : public Duck{
 	public:
 
 		/**
-		 * @brief Constructor
-		 * @param duck_sprites    Names of the files to use as the duck's sprites
-		 * @param duckies_sprites Names of the files to use as the duckies' sprites
-		 * @param coord           Initials coordinates of the duck
+		 * @brief Duck constructor with path to sprites and starting_coordinates
+		 * @param game_window          Window of the game
+		 * @param duck_textures        Textures of the duck. Order : Up, Down, Left, Right
+		 * @param duckies_textures     Textures of the duckies. Order : Up, Down, Left, Right
+		 * @param starting_coordinates Coordinates of the ducky spawn
 		 */
-		Duck(std::string* duck_sprites, std::string* duckies_sprites, Coord coord);
+		void Duck(sf::Window& game_window, sf::Texture duck_textures[4], sf::Texture duckies_textures[4], Coord starting_coordinates);
 
 		/**
 		 * @brief Default constructor
