@@ -22,8 +22,8 @@
 class Coord{
 
 	public:
-		unsigned char x;
-		unsigned char y;
+		unsigned int x;
+		unsigned int y;
 
 		/**
 		 * @brief Constructor with coordinates initialisation

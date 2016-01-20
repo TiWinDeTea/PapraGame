@@ -52,7 +52,7 @@ public:
 
 	~Game(){};
 	Game(){ressources_path = "res/";}
-	Game(std::String path){ressources_path = path;}
+	Game(std::String path, Coord coo){ressources_path = path; x_size = coo.x; y_size = coo.y;}
 
 	void launch();
 
@@ -64,9 +64,10 @@ private:
 	Map game_map;
 	Duck player[PLAYER_NUMBER];
 	unsigned char winner;
-	sf::Texture duck_texture[4][2][PLAYER_NUMBER];
+	sf::Texture duck_texture[PLAYER_NUMBER][2][4];
 	sf::Texture map_texture[8];
 	sf::Texture egg_texture;
+	sf::Window game_window;
 }
 
 #endif /* GAME_HPP_INCLUDED */
