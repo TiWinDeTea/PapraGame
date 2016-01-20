@@ -38,6 +38,7 @@ public:
 	Ducky(){};
 	/**
 	 * @brief Ducky constructor with path to sprites and starting_coordinates
+	 * @param game_window          Window of the game
 	 * @param textures             Textures of the ducky. Order : Up, Down, Left, Right
 	 * @param starting_coordinates Coordinates of the ducky spawn
 	 */
