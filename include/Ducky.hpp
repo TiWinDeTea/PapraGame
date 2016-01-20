@@ -16,7 +16,7 @@
  */
 
 #include <vector>
-#include <Coord>
+#include <Coord.hpp>
 #include <SFML/Graphics>
 #include <enum>
 
@@ -41,7 +41,7 @@ public:
 	 * @param textures             Textures of the ducky. Order : Up, Down, Left, Right
 	 * @param starting_coordinates Coordinates of the ducky spawn
 	 */
-	Ducky(sf::Texture textures[4], Coord starting_coordinates);
+	Ducky(sf::Window& game_window, sf::Texture textures[4], Coord starting_coordinates);
 
 	/**
 	 * @brief Ducky constructor with path to sprites
@@ -50,7 +50,7 @@ public:
 	 * @param starting_coordinates Coordinates of the ducky spawn
 	 * @param dir                  Direction of the ducky.
 	 */
-	Ducky(sf::Texture textures[4], Coord act_coordinates, Coord starting_coordinates, Direction dir);
+	Ducky(sf::Window& game_window, sf::Texture textures[4], Coord act_coordinates, Coord starting_coordinates, Direction dir);
 
 	/**
 	 * @brief Prints the ducky
@@ -59,14 +59,9 @@ public:
 
 	/**
 	 * @brief Moves the ducky
-	 */
-	void move();
-
-	/**
-	 * @brief Sets the Ducky's direction
 	 * @param new_dir New direction
 	 */
-	void setDirection(Direction new_dir);
+	void move(Direction new_dir);
 
 	/**
 	 * @brief Resets the Ducky's coordinate to their original ones
@@ -84,6 +79,7 @@ private:
 	Coord coordinates, st_coordinates;
 	Direction direction;
 	sf::Sprite sprite[4];
+	sf::Window window;
 };
 
 #endif /* DUCKY_HPP_INCLUDED */
