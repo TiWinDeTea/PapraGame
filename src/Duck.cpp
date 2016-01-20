@@ -20,3 +20,19 @@ Duck::Duck(sf::Window& game_window, sf::Texture duck_textures[4], sf::Texture du
 		Duckies.push_back(new Ducky(game_window, duckies_textures[4], starting_coordinates))
 	}
 }
+
+void Duck::damaged(){
+
+	duckies.pop_back();
+	coordinates = st_coordinates;
+	invulnerability = MOVES_INVULNERABLE;
+
+	for(unsigned char i = duckies.size(); i--;){
+		Duckies.resetCoord();
+	}
+}
+
+void power_up(){
+
+
+}

@@ -18,12 +18,13 @@
 #include <Ducky>
 
 #define DUCKIES_INITIAL_NUMBER 2
+#define MOVES_INVULNERABLE 3
 
 /**
  * @class Duck Duck.hpp
  * @brief Defines the Duck Class
  */
-class Duck : public Duck{
+class Duck : public Ducky{
 
 	public:
 
@@ -58,13 +59,19 @@ class Duck : public Duck{
 		bool power_up();
 
 		/**
+		 * @brief Moves the duck and the duckies
+		 * @param new_dir New direction
+		 */
+		void move();
+
+		/**
 		 * @brief Return the number of duckies
 		 * @return The number of duckies
 		 */
 		unsigned char size();
 
 	private:
-		
+
 		std::vector<Ducky> Duckies;
 		char invulnerability;
 };
