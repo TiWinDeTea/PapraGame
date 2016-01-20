@@ -17,6 +17,8 @@
 
 #include <Ducky>
 
+#define DUCKIES_INITIAL_NUMBER 2
+
 /**
  * @class Duck Duck.hpp
  * @brief Defines the Duck Class

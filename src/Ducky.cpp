@@ -15,7 +15,7 @@ Ducky::Ducky(sf::Window& game_window, sf::Texture textures[4], Coord starting_co
 	for (unsigned char i = 4 ; i--;) {
 		sprite[i].setTexture(textures[i]);
 	}
-	direction = WEST;
+	direction = LEFT;
 	window = game_window;
 }
 
