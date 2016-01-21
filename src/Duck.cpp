@@ -17,7 +17,7 @@ Duck::Duck(sf::Window& game_window, sf::Texture duck_textures[4], sf::Texture du
 	window = game_window;
 
 	for(unsigned char i = DUCKIES_INITIAL_NUMBER; i--;){
-		Duckies.push_back(new Ducky(game_window, duckies_textures[4], starting_coordinates))
+		Duckies.push_back(Ducky(starting_coordinates))
 	}
 }
 
@@ -56,7 +56,7 @@ void Duck::power_up(){
 		default:
 			break;
 	}
-	duckies.push_back(new Ducky(game_window, duckies_textures[4], new_coord, starting_coordinates, new_dir));
+	duckies.push_back(Ducky(new_coord, starting_coordinates, new_dir));
 	duckies.back().print();
 }
 

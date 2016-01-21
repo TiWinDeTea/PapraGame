@@ -41,12 +41,12 @@ class Duck : public Ducky{
 		/**
 		 * @brief Default constructor
 		 */
-		Duck();
+		Duck(){};
 
 		/**
 		 * @brief Default destructor
 		 */
-		~Duck();
+		~Duck(){};
 
 		/**
 		 * @brief Apply damages to the duck and respawn it
