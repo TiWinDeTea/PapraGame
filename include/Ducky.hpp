@@ -26,6 +26,8 @@
  */
 class Ducky{
 
+	friend class Duck;
+
 	public:
 
 		/**
@@ -69,7 +71,7 @@ class Ducky{
 		 */
 		Coord getCoord(){ return coordinates; }
 
-	protected:
+	private:
 		
 		Coord coordinates, st_coordinates;
 		Direction direction;

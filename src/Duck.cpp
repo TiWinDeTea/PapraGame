@@ -11,13 +11,13 @@ Duck::Duck(sf::Window& game_window, sf::Texture duck_textures[4], sf::Texture du
 	st_coordinates = starting_coordinates;
 	coordinates = starting_coordinates;
 	for(unsigned char i = 4 ; i--;){
-		sprite[i].setTexture(textures[i]);
+		duck_sprite[i].setTexture(duck_textures[i]);
 	}
 	direction = initial_direction;
 	window = game_window;
 
 	for(unsigned char i = DUCKIES_INITIAL_NUMBER; i--;){
-		Duckies.push_back(Ducky(starting_coordinates))
+		duckies.push_back(Ducky(starting_coordinates));
 	}
 }
 
@@ -27,12 +27,12 @@ void Duck::damaged(){
 	coordinates = st_coordinates;
 	invulnerability = MOVES_INVULNERABLE;
 
-	for(unsigned char i = duckies.size(); i--;){
-		Duckies.resetCoord();
+	for(unsigned char i = static_cast<unsigned char>(duckies.size()); i--;){
+		duckies[i].resetCoord();
 	}
 }
 
-void Duck::power_up(){
+void Duck::powerUp(){
 
 	Coord new_coord = duckies.back().coordinates;
 	Direction new_dir;
@@ -56,13 +56,14 @@ void Duck::power_up(){
 		default:
 			break;
 	}
-	duckies.push_back(Ducky(new_coord, starting_coordinates, new_dir));
-	duckies.back().print();
+	duckies.push_back(Ducky(new_coord, st_coordinates, new_dir));
+	ducky_sprite[duckies.back().direction].setPosition(static_cast<float>(duckies.back().coordinates.x * 32), static_cast<float>(duckies.back().coordinates.y * 32));
+	window.draw(ducky_sprite[duckies.back().direction]);
 }
 
-void Duck::move(new_direction){
+void Duck::move(Direction new_direction){
 
-	for(unsigned char i = duckies.size(); i > 0; --i){
+	for(unsigned char i = static_cast<unsigned char>(duckies.size()); i > 0; --i){
 		if(duckies[i].coordinates != duckies[i - 1].coordinates)
 			duckies[i].move(duckies[i - 1].direction);
 	}
@@ -87,7 +88,7 @@ void Duck::move(new_direction){
 			break;
 	}
 	direction = new_direction;
-	this.print();
+	this->print();
 }
 
 unsigned char Duck::size(){
@@ -97,11 +98,11 @@ unsigned char Duck::size(){
 
 void Duck::print(){
 
-	for(unsigned char i = duckies.size(); i--;){
-		ducky_sprite[duckies[i].direction].setPosition(duckies[i].coordinates.x * 32, duckies[i].coordinates.y * 32);
+	for(unsigned char i = static_cast<unsigned char>(duckies.size()); i--;){
+		ducky_sprite[duckies[i].direction].setPosition(static_cast<float>(duckies[i].coordinates.x * 32), static_cast<float>(duckies[i].coordinates.y * 32));
 		window.draw(ducky_sprite[duckies[i].direction]);
 	}
 
-	duck_sprite[direction].setPosition(coordinates.x * 32, coordinates.y * 32);
+	duck_sprite[direction].setPosition(static_cast<float>(coordinates.x * 32), static_cast<float>(coordinates.y * 32));
 	window.draw(duck_sprite[direction]);
 }

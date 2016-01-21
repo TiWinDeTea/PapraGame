@@ -55,9 +55,8 @@ class Duck : public Ducky{
 
 		/**
 		 * @brief Add a ducky to the duck family
-		 * @return [description]
 		 */
-		bool power_up();
+		void powerUp();
 
 		/**
 		 * @brief Moves the duck and the duckies
@@ -78,8 +77,11 @@ class Duck : public Ducky{
 
 	private:
 
-		std::vector<Ducky> Duckies;
+		std::vector<Ducky> duckies;
 		char invulnerability;
+		sf::Sprite duck_sprite[4];
+		sf::Sprite ducky_sprite[4];
+		sf::RenderWindow window;
 };
 
 #endif /*DUCK_HPP_INCLUDED*/
