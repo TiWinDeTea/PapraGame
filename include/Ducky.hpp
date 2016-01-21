@@ -36,7 +36,7 @@ class Ducky{
 		/**
 		 * @brief Default Ducky constructor
 		 */
-		Ducky(){};
+		Ducky();
 
 		/**
 		 * @brief Ducky constructor with path to sprites and starting_coordinates
@@ -44,7 +44,7 @@ class Ducky{
 		 * @param textures             Textures of the ducky. Order : Up, Down, Left, Right
 		 * @param starting_coordinates Coordinates of the ducky spawn
 		 */
-		Ducky(sf::Window& game_window, sf::Texture textures[4], Coord starting_coordinates);
+		Ducky(sf::RenderWindow game_window, sf::Texture textures[4], Coord starting_coordinates);
 
 		/**
 		 * @brief Ducky constructor with path to sprites
@@ -54,7 +54,7 @@ class Ducky{
 		 * @param starting_coordinates Coordinates of the ducky spawn
 		 * @param dir                  Direction of the ducky.
 		 */
-		Ducky(sf::Window& game_window, sf::Texture textures[4], Coord act_coordinates, Coord starting_coordinates, Direction dir);
+		Ducky(sf::RenderWindow game_window, sf::Texture textures[4], Coord act_coordinates, Coord starting_coordinates, Direction dir);
 
 		/**
 		 * @brief Prints the ducky
@@ -76,7 +76,7 @@ class Ducky{
 		 * @brief Coordinates getter
 		 * @return Ducky's coordinates
 		 */
-		Coord getCoord(){ return Coordinates; }
+		Coord getCoord(){ return coordinates; }
 
 	protected:
 		
@@ -86,7 +86,7 @@ class Ducky{
 	private:
 
 		sf::Sprite sprite[4];
-		sf::Window window;
+		sf::RenderWindow window;
 };
 
 #endif /* DUCKY_HPP_INCLUDED */

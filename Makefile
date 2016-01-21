@@ -25,7 +25,7 @@
 
 FILEIDENTIFIER	= .cpp
 COMPILER	= g++
-COMPFLAGS	=  -Wdisabled-optimization -Wvector-operation-performance -Winvalid-pch -Wunused -Wconversion -Wuseless-cast -Wlogical-op -Wuninitialized -Wsuggest-final-types -Wdouble-promotion -Wformat -Wmissing-include-dirs -Wall -Werror -pedantic -pedantic-errors -Wmain -Wswitch-default -Wunreachable-code -Winline -Wfloat-equal -Wundef -Wcast-align -Wredundant-decls -Winit-self -Wshadow -Wnon-virtual-dtor -O3 -Weffc++ -Wswitch-enum -Wmissing-declarations -Wzero-as-null-pointer-constant
+COMPFLAGS	=  -Wdisabled-optimization -Wvector-operation-performance -Winvalid-pch -Wunused -Wconversion -Wuseless-cast -Wlogical-op -Wuninitialized -Wdouble-promotion -Wformat -Wmissing-include-dirs -Wall -pedantic -pedantic-errors -Wmain -Wswitch-default -Wunreachable-code -Winline -Wfloat-equal -Wundef -Wcast-align -Wredundant-decls -Winit-self -Wshadow -Wnon-virtual-dtor -O3 -Weffc++ -Wswitch-enum -Wmissing-declarations -Wzero-as-null-pointer-constant -std=c++14
 DEBUGGER	= gdb
 LEAKCHECKER	= valgrind --leak-check=full --show-leak-kinds=all
 DISPLAY		= printf
@@ -39,7 +39,7 @@ OBJDIR		= $(BUILDDIR)obj/
 SOURCEDIR	= src/
 INCLUDEDIR	= -I/usr/include -I. -Iinclude/
 LIBSDIR		= -L/usr/lib -L.
-SOURCENAME	= Map Ducky Duck Game main
+SOURCENAME	= Ducky Duck Map Game main
 EXENAME		= PapraGame.elf
 LINKS		= -lsfml-system -lsfml-window -lsfml-graphics
 

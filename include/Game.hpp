@@ -61,8 +61,8 @@ class Game{
 public:
 
 	~Game(){};
-	Game(){ressources_path = "res/";}
-	Game(std::string path){ressources_path = path;}
+	Game(){path = "res/";}
+	Game(std::string ressources_path){path = ressources_path;}
 
 	void launch();
 
@@ -80,8 +80,9 @@ private:
 	sf::Texture duck_texture[PLAYER_NUMBER][2][4];
 	sf::Texture map_texture[8];
 	sf::Texture egg_texture;
-	sf::Window game_window;
+	sf::RenderWindow game_window;
+	unsigned int pxl_length, pxl_height;
 	std::string path;
-}
+};
 
 #endif /* GAME_HPP_INCLUDED */
