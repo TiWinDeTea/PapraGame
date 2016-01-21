@@ -6,34 +6,16 @@
 
 #include <Ducky.hpp>
 
-Ducky::Ducky(){
-	st_coordinates.x = st_coordinates.y = 0;
-	direction = UP;
-}
-
-Ducky::Ducky(sf::RenderWindow game_window, sf::Texture textures[4], Coord starting_coordinates){
+Ducky::Ducky(Coord starting_coordinates){
 	st_coordinates = starting_coordinates;
 	coordinates = starting_coordinates;
-	for (unsigned char i = 4 ; i--;) {
-		sprite[i].setTexture(textures[i]);
-	}
 	direction = LEFT;
-	window = game_window;
 }
 
-Ducky::Ducky(sf::RenderWindow game_window, sf::Texture textures[4], Coord act_coordinates, Coord starting_coordinates, Direction dir){
+Ducky::Ducky(Coord act_coordinates, Coord starting_coordinates, Direction dir){
 	st_coordinates = starting_coordinates;
 	coordinates = act_coordinates;
-	for (unsigned char i = 4 ; i-- ;) {
-		sprite[i].setTexture(textures[i]);
-	}
 	direction = dir;
-	window = game_window;
-}
-
-void Ducky::print(){
-	sprite[direction].setPosition(coordinates.x * 32, coordinates.y * 32);
-	window.draw(sprite[direction]);
 }
 
 void Ducky::move(Direction new_dir){
@@ -54,5 +36,4 @@ void Ducky::move(Direction new_dir){
 		default:
 			break;
 	}
-	this->print();
 }
