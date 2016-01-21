@@ -11,3 +11,13 @@ Coor::Coord(unsigned int initial_x, unsigned int initial_y){
     x = initial_x;
     y = initial_y;
 }
+
+inline bool operator==(const Coord& a, const Coord& b)
+{
+    return (a.x() == b.x() && a.y() == b.y());
+}
+
+inline bool operator!=(const Coord& a, const Coord& b)
+{
+    return !(a == b);
+}
