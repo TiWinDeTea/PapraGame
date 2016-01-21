@@ -4,10 +4,10 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.            *
  ***********************************************************************/
 
-#include <Map>
-#include <enum>
-#include <Coord>
-#include <SFML/Graphics>
+#include <Map.hpp>
+#include <enum.hpp>
+#include <Coord.hpp>
+#include <SFML/Graphics.hpp>
 
 #define RESOLUTION_X_IMAGE 32
 #define RESOLUTION_Y_IMAGE 32
