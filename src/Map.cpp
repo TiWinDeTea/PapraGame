@@ -21,7 +21,7 @@
  * return the map created.
  */
 
-Map::Map(unsigned char x, unsigned char y, Area smap[x][y], sf::Texture texture[NB_TEXTURE], sf::Texture egg_texture){
+Map::Map(const unsigned int x, const unsigned int y, Area** smap, sf::Texture texture[NB_TEXTURE], sf::Texture egg_texture){
     
     x_size = x;
     y_size = y;
@@ -62,7 +62,7 @@ void Map::printAll (){
 void Map::print (Coord tile){
     
     map[tile.x][tile.y].setPosition(tile.x*RESOLUTION_X_IMAGE, tile.y*RESOLUTION_Y_IMAGE);
-    windows.draw(map[tile.x][tile.y]);
+    window.draw(map[tile.x][tile.y]);
     
 }
 
@@ -74,7 +74,7 @@ void Map::popEgg (Coord egg_coord){
     
     coordinate_egg = egg_coord;
     
-    egg_sprite.setPosition(coordinate_egg.x*RESOLUTION_X_IMAGE, coordinate_egg.y*RESOLUTION_Y_IMAGE);
+    egg_sprite.setPosition(static_cast<float>(coordinate_egg.x*RESOLUTION_X_IMAGE),static_cast<float>( coordinate_egg.y*RESOLUTION_Y_IMAGE));
     windows.draw(egg_sprite);
     
 }

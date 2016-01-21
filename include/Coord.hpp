@@ -28,7 +28,8 @@ class Coord{
 		/**
 		 * @brief Constructor with coordinates initialisation
 		 */
-		Coord(unsigned char initial_x, unsigned char initial_y){x=initial_x;y=initial_y;};
+		
+                Coord(unsigned int initial_x, unsigned int initial_y);
 
 		/**
 		 * @brief Default constructor

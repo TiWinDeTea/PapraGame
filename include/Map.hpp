@@ -14,16 +14,22 @@
 #define NB_TEXTURE 8
 
 /**
- * @file Map.hh
+ * @file Map.hpp
  * @author Julien BARBIER
  * @version 0.0
  * @license Mozilla Public License, v. 2.0
+ * @brief Define the Map class
  */
+
+/**
+ * @class Map Map.hpp
+ * @brief Define the Class Map
+ */
+
 
 class Map {
 
 	public :
-
 		/**
 		 * @brief Destroy the class Map
 		 */
@@ -32,7 +38,7 @@ class Map {
 		/**
 		 * @brief Creation of Map by default.
 		 */
-		Map () {};
+		Map ();
 
 		/**
 		 * @brief Creation of map with all the parametre needed.
@@ -42,7 +48,7 @@ class Map {
 		 * @param texture[NB_TEXTURE] Array which will contain the texture for this game.
 		 * @param egg_texture Contain the texture of the egg.
 		 */
-		Map(unsigned char x, unsigned char y, Area smap[x][y], sf::Texture texture[NB_TEXTURE], sf::Texture egg_texture);
+		Map(const unsigned int x, const unsigned int y, Area** smap, sf::Texture texture[NB_TEXTURE], sf::Texture egg_texture);
 
 		/**
 		 * @brief Change the coordinates of the egg and print him.
@@ -64,12 +70,13 @@ class Map {
 
 	private :
 
-		unsigned char x_size;
-		unsigned char y_size;
+		unsigned int x_size;
+		unsigned int y_size;
 		sf::Sprite sprites[NB_TEXTURE];
 		Coord coordinate_egg;
 		sf::Sprite egg_sprite;
 		Area** map;
+                sf::RenderWindow window;
 };
 
 #endif /* MAPP_HPP_INCLUDED */
