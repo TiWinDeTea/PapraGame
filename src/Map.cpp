@@ -78,6 +78,3 @@ void Map::popEgg (Coord egg_coord){
     windows.draw(egg_sprite);
     
 }
-
-
-	    
