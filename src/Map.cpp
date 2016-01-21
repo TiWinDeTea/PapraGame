@@ -5,12 +5,6 @@
  ***********************************************************************/
 
 #include <Map.hpp>
-#include <enum.hpp>
-#include <Coord.hpp>
-#include <SFML/Graphics.hpp>
-
-#define RESOLUTION_X_IMAGE 32
-#define RESOLUTION_Y_IMAGE 32
 
 /*Map::Map : function to create with parametre the map for the game.
  * All the parametre must be different of undefined.
@@ -21,36 +15,32 @@
  * return the map created.
  */
 
-Map::Map(const unsigned int x, const unsigned int y, Area** smap, sf::Texture texture[NB_TEXTURE], sf::Texture egg_texture){
-    
-    x_size = x;
-    y_size = y;
-    
-    map = new Area[x][y];
-    
-    for (unsigned int i = 0; i < x; i++){	
-	for (unsigned int j = 0; j < y; j ++){	    
-	    map[i][j] = smap[i][j];
+Map::Map(const unsigned int x, const unsigned int y, Area** smap, sf::Texture texture[NB_TEXTURE], sf::Texture egg_texture) : x_size(x), y_size(y)
+{ 
+    for (unsigned int i = 0; i < x; i++){
+        map.push_back(std::vector<Area>());
+	for (unsigned int j = 0; j < y; j ++){
+            map[i].push_back(smap[i][j]);
 	}
     }
     
     for (unsigned int i = 0; i < NB_TEXTURE; i++){	
-	sprites[i].setTexture(texture[i]); /* Pray for working */
+	sprites[i].setTexture(texture[i]);
     }
     
-    egg_sprite = egg_texture;
+    egg_sprite.setTexture(egg_texture);
 }
 
 /*printAll : procedure to print all the map.
  */
 
-void Map::printAll (){
+void Map::printAll (sf::RenderWindow& window){
     
     Coord tile;
     
     for (tile.y = 0; tile.y < y_size; ++tile.y){	
 	for (tile.x = 0; tile.x < x_size; ++tile.x){	    
-	    this.print(tile);
+	    this->print(tile, window);
 	}
     }
 }
@@ -59,10 +49,10 @@ void Map::printAll (){
  * tile : coordinate of the tile we want to print.
  */
 
-void Map::print (Coord tile){
+void Map::print (Coord tile, sf::RenderWindow& window){
     
-    map[tile.x][tile.y].setPosition(tile.x*RESOLUTION_X_IMAGE, tile.y*RESOLUTION_Y_IMAGE);
-    window.draw(map[tile.x][tile.y]);
+    sprites[map[tile.x][tile.y]].setPosition(static_cast<float>(tile.x*RESOLUTION_X_IMAGE), static_cast<float>(tile.y*RESOLUTION_Y_IMAGE));
+    window.draw(sprites[map[tile.x][tile.y]]);
     
 }
 
@@ -70,11 +60,11 @@ void Map::print (Coord tile){
  * egg_coord : new coordinate of the egg.
  */
 
-void Map::popEgg (Coord egg_coord){
+void Map::popEgg (Coord egg_coord, sf::RenderWindow window){
     
     coordinate_egg = egg_coord;
     
     egg_sprite.setPosition(static_cast<float>(coordinate_egg.x*RESOLUTION_X_IMAGE),static_cast<float>( coordinate_egg.y*RESOLUTION_Y_IMAGE));
-    windows.draw(egg_sprite);
+    window.draw(egg_sprite);
     
 }

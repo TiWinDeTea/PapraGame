@@ -10,8 +10,11 @@
 #include <Coord.hpp>
 #include <SFML/Graphics.hpp>
 #include <enum.hpp>
+#include <vector>
 
 #define NB_TEXTURE 8
+#define RESOLUTION_X_IMAGE 32
+#define RESOLUTION_Y_IMAGE 32
 
 /**
  * @file Map.hpp
@@ -33,7 +36,7 @@ class Map {
 		/**
 		 * @brief Destroy the class Map
 		 */
-		~Map(){delete map;}
+		~Map(){};
 
 		/**
 		 * @brief Creation of Map by default.
@@ -53,30 +56,32 @@ class Map {
 		/**
 		 * @brief Change the coordinates of the egg and print him.
 		 * @param egg_coord The coordinate of the egg
+                 * @param window The window for sfml and to print the map
 		 */
-		void popEgg (Coord egg_coord);
+		void popEgg (Coord egg_coord, sf::RenderWindow window);
 
 		/**
 		 * @brief Print a send case in the screen.
 		 * @param coord The coordinate of the case we want to convert.
+                 * @param window the window for sfml and to print the map.
 		 */
 
-		void print(Coord coord);
+		void print(Coord coord, sf::RenderWindow& window);
 
 		/**
 		 * @brief printAll Print all the map.
+                 * @param window the window for sfml and to print the map
 		 */
-		void printAll();
+		void printAll(sf::RenderWindow& window);
 
 	private :
 
-		unsigned int x_size;
-		unsigned int y_size;
+		const unsigned int x_size;
+		const unsigned int y_size;
 		sf::Sprite sprites[NB_TEXTURE];
 		Coord coordinate_egg;
 		sf::Sprite egg_sprite;
-		Area** map;
-                sf::RenderWindow window;
+		std::vector<std::vector<Area>> map;
 };
 
 #endif /* MAPP_HPP_INCLUDED */
