@@ -4,9 +4,6 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.            *
  ***********************************************************************/
 
-#ifndef DUCKY_CPP_INCLUDED
-#define DUCKY_CPP_INCLUDED
-
 #include <Ducky.hpp>
 
 Ducky::Ducky(sf::Window& game_window, sf::Texture textures[4], Coord starting_coordinates){
@@ -54,5 +51,3 @@ void Ducky::move(Direction new_dir){
 	}
 	this.print();
 }
-
-#endif /* DUCKY_CPP_INCLUDED */

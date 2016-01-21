@@ -26,62 +26,67 @@
  */
 class Ducky{
 
-public:
+	public:
 
-	/**
-	 * @brief Ducky destructor
-	 */
-	~Ducky(){};
-	/**
-	 * @brief Default Ducky constructor
-	 */
-	Ducky(){};
-	/**
-	 * @brief Ducky constructor with path to sprites and starting_coordinates
-	 * @param game_window          Window of the game
-	 * @param textures             Textures of the ducky. Order : Up, Down, Left, Right
-	 * @param starting_coordinates Coordinates of the ducky spawn
-	 */
-	Ducky(sf::Window& game_window, sf::Texture textures[4], Coord starting_coordinates);
+		/**
+		 * @brief Ducky destructor
+		 */
+		~Ducky(){};
 
-	/**
-	 * @brief Ducky constructor with path to sprites
-	 * @param game_window          Window of the game
-	 * @param textures             Textures of the ducky. Order : Up, Down, Left, Right
-	 * @param act_coordinates      Coordinates of the ducky
-	 * @param starting_coordinates Coordinates of the ducky spawn
-	 * @param dir                  Direction of the ducky.
-	 */
-	Ducky(sf::Window& game_window, sf::Texture textures[4], Coord act_coordinates, Coord starting_coordinates, Direction dir);
+		/**
+		 * @brief Default Ducky constructor
+		 */
+		Ducky(){};
 
-	/**
-	 * @brief Prints the ducky
-	 */
-	void print();
+		/**
+		 * @brief Ducky constructor with path to sprites and starting_coordinates
+		 * @param game_window          Window of the game
+		 * @param textures             Textures of the ducky. Order : Up, Down, Left, Right
+		 * @param starting_coordinates Coordinates of the ducky spawn
+		 */
+		Ducky(sf::Window& game_window, sf::Texture textures[4], Coord starting_coordinates);
 
-	/**
-	 * @brief Moves the ducky
-	 * @param new_dir New direction
-	 */
-	void move(Direction new_dir);
+		/**
+		 * @brief Ducky constructor with path to sprites
+		 * @param game_window          Window of the game
+		 * @param textures             Textures of the ducky. Order : Up, Down, Left, Right
+		 * @param act_coordinates      Coordinates of the ducky
+		 * @param starting_coordinates Coordinates of the ducky spawn
+		 * @param dir                  Direction of the ducky.
+		 */
+		Ducky(sf::Window& game_window, sf::Texture textures[4], Coord act_coordinates, Coord starting_coordinates, Direction dir);
 
-	/**
-	 * @brief Resets the Ducky's coordinate to their original ones
-	 */
-	void resetCoord(){ coordinates = st_coordinates; }
+		/**
+		 * @brief Prints the ducky
+		 */
+		void print();
 
-	/**
-	 * @brief Coordinates getter
-	 * @return Ducky's coordinates
-	 */
-	Coord getCoord(){ return Coordinates; }
+		/**
+		 * @brief Moves the ducky
+		 * @param new_dir New direction
+		 */
+		void move(Direction new_dir);
 
-private:
+		/**
+		 * @brief Resets the Ducky's coordinate to their original ones
+		 */
+		void resetCoord(){ coordinates = st_coordinates; }
 
-	Coord coordinates, st_coordinates;
-	Direction direction;
-	sf::Sprite sprite[4];
-	sf::Window window;
+		/**
+		 * @brief Coordinates getter
+		 * @return Ducky's coordinates
+		 */
+		Coord getCoord(){ return Coordinates; }
+
+	protected:
+		
+		Coord coordinates, st_coordinates;
+		Direction direction;
+
+	private:
+
+		sf::Sprite sprite[4];
+		sf::Window window;
 };
 
 #endif /* DUCKY_HPP_INCLUDED */
