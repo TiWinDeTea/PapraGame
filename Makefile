@@ -39,9 +39,9 @@ OBJDIR		= $(BUILDDIR)obj/
 SOURCEDIR	= src/
 INCLUDEDIR	= -I/usr/include -I. -Iinclude/
 LIBSDIR		= -L/usr/lib -L.
-SOURCENAME	= 
-EXENAME		= 
-LINKS		= -lm
+SOURCENAME	= main Game Map Ducky Duck
+EXENAME		= PapraGame.elf
+LINKS		= -lsfml-system -lsfml-window -lsfml-graphics
 
 EXEFINALOBJ	= $(OBJDIR)$(EXENAME).o
 EXEFINAL	= $(BUILDDIR)$(EXENAME).elf
