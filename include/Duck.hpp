@@ -53,7 +53,7 @@ class Duck : public Ducky{
 		void damaged();
 
 		/**
-		 * @brief Add a ducky to the duck familly
+		 * @brief Add a ducky to the duck family
 		 * @return [description]
 		 */
 		bool power_up();
