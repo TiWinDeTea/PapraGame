@@ -15,7 +15,7 @@
  * @brief Defines the Duck Class
  */
 
-#include <Ducky>
+#include <Ducky.hpp>
 
 #define DUCKIES_INITIAL_NUMBER 2
 #define MOVES_INVULNERABLE 3
@@ -62,7 +62,7 @@ class Duck : public Ducky{
 		 * @brief Moves the duck and the duckies
 		 * @param new_dir New direction
 		 */
-		void move();
+		void move(Direction new_direction);
 
 		/**
 		 * @brief Return the number of duckies
