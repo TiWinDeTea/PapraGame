@@ -32,7 +32,7 @@ void Duck::damaged(){
 	}
 }
 
-void power_up(){
+void Duck::power_up(){
 
 	Coord new_coord = duckies.back().coordinates;
 	Direction new_dir;
@@ -60,7 +60,15 @@ void power_up(){
 	duckies.back().print();
 }
 
-void move(new_direction){
+void Duck::move(new_direction){
+
+	for(unsigned char i = duckies.size(); i > 0; --i){
+		if(duckies[i].coordinates != duckies[i - 1].coordinates)
+			duckies[i].move(duckies[i - 1].direction);
+	}
+	if(duckies.front().coordinates != coordinates){
+		duckies.front().move(direction);
+	}
 
 	switch(new_direction){
 		case UP:
@@ -78,16 +86,22 @@ void move(new_direction){
 		default:
 			break;
 	}
-
-	duckies.front().move(direction);
 	direction = new_direction;
 	this.print();
-	for(unsigned char i = duckies.size(); i > 0; --i){
-		duckies[i].move(duckies[i - 1].direction);
-	}
 }
 
-unsigned char size(){
+unsigned char Duck::size(){
 
 	return static_cast<unsigned char>(duckies.size());
+}
+
+void Duck::print(){
+
+	for(unsigned char i = duckies.size(); i--;){
+		ducky_sprite[duckies[i].direction].setPosition(duckies[i].coordinates.x * 32, duckies[i].coordinates.y * 32);
+		window.draw(ducky_sprite[duckies[i].direction]);
+	}
+
+	duck_sprite[direction].setPosition(coordinates.x * 32, coordinates.y * 32);
+	window.draw(duck_sprite[direction]);
 }

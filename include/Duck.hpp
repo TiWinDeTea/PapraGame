@@ -71,6 +71,11 @@ class Duck : public Ducky{
 		 */
 		unsigned char size();
 
+		/**
+		 * @brief Prints the duck and the duckies
+		 */
+		void print();
+
 	private:
 
 		std::vector<Ducky> Duckies;
