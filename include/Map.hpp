@@ -9,9 +9,9 @@
  #ifndef MAP_HPP_INCLUDED
  #define MAP_HPP_INCLUDED
  
- #include <Coord>
- #include <SFML/Graphics>
- #include <enum>
+ #include <Coord.hpp>
+ #include <SFML/Graphics.hpp>
+ #include <enum.hpp>
  
  #define NB_TEXTURE 8
  

@@ -17,8 +17,8 @@
 
 #include <vector>
 #include <Coord.hpp>
-#include <SFML/Graphics>
-#include <enum>
+#include <SFML/Graphics.hpp>
+#include <enum.hpp>
 
 /**
  * @class Ducky Ducky.hpp

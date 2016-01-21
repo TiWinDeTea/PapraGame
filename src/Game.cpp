@@ -29,13 +29,13 @@ void Game::launch(){
 		TEXTURE_OBSTACLE };
 
 	bool loading_success = true;
-	char player;
+	char player_id;
 
 	for (unsigned int i = PLAYER_NUMBER ; i-- ;) {
-		player = i + '0';
+		player_id = i + '0';
 		for (unsigned int j = 4 ; j-- ;) {
-			loading_success = loading_success && duck_texture[i][0][j].loadFromFile(ressources_path + duck_textures_pah[j] + player + FILETYPE);
-			loading_success = loading_success && duck_textures[i][1][j].loadFromFile(ressources_path + ducky_textures_path[j] + player + FILETYPE);
+			loading_success = loading_success && duck_texture[i][0][j].loadFromFile(ressources_path + duck_textures_path[j] + player_id + FILETYPE);
+			loading_success = loading_success && duck_textures[i][1][j].loadFromFile(ressources_path + ducky_textures_path[j] + player_id + FILETYPE);
 		}
 	}
 	for (unsigned char i = 8 ; i-- ;) {
@@ -144,7 +144,6 @@ void Game::start()
 				game_window.close();
 		}
 
-		game_window.clear();
 		game_window.display();
 	}
 
