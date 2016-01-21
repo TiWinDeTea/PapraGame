@@ -6,14 +6,14 @@
 
 #include <Duck.hpp>
 
-Duck::Duck(sf::Window& game_window, sf::Texture duck_textures[4], sf::Texture duckies_textures[4], Coord starting_coordinates){
+Duck::Duck(sf::Window& game_window, sf::Texture duck_textures[4], sf::Texture duckies_textures[4], Coord starting_coordinates, Direction initial_direction){
 
 	st_coordinates = starting_coordinates;
 	coordinates = starting_coordinates;
 	for(unsigned char i = 4 ; i--;){
 		sprite[i].setTexture(textures[i]);
 	}
-	direction = UP;
+	direction = initial_direction;
 	window = game_window;
 
 	for(unsigned char i = DUCKIES_INITIAL_NUMBER; i--;){
