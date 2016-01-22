@@ -9,27 +9,27 @@
 void Game::launch(){
 
 	std::string duck_textures_path[4] = {
-		TEXTURE_DUCK_UP,
-		TEXTURE_DUCK_DOWN,
-		TEXTURE_DUCK_LEFT,
-		TEXTURE_DUCK_RIGHT
+		ducks_path + TEXTURE_DUCK_UP,
+		ducks_path + TEXTURE_DUCK_DOWN,
+		ducks_path + TEXTURE_DUCK_LEFT,
+		ducks_path + TEXTURE_DUCK_RIGHT
 	};
 	std::string ducky_textures_path[4] = {
-		TEXTURE_DUCKY_UP,
-		TEXTURE_DUCKY_DOWN,
-		TEXTURE_DUCKY_LEFT,
-		TEXTURE_DUCKY_RIGHT
+		ducks_path + TEXTURE_DUCKY_UP,
+		ducks_path + TEXTURE_DUCKY_DOWN,
+		ducks_path + TEXTURE_DUCKY_LEFT,
+		ducks_path + TEXTURE_DUCKY_RIGHT
 	};
 	std::string map_textures_path[7] = {
-		TEXTURE_OBSTACLE,
-		TEXTURE_EMPTY_TILE,
-		TEXTURE_WATER_UP_RIGHT,
-		TEXTURE_WATER_RIGHT_DOWN,
-		TEXTURE_WATER_LEFT_DOWN,
-		TEXTURE_WATER_UP_DOWN,
-		TEXTURE_WATER_LEFT_DOWN
+		biome_path + TEXTURE_OBSTACLE,
+		biome_path + TEXTURE_EMPTY_TILE,
+		biome_path + TEXTURE_WATER_UP_RIGHT,
+		biome_path + TEXTURE_WATER_RIGHT_DOWN,
+		biome_path + TEXTURE_WATER_LEFT_DOWN,
+		biome_path + TEXTURE_WATER_UP_DOWN,
+		biome_path + TEXTURE_WATER_LEFT_DOWN
 	};
-	bool loading_success = egg_texture.loadFromFile(path + TEXTURE_EGG + FILETYPE);
+	bool loading_success = egg_texture.loadFromFile(path + ducks_path + TEXTURE_EGG + FILETYPE);
 	char player_id;
 
 	for (unsigned int i = PLAYER_NUMBER ; i-- ;) {

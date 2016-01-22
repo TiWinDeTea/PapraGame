@@ -39,8 +39,8 @@
 #define TEXTURE_WATER_LEFT_RIGHT    "WaterLR"
 #define TEXTURE_WATER_LEFT_DOWN     "WaterDL"
 #define TEXTURE_WATER_RIGHT_DOWN    "WaterRD"
-#define TEXTURE_EMPTY_TILE          "Grass"
-#define TEXTURE_OBSTACLE            "Rock"
+#define TEXTURE_EMPTY_TILE          "EmptyTile"
+#define TEXTURE_OBSTACLE            "Obstacle"
 #define TEXTURE_EGG                 "Egg"
 #define FILETYPE                    ".png"
 #define MAPFILE                     "map"
@@ -62,8 +62,8 @@ class Game{
 public:
 
 	~Game(){};
-	Game(){path = "res/";}
-	Game(std::string ressources_path){path = ressources_path;}
+	Game(){path = "res/"; biome_path = "grass/"; ducks_path = "ducks/";}
+	Game(std::string path1, std::string path2, std::string path3){path = path1; biome_path = path2; ducks_path = path3;}
 
 	void launch();
 
@@ -83,7 +83,7 @@ private:
 	sf::Texture egg_texture;
 	sf::RenderWindow game_window;
 	unsigned int pxl_length, pxl_height;
-	std::string path;
+	std::string path, biome_path, ducks_path;
 };
 
 #endif /* GAME_HPP_INCLUDED */

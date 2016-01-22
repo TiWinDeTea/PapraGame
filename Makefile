@@ -98,6 +98,10 @@ memleak: COMPFLAGS = -g $(COMPSTANDARD)
 memleak: $(EXEFINAL)
 	$(LEAKCHECKER) $(EXEFINAL)
 
+.PHONY: run
+run: $(EXEFINAL)
+	@$(EXEFINAL)
+
 .PHONY: clean
 clean:
 	@$(DISPLAY) "\033[0mCleaning files and folders...\n"
