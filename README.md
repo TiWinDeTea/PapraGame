@@ -5,8 +5,8 @@ PapraGame Project
 <br/>
 PapraGame is a game featuring ducks !
 
-It's a two players versus snake-like. Two win, you have to be the first to get 5 duckies (you start with 2).
-You can get duckies either by catch an egg, or by stealing one to your 	opponent (you can steal him/her a ducky by forcing him/her to punch you in the face or in your own duckies).
+It's a two players versus snake-like. To win, you have to be the first to get 5 duckies (you start with 2).
+You can get duckies either by catching an egg, or by stealing one to your opponent (you can steal him/her a ducky by forcing him/her to punch you in the face or in your own duckies).
 
 Several biomes are available (changes the graphics), and the map can be easily modified.
 
