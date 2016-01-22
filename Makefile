@@ -37,11 +37,11 @@ VOIDECHO       = > /dev/null 2>&1
 BUILDDIR       = build/
 OBJDIR         = $(BUILDDIR)obj/
 SOURCEDIR      = src/
-INCLUDEDIR     = -I/usr/include -I. -Iinclude/
-LIBSDIR        = -L/usr/lib -L.
-SOURCENAME     = Ducky Duck Map Game main
+INCLUDEDIR     = -I/usr/include -Iinclude/
+LIBSDIR        = -L/usr/lib
+SOURCENAME     = Coord Ducky Duck Map Game main
 EXENAME        = PapraGame
-LINKS          = -lsfml-system -lsfml-window -lsfml-graphics
+LINKS          = -lstdc++ -lsfml-system -lsfml-window -lsfml-graphics
 
 EXEFINALOBJ    = $(OBJDIR)$(EXENAME).o
 EXEFINAL       = $(BUILDDIR)$(EXENAME).elf
@@ -67,7 +67,7 @@ $(EXENAME): $(EXEFINAL)
 $(EXEFINAL): $(EXEFINALOBJ)
 	@$(DISPLAY) "\n\033[1m\033[92m+\033[0m Building \033[33m$(EXEFINAL)\033[0m from \033[33m$(OBJDIR)$(EXENAME).o\033[0m..."
 	@$(MKDIR) $(BUILDDIR)
-	$(COMPILER) $(COMPFLAGS) $(LIBSDIR) $(LINKS) $(OBJDIR)$(EXENAME).o -o $(EXEFINAL)
+	$(COMPILER) $(LIBSDIR) $(LINKS) $(EXEFINALOBJ) -o $(EXEFINAL)
 	@for i in `seq 1 $(shell expr 65 - $(call STRLEN,$(OBJDIR)$(EXENAME).o) - $(call STRLEN,$(EXEFINAL)))`; do $(DISPLAY) " "; done
 	@$(DISPLAY) " -> Done\n"
 	@$(DISPLAY) "\n"

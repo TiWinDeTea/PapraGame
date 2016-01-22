@@ -34,7 +34,7 @@ class Coord{
 		/**
 		 * @brief Default constructor
 		 */
-		Coord();
+		Coord(){};
 };
 
 /**

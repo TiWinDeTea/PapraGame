@@ -41,7 +41,7 @@ class Map {
 		/**
 		 * @brief Creation of Map by default.
 		 */
-		Map ();
+		Map (){};
 
 		/**
 		 * @brief Creation of map with all the parametre needed.
