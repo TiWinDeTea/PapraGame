@@ -51,7 +51,7 @@ class Map {
 		 * @param texture[NB_TEXTURE] Array which will contain the texture for this game.
 		 * @param egg_texture Contain the texture of the egg.
 		 */
-		Map(const unsigned int x, const unsigned int y, std::vector< std::vector<Area> > smap, sf::Texture texture[NB_TEXTURE], sf::Texture egg_texture);
+		Map(const unsigned int x, const unsigned int y, std::vector< std::vector<Area> > smap, sf::Texture texture[NB_TEXTURE], sf::Texture& egg_texture);
 
 		/**
 		 * @brief Change the coordinates of the egg and print him.

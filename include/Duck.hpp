@@ -77,6 +77,12 @@ class Duck : public Ducky{
 		 */
 		void print(sf::RenderWindow& window);
 
+		/**
+		 * @brief Set the direction of the duck
+		 * @param new_direction The new direction
+		 */
+		void setDirection(Direction new_direction);
+
 	private:
 
 		std::vector<Ducky> duckies;

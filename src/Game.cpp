@@ -132,14 +132,46 @@ bool Game::loadMap(){
 
 void Game::start()
 {
+	std::vector<std::vector<sf::Keyboard::Key>> players_keys;
+	players_keys.push_back(new std::vector<sf::Keyboard::Key>);
+	players_keys[0].push_back(sf::Keyboard::Up);
+	players_keys[0].push_back(sf::Keyboard::Down);
+	players_keys[0].push_back(sf::Keyboard::Left);
+	players_keys[0].push_back(sf::Keyboard::Right);
+	players_keys.push_back(new std::vector<sf::Keyboard::Key>);
+	players_keys[1].push_back(sf::Keyboard::Z);
+	players_keys[1].push_back(sf::Keyboard::S);
+	players_keys[1].push_back(sf::Keyboard::Q);
+	players_keys[1].push_back(sf::Keyboard::D);
 	sf::Event event;
 	while (game_window.isOpen())
 	{
 		game_window.clear();
 		while (game_window.pollEvent(event))
 		{
-			if (event.type == sf::Event::Closed)
-				game_window.close();
+			switch(event.type){
+
+				case sf::Event::Closed:
+
+					game_window.close();
+					break;
+
+				case sf::Event::KeyPressed:
+					for(unsigned char i = PLAYER_NUMBER; i--;){
+						if(sf::Keyboard::isKeyPressed(players_keys[i][1]))
+						    player[i].setDirection(UP);
+						else if(sf::Keyboard::isKeyPressed(players_keys[i][2]))
+						    player[i].setDirection(DOWN);
+						else if(sf::Keyboard::isKeyPressed(players_keys[i][3]))
+						    player[i].setDirection(LEFT);
+						else if(sf::Keyboard::isKeyPressed(players_keys[i][4]))
+						    player[i].setDirection(RIGHT);
+					}
+					break;
+
+				default:
+					break;
+			}
 		}
 
 		sf::sleep(sf::milliseconds(100));
