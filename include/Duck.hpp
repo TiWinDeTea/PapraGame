@@ -56,7 +56,7 @@ class Duck : public Ducky{
 		 * @brief Add a ducky to the duck family
 		 * @param window Game's window
 		 */
-		void powerUp(sf::RenderWindow window);
+		void powerUp(sf::RenderWindow& window);
 
 		/**
 		 * @brief Moves the duck and the duckies
@@ -76,12 +76,6 @@ class Duck : public Ducky{
 		 * @param window Game's window
 		 */
 		void print(sf::RenderWindow& window);
-
-		/**
-		 * @brief Set the direction of the duck
-		 * @param new_direction The new direction
-		 */
-		void setDirection(Direction new_direction);
 
 	private:
 

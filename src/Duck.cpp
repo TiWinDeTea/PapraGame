@@ -101,7 +101,3 @@ void Duck::print(sf::RenderWindow& window){
 	duck_sprite[direction].setPosition(static_cast<float>(coordinates.x * 32), static_cast<float>(coordinates.y * 32));
 	window.draw(duck_sprite[direction]);
 }
-
-void setDirection(Direction new_direction){
-	direction = new_direction;
-}

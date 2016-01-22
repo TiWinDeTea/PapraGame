@@ -132,17 +132,20 @@ bool Game::loadMap(){
 
 void Game::start()
 {
-	std::vector<std::vector<sf::Keyboard::Key>> players_keys;
-	players_keys.push_back(new std::vector<sf::Keyboard::Key>);
-	players_keys[0].push_back(sf::Keyboard::Up);
-	players_keys[0].push_back(sf::Keyboard::Down);
-	players_keys[0].push_back(sf::Keyboard::Left);
-	players_keys[0].push_back(sf::Keyboard::Right);
-	players_keys.push_back(new std::vector<sf::Keyboard::Key>);
-	players_keys[1].push_back(sf::Keyboard::Z);
-	players_keys[1].push_back(sf::Keyboard::S);
-	players_keys[1].push_back(sf::Keyboard::Q);
-	players_keys[1].push_back(sf::Keyboard::D);
+	std::vector< std::vector<sf::Keyboard::Key> > player_keys;
+	player_keys.push_back(std::vector<sf::Keyboard::Key>());
+	player_keys[0].push_back(sf::Keyboard::Up);
+	player_keys[0].push_back(sf::Keyboard::Down);
+	player_keys[0].push_back(sf::Keyboard::Left);
+	player_keys[0].push_back(sf::Keyboard::Right);
+	player_keys.push_back(std::vector<sf::Keyboard::Key>());
+	player_keys[1].push_back(sf::Keyboard::Z);
+	player_keys[1].push_back(sf::Keyboard::S);
+	player_keys[1].push_back(sf::Keyboard::Q);
+	player_keys[1].push_back(sf::Keyboard::D);
+	std::vector<Direction> player_dir;
+	for(unsigned char i = PLAYER_NUMBER; i--;)
+		player_dir.push_back(player[i].getDirection());
 
 	Coord egg_coo;
 	egg_coo.x = 5;
@@ -155,30 +158,23 @@ void Game::start()
 		game_window.clear();
 		while (game_window.pollEvent(event))
 		{
-			switch(event.type){
-
-				case sf::Event::Closed:
-
-					game_window.close();
-					break;
-
-				case sf::Event::KeyPressed:
-					for(unsigned char i = PLAYER_NUMBER; i--;){
-						if(sf::Keyboard::isKeyPressed(players_keys[i][1]))
-						    player[i].setDirection(UP);
-						else if(sf::Keyboard::isKeyPressed(players_keys[i][2]))
-						    player[i].setDirection(DOWN);
-						else if(sf::Keyboard::isKeyPressed(players_keys[i][3]))
-						    player[i].setDirection(LEFT);
-						else if(sf::Keyboard::isKeyPressed(players_keys[i][4]))
-						    player[i].setDirection(RIGHT);
-					}
-					break;
-
-				default:
-					break;
+			if(event.type == sf::Event::Closed)
+				game_window.close();
+			else if(event.type == sf::Event::KeyPressed){
+				for(unsigned char i = PLAYER_NUMBER; i--;){
+					if(sf::Keyboard::isKeyPressed(player_keys[i][1]))
+					    player_dir[i] = UP;
+					else if(sf::Keyboard::isKeyPressed(player_keys[i][2]))
+					    player_dir[i] = DOWN;
+					else if(sf::Keyboard::isKeyPressed(player_keys[i][3]))
+					    player_dir[i] = LEFT;
+					else if(sf::Keyboard::isKeyPressed(player_keys[i][4]))
+					    player_dir[i] = RIGHT;
+				}
 			}
 		}
+		for(unsigned char i = PLAYER_NUMBER; i--;)
+			player[i].move(game_window, player_dir[i]);
 
 		sf::sleep(sf::milliseconds(100));
 		game_map.print(game_window);

@@ -71,6 +71,12 @@ class Ducky{
 		 */
 		Coord getCoord(){ return coordinates; }
 
+		/**
+		 * @brief Direction getter
+		 * @return Ducky's direction
+		 */
+		Direction getDirection(){ return direction; }
+
 	private:
 		
 		Coord coordinates, st_coordinates;
