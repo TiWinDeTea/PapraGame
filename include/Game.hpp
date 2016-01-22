@@ -62,7 +62,7 @@ class Game{
 public:
 
 	~Game(){};
-	Game(){path = "res/"; biome_path = "grass/"; ducks_path = "ducks/";}
+	Game(){path = "res/"; biome_path = "none"; ducks_path = "ducks/";}
 	Game(std::string path1, std::string path2, std::string path3){path = path1; biome_path = path2; ducks_path = path3;}
 
 	void launch();

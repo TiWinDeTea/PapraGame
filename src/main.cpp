@@ -3,7 +3,7 @@
 int main(int argc, char* argv[]);
 int main(int argc, char* argv[]){
 	if (argc <= 1)  {
-		Game game("res/", "grass/", "ducks/");
+		Game game;
 		game.launch();
 	}
 	else{

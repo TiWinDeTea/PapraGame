@@ -8,6 +8,15 @@
 
 void Game::launch(){
 
+	if (biome_path == "none") {
+		std::ifstream map_file(path + MAPFILE, std::ios::in | std::ios::binary);
+		if (map_file){
+			map_file >> biome_path;
+			biome_path += '/';
+		}
+		map_file.close();
+	}
+
 	std::string duck_textures_path[4] = {
 		ducks_path + TEXTURE_DUCK_UP,
 		ducks_path + TEXTURE_DUCK_DOWN,
@@ -64,6 +73,7 @@ bool Game::loadMap(){
 	std::string value;
 
 	if (map_file) {
+		map_file >> value; // ignoring first line : already interpreted
 		map_file >> x_map_size;
 		map_file >> y_map_size;
 		pxl_height = 32*y_map_size;
@@ -72,13 +82,13 @@ bool Game::loadMap(){
 			map_file >> player_spawn[i].x;
 			map_file >> player_spawn[i].y;
 			map_file >> value;
-			if (value == "UP")
+			if (value == "up")
 				player_initial_dir[i] = UP;
-			else if (value == "DOWN")
+			else if (value == "down")
 				player_initial_dir[i] = DOWN;
-			else if (value == "LEFT")
+			else if (value == "left")
 				player_initial_dir[i] = LEFT;
-			else if (value == "RIGHT")
+			else if (value == "right")
 				player_initial_dir[i] = RIGHT;
 			else{
 				std::cout << "Not a valid direction : " << value << std::endl;
