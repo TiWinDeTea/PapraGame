@@ -30,13 +30,12 @@ class Duck : public Ducky{
 
 		/**
 		 * @brief Duck constructor with path to sprites and starting_coordinates
-		 * @param game_window          Window of the game
 		 * @param duck_textures        Textures of the duck. Order : Up, Down, Left, Right
 		 * @param duckies_textures     Textures of the duckies. Order : Up, Down, Left, Right
 		 * @param starting_coordinates Coordinates of the ducky spawn
 		 * @param initial_direction    Direction of the duck at spawn
 		 */
-		Duck(sf::Window& game_window, sf::Texture duck_textures[4], sf::Texture duckies_textures[4], Coord starting_coordinates, Direction initial_direction);
+		Duck(sf::Texture duck_textures[4], sf::Texture duckies_textures[4], Coord starting_coordinates, Direction initial_direction);
 
 		/**
 		 * @brief Default constructor
@@ -55,14 +54,16 @@ class Duck : public Ducky{
 
 		/**
 		 * @brief Add a ducky to the duck family
+		 * @param window Game's window
 		 */
-		void powerUp();
+		void powerUp(sf::RenderWindow window);
 
 		/**
 		 * @brief Moves the duck and the duckies
+		 * @param window  Game's window
 		 * @param new_dir New direction
 		 */
-		void move(Direction new_direction);
+		void move(sf::RenderWindow& window, Direction new_direction);
 
 		/**
 		 * @brief Return the number of duckies
@@ -72,8 +73,9 @@ class Duck : public Ducky{
 
 		/**
 		 * @brief Prints the duck and the duckies
+		 * @param window Game's window
 		 */
-		void print();
+		void print(sf::RenderWindow& window);
 
 	private:
 
@@ -81,7 +83,6 @@ class Duck : public Ducky{
 		char invulnerability;
 		sf::Sprite duck_sprite[4];
 		sf::Sprite ducky_sprite[4];
-		sf::RenderWindow window;
 };
 
 #endif /*DUCK_HPP_INCLUDED*/

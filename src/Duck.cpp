@@ -6,7 +6,7 @@
 
 #include <Duck.hpp>
 
-Duck::Duck(sf::Window& game_window, sf::Texture duck_textures[4], sf::Texture duckies_textures[4], Coord starting_coordinates, Direction initial_direction){
+Duck::Duck(sf::Texture duck_textures[4], sf::Texture duckies_textures[4], Coord starting_coordinates, Direction initial_direction){
 
 	st_coordinates = starting_coordinates;
 	coordinates = starting_coordinates;
@@ -14,7 +14,6 @@ Duck::Duck(sf::Window& game_window, sf::Texture duck_textures[4], sf::Texture du
 		duck_sprite[i].setTexture(duck_textures[i]);
 	}
 	direction = initial_direction;
-	window = game_window;
 
 	for(unsigned char i = DUCKIES_INITIAL_NUMBER; i--;){
 		duckies.push_back(Ducky(starting_coordinates));
@@ -32,7 +31,7 @@ void Duck::damaged(){
 	}
 }
 
-void Duck::powerUp(){
+void Duck::powerUp(sf::RenderWindow window){
 
 	Coord new_coord = duckies.back().coordinates;
 	Direction new_dir;
@@ -61,10 +60,8 @@ void Duck::powerUp(){
 	window.draw(ducky_sprite[duckies.back().direction]);
 }
 
-void Duck::move(Direction new_direction){
-
-	for(unsigned char i = static_cast<unsigned char>(duckies.size()); i > 0; --i){
-		if(duckies[i].coordinates != duckies[i - 1].coordinates)
+void Duck::move(sf::RenderWindow& window, Direction new_direction){
+for(unsigned char i = static_cast<unsigned char>(duckies.size()); i > 0; --i){ if(duckies[i].coordinates != duckies[i - 1].coordinates)
 			duckies[i].move(duckies[i - 1].direction);
 	}
 	if(duckies.front().coordinates != coordinates){
@@ -88,7 +85,7 @@ void Duck::move(Direction new_direction){
 			break;
 	}
 	direction = new_direction;
-	this->print();
+	this->print(window);
 }
 
 unsigned char Duck::size(){
@@ -96,7 +93,7 @@ unsigned char Duck::size(){
 	return static_cast<unsigned char>(duckies.size());
 }
 
-void Duck::print(){
+void Duck::print(sf::RenderWindow& window){
 
 	for(unsigned char i = static_cast<unsigned char>(duckies.size()); i--;){
 		ducky_sprite[duckies[i].direction].setPosition(static_cast<float>(duckies[i].coordinates.x * 32), static_cast<float>(duckies[i].coordinates.y * 32));

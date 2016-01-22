@@ -23,31 +23,31 @@
  #########################################################################################
 
 
-FILEIDENTIFIER	= .cpp
-COMPILER	= g++
-COMPFLAGS	=  -Wdisabled-optimization -Wvector-operation-performance -Winvalid-pch -Wunused -Wconversion -Wuseless-cast -Wlogical-op -Wuninitialized -Wdouble-promotion -Wformat -Wmissing-include-dirs -Wall -pedantic -pedantic-errors -Wmain -Wswitch-default -Wunreachable-code -Winline -Wfloat-equal -Wundef -Wcast-align -Wredundant-decls -Winit-self -Wshadow -Wnon-virtual-dtor -O3 -Wswitch-enum -Wmissing-declarations -Wzero-as-null-pointer-constant -std=c++14
-DEBUGGER	= gdb
-LEAKCHECKER	= valgrind --leak-check=full --show-leak-kinds=all
-DISPLAY		= printf
-MKDIR		= mkdir -p
-RMDIR		= rmdir
-RM		= rm -f
-LD		= ld -r
-VOIDECHO	= > /dev/null 2>&1
-BUILDDIR	= build/
-OBJDIR		= $(BUILDDIR)obj/
-SOURCEDIR	= src/
-INCLUDEDIR	= -I/usr/include -I. -Iinclude/
-LIBSDIR		= -L/usr/lib -L.
-SOURCENAME	= Ducky Duck Map Game main
-EXENAME		= PapraGame.elf
-LINKS		= -lsfml-system -lsfml-window -lsfml-graphics
+FILEIDENTIFIER = .cpp
+COMPILER       = g++
+COMPFLAGS      =  -Wdisabled-optimization -Wvector-operation-performance -Winvalid-pch -Wunused -Wconversion -Wuseless-cast -Wlogical-op -Wuninitialized -Wdouble-promotion -Wformat -Wmissing-include-dirs -Wall -pedantic -pedantic-errors -Wmain -Wswitch-default -Wunreachable-code -Winline -Wfloat-equal -Wundef -Wcast-align -Wredundant-decls -Winit-self -Wshadow -Wnon-virtual-dtor -O3 -Wswitch-enum -Wmissing-declarations -Wzero-as-null-pointer-constant -std=c++14
+DEBUGGER       = gdb
+LEAKCHECKER    = valgrind --leak-check=full --show-leak-kinds=all
+DISPLAY        = printf
+MKDIR          = mkdir -p
+RMDIR          = rmdir
+RM             = rm -f
+LD             = ld -r
+VOIDECHO       = > /dev/null 2>&1
+BUILDDIR       = build/
+OBJDIR         = $(BUILDDIR)obj/
+SOURCEDIR      = src/
+INCLUDEDIR     = -I/usr/include -I. -Iinclude/
+LIBSDIR        = -L/usr/lib -L.
+SOURCENAME     = Ducky Duck Map Game main
+EXENAME        = PapraGame.elf
+LINKS          = -lsfml-system -lsfml-window -lsfml-graphics
 
-EXEFINALOBJ	= $(OBJDIR)$(EXENAME).o
-EXEFINAL	= $(BUILDDIR)$(EXENAME).elf
-SOURCES		= $(foreach src,$(SOURCENAME),$(SOURCEDIR)$(src)$(FILEIDENTIFIER))
-OBJECTS		= $(foreach src,$(SOURCENAME),$(OBJDIR)$(src).o)
-VPATH		= $(SOURCEDIR)
+EXEFINALOBJ    = $(OBJDIR)$(EXENAME).o
+EXEFINAL       = $(BUILDDIR)$(EXENAME).elf
+SOURCES        = $(foreach src,$(SOURCENAME),$(SOURCEDIR)$(src)$(FILEIDENTIFIER))
+OBJECTS        = $(foreach src,$(SOURCENAME),$(OBJDIR)$(src).o)
+VPATH          = $(SOURCEDIR)
 
 CHARACTERS := A B C D E F G H I J K L M N O P Q R S T U V W X Y Z
 CHARACTERS += a b c d e f g h i j k l m n o p q r s t u v w x y z

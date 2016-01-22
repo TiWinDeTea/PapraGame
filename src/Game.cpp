@@ -8,7 +8,7 @@
 
 void Game::launch(){
 
-	std::string duck_textures_path[4] = { 
+	std::string duck_textures_path[4] = {
 		TEXTURE_DUCK_UP,
 		TEXTURE_DUCK_DOWN,
 		TEXTURE_DUCK_LEFT,
@@ -21,16 +21,15 @@ void Game::launch(){
 		TEXTURE_DUCKY_RIGHT
 	};
 	std::string map_textures_path[8] = {
-		TEXTURE_WATER_UP_DOWN,
-		TEXTURE_WATER_UP_RIGHT,
-		TEXTURE_WATER_UP_LEFT,
-		TEXTURE_WATER_LEFT_RIGHT,
-		TEXTURE_WATER_LEFT_DOWN,
-		TEXTURE_WATER_RIGHT_DOWN,
+		TEXTURE_OBSTACLE,
 		TEXTURE_EMPTY_TILE,
-		TEXTURE_OBSTACLE
+		TEXTURE_WATER_UP_RIGHT,
+		TEXTURE_WATER_RIGHT_DOWN,
+		TEXTURE_WATER_LEFT_DOWN,
+		TEXTURE_WATER_UP_DOWN,
+		TEXTURE_WATER_LEFT_RIGHT
 	};
-	bool loading_success = true;
+	bool loading_success = egg_texture.loadFromFile(path + TEXTURE_EGG + FILETYPE);
 	char player_id;
 
 	for (unsigned int i = PLAYER_NUMBER ; i-- ;) {
@@ -53,7 +52,7 @@ void Game::launch(){
 		winner = 0;
 		game_window.create(sf::VideoMode(pxl_length, pxl_height), "PapraGame ~ A game with Ducks !", sf::Style::Titlebar | sf::Style::Close);
 		for (unsigned int i = PLAYER_NUMBER ; i-- ;) {
-			player[i] = Duck(game_window, duck_texture[i][0], duck_texture[i][1], player_spawn[i], player_initial_dir[i]);
+			player[i] = Duck(duck_texture[i][0], duck_texture[i][1], player_spawn[i], player_initial_dir[i]);
 		}
 
 		this->start();
@@ -62,7 +61,7 @@ void Game::launch(){
 
 bool Game::loadMap(){
 	std::ifstream map_file(std::string(path + MAPFILE).c_str(), std::ios::in | std::ios::binary);
-	unsigned char x_map_size, y_map_size;
+	unsigned int x_map_size, y_map_size;
 	std::string value;
 
 	if (map_file) {
@@ -87,7 +86,7 @@ bool Game::loadMap(){
 				std::cout << "(On player " << i << ")" << std::endl;
 			}
 		}
-		Area map_interpreted[x_map_size][y_map_size];
+		Area** map_interpreted = static_cast<Area**>(malloc(y_map_size * x_map_size * sizeof(Area)));
 		for (unsigned int i = 0 ; i < y_map_size ; ++i) {
 			std::getline(map_file, value);
 			for (unsigned int j = 0 ; j < y_map_size ; ++j) {
@@ -125,7 +124,8 @@ bool Game::loadMap(){
 			}
 		}
 
-		game_map = Map(x_map_size, y_map_size, map_interpreted, map_texture);
+		game_map = Map(x_map_size, y_map_size, map_interpreted, map_texture, egg_texture);
+		free(map_interpreted);
 	}
 	else
 		return false;
@@ -143,6 +143,7 @@ void Game::start()
 				game_window.close();
 		}
 
+		game_map.printAll(game_window);
 		game_window.display();
 	}
 }

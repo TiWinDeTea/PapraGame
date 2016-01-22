@@ -73,15 +73,17 @@ class Map {
                  * @param window the window for sfml and to print the map
 		 */
 		void printAll(sf::RenderWindow& window);
+		
+		Map& operator=(const Map& mymap);
 
 	private :
 
-		const unsigned int x_size;
-		const unsigned int y_size;
+		unsigned int x_size;
+		unsigned int y_size;
 		sf::Sprite sprites[NB_TEXTURE];
 		Coord coordinate_egg;
 		sf::Sprite egg_sprite;
-		std::vector<std::vector<Area>> map;
+		std::vector< std::vector<Area> > map;
 };
 
 #endif /* MAPP_HPP_INCLUDED */
