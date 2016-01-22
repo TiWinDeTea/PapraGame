@@ -20,17 +20,17 @@ It should be created according to the following (line by line)
 + Length of the map
 + Width of the map
 + Starting point of player 1 (x y)
-++ On the same line, starting direction of the player 1 (up, down, left, right)
+    + On the same line, starting direction of the player 1 (up, down, left, right)
 + Same for the playe 2
 + Map itself with characters :
-++ ``o`` for the obstacle (rock, asteroïd, cactus, …)
-++ ``.`` for the blank tile (grass, void space, sand, …)
-++ ``|`` for the 'river' that goes from north to south
-++ ``-`` for the east-west one
-++ ``1`` for east-south (from the num-keypad)
-++ ``3`` for west-south
-++ ``7`` for east-north
-++ ``9`` for west-north
+    + ``o`` for the obstacle (rock, asteroïd, cactus, …)
+    + ``.`` for the blank tile (grass, void space, sand, …)
+    + ``|`` for the 'river' that goes from north to south
+    + ``-`` for the east-west one
+    + ``1`` for east-south (from the num-keypad)
+    + ``3`` for west-south
+    + ``7`` for east-north
+    + ``9`` for west-north
 
 ##Authors
 <br/>
@@ -55,24 +55,20 @@ You can get this game from the Time Winder Dev Team [github repo](https://github
 License : Mozilla Public License Version 2.0
 [Read the license file](LICENSE.md)
 
-************************************************************************
-*                                                                      *
-*  Disclaimer of Warranty                                              *
-*  -------------------------                                           *
-*                                                                      *
-*  Covered Software is provided under this License on an "as is"       *
-*  basis, without warranty of any kind, either expressed, implied, or  *
-*  statutory, including, without limitation, warranties that the       *
-*  Covered Software is free of defects, merchantable, fit for a        *
-*  particular purpose or non-infringing. The entire risk as to the     *
-*  quality and performance of the Covered Software is with You.        *
-*  Should any Covered Software prove defective in any respect, You     *
-*  (not any Contributor) assume the cost of any necessary servicing,   *
-*  repair, or correction. This disclaimer of warranty constitutes an   *
-*  essential part of this License. No use of any Covered Software is   *
-*  authorized under this License except under this disclaimer.         *
-*                                                                      *
-************************************************************************
+Disclaimer of Warranty
+
+    Covered Software is provided under this License on an "as is"
+    basis, without warranty of any kind, either expressed, implied, or
+    statutory, including, without limitation, warranties that the
+    Covered Software is free of defects, merchantable, fit for a
+    particular purpose or non-infringing. The entire risk as to the
+    quality and performance of the Covered Software is with You.
+    Should any Covered Software prove defective in any respect, You
+    (not any Contributor) assume the cost of any necessary servicing,
+    repair, or correction. This disclaimer of warranty constitutes an
+    essential part of this License. No use of any Covered Software is
+    authorized under this License except under this disclaimer.
+
 <br/>
 
 ##Compile
