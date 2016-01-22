@@ -15,7 +15,7 @@
  */
 
 enum Area : unsigned char {
-    
+
     ROCK = 0,
     GRASS,
     WATER_UR, /*!< up -> right */
@@ -33,11 +33,9 @@ enum Area : unsigned char {
 enum Direction : unsigned char {
     
     UP = 0,
-    LEFT,
     DOWN,
+    LEFT,
     RIGHT
 };
-    
+
 #endif /* ENUM_HPP_INCLUDED */	
-    
-    

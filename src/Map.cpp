@@ -15,12 +15,12 @@
  * return the map created.
  */
 
-Map::Map(const unsigned int x, const unsigned int y, Area** smap, sf::Texture texture[NB_TEXTURE], sf::Texture egg_texture) : x_size(x), y_size(y)
+Map::Map(const unsigned int x, const unsigned int y, std::vector< std::vector<Area> > smap, sf::Texture texture[NB_TEXTURE], sf::Texture egg_texture) : x_size(x), y_size(y)
 { 
     for (unsigned int i = 0; i < x; i++){
         map.push_back(std::vector<Area>());
 	for (unsigned int j = 0; j < y; j ++){
-            map[i].push_back(smap[i][j]);
+            map[i].push_back(smap[j][i]);
 	}
     }
     
@@ -43,6 +43,7 @@ void Map::printAll (sf::RenderWindow& window){
 	    this->print(tile, window);
 	}
     }
+    this->popEgg(coordinate_egg, window);
 }
 
 /*print : print a tile of the map.
@@ -60,7 +61,7 @@ void Map::print (Coord tile, sf::RenderWindow& window){
  * egg_coord : new coordinate of the egg.
  */
 
-void Map::popEgg (Coord egg_coord, sf::RenderWindow window){
+void Map::popEgg (Coord egg_coord, sf::RenderWindow& window){
     
     coordinate_egg = egg_coord;
     

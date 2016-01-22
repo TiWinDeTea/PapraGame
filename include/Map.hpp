@@ -51,14 +51,14 @@ class Map {
 		 * @param texture[NB_TEXTURE] Array which will contain the texture for this game.
 		 * @param egg_texture Contain the texture of the egg.
 		 */
-		Map(const unsigned int x, const unsigned int y, Area** smap, sf::Texture texture[NB_TEXTURE], sf::Texture egg_texture);
+		Map(const unsigned int x, const unsigned int y, std::vector< std::vector<Area> > smap, sf::Texture texture[NB_TEXTURE], sf::Texture egg_texture);
 
 		/**
 		 * @brief Change the coordinates of the egg and print him.
 		 * @param egg_coord The coordinate of the egg
 		 * @param window The window for sfml and to print the map
 		 */
-		void popEgg (Coord egg_coord, sf::RenderWindow window);
+		void popEgg (Coord egg_coord, sf::RenderWindow& window);
 
 		/**
 		 * @brief Print a send case in the screen.

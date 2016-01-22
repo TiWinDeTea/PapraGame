@@ -27,7 +27,7 @@ void Game::launch(){
 		TEXTURE_WATER_RIGHT_DOWN,
 		TEXTURE_WATER_LEFT_DOWN,
 		TEXTURE_WATER_UP_DOWN,
-		TEXTURE_WATER_LEFT_RIGHT
+		TEXTURE_WATER_LEFT_DOWN
 	};
 	bool loading_success = egg_texture.loadFromFile(path + TEXTURE_EGG + FILETYPE);
 	char player_id;
@@ -84,35 +84,36 @@ bool Game::loadMap(){
 				std::cout << "(On player " << i << ")" << std::endl;
 			}
 		}
-		Area** map_interpreted = static_cast<Area**>(malloc(y_map_size * x_map_size * sizeof(Area)));
-		for (unsigned int i = 0 ; i < y_map_size ; ++i) {
+		std::vector< std::vector<Area> > map_interpreted;
+		for (unsigned int i = 0 ; i < x_map_size ; ++i) {
+			map_interpreted.push_back(std::vector<Area>());
 			map_file >> value;
-			for (unsigned int j = 0 ; j < x_map_size ; ++j) {
+			for (unsigned int j = 0 ; j < y_map_size ; ++j) {
 				switch(value[j])
 				{
 					case IDENTIFIER_EMPTY_TILE:
-						map_interpreted[j][i] = GRASS;
+						map_interpreted[i].push_back(GRASS);
 						break;
 					case IDENTIFIER_OBSTACLE:
-						map_interpreted[j][i] = ROCK;
+						map_interpreted[i].push_back(ROCK);
 						break;
 					case IDENTIFIER_WATER_LEFT_DOWN:
-						map_interpreted[j][i] = WATER_DL;
+						map_interpreted[i].push_back(WATER_DL);
 						break;
 					case IDENTIFIER_WATER_LEFT_RIGHT:
-						map_interpreted[j][i] = WATER_LR;
+						map_interpreted[i].push_back(WATER_LR);
 						break;
 					case IDENTIFIER_WATER_RIGHT_DOWN:
-						map_interpreted[j][i] = WATER_RD;
+						map_interpreted[i].push_back(WATER_RD);
 						break;
 					case IDENTIFIER_WATER_UP_DOWN:
-						map_interpreted[j][i] = WATER_UD;
+						map_interpreted[i].push_back(WATER_UD);
 						break;
 					case IDENTIFIER_WATER_UP_LEFT:
-						map_interpreted[j][i] = WATER_LU;
+						map_interpreted[i].push_back(WATER_LU);
 						break;
 					case IDENTIFIER_WATER_UP_RIGHT:
-						map_interpreted[j][i] = WATER_UR;
+						map_interpreted[i].push_back(WATER_UR);
 						break;
 					default:
 						std::cout << "Bad map" << std::endl;
@@ -123,7 +124,6 @@ bool Game::loadMap(){
 		}
 
 		game_map = Map(x_map_size, y_map_size, map_interpreted, map_texture, egg_texture);
-		free(map_interpreted);
 		return true;
 	}
 	else
@@ -142,6 +142,7 @@ void Game::start()
 				game_window.close();
 		}
 
+		sf::sleep(sf::milliseconds(100));
 		game_map.printAll(game_window);
 		game_window.display();
 	}
