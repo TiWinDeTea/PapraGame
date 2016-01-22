@@ -20,14 +20,15 @@ void Game::launch(){
 		ducks_path + TEXTURE_DUCKY_LEFT,
 		ducks_path + TEXTURE_DUCKY_RIGHT
 	};
-	std::string map_textures_path[7] = {
+	std::string map_textures_path[8] = {
 		biome_path + TEXTURE_OBSTACLE,
 		biome_path + TEXTURE_EMPTY_TILE,
 		biome_path + TEXTURE_WATER_UP_RIGHT,
 		biome_path + TEXTURE_WATER_RIGHT_DOWN,
 		biome_path + TEXTURE_WATER_LEFT_DOWN,
+		biome_path + TEXTURE_WATER_UP_LEFT,
 		biome_path + TEXTURE_WATER_UP_DOWN,
-		biome_path + TEXTURE_WATER_LEFT_DOWN
+		biome_path + TEXTURE_WATER_LEFT_RIGHT
 	};
 	bool loading_success = egg_texture.loadFromFile(path + ducks_path + TEXTURE_EGG + FILETYPE);
 	char player_id;
@@ -39,7 +40,7 @@ void Game::launch(){
 			loading_success = loading_success && duck_texture[i][1][j].loadFromFile(path + ducky_textures_path[j] + player_id + FILETYPE);
 		}
 	}
-	for (unsigned char i = 7 ; i-- ;) {
+	for (unsigned char i = 8 ; i-- ;) {
 		loading_success = loading_success && map_texture[i].loadFromFile(path + map_textures_path[i] + FILETYPE);
 	}
 
@@ -92,10 +93,10 @@ bool Game::loadMap(){
 				switch(value[j])
 				{
 					case IDENTIFIER_EMPTY_TILE:
-						map_interpreted[i].push_back(GRASS);
+						map_interpreted[i].push_back(EMPTY_TILE);
 						break;
 					case IDENTIFIER_OBSTACLE:
-						map_interpreted[i].push_back(ROCK);
+						map_interpreted[i].push_back(OBSTACLE);
 						break;
 					case IDENTIFIER_WATER_LEFT_DOWN:
 						map_interpreted[i].push_back(WATER_DL);
@@ -154,7 +155,6 @@ void Game::start()
 	sf::Event event;
 	game_map.popEgg(egg_coo, game_window);
 
-	game_window.display();
 	while (game_window.isOpen())
 	{
 		game_window.clear();
@@ -176,7 +176,7 @@ void Game::start()
 				}
 			}
 		}
-		sf::sleep(sf::milliseconds(50));
+		sf::sleep(sf::milliseconds(30));
 		++tmp;
 
 		if(tmp > 20){

@@ -10,14 +10,14 @@
 /**
  * @file enum.hpp
  * @author Barbier Julien
- * @license Mozilla Public License, v. 2.0 
+ * @license Mozilla Public License, v. 2.0
  * @brief Creation of the enumeration of texture for the area.
  */
 
 enum Area : unsigned char {
 
-    ROCK = 0,
-    GRASS,
+    OBSTACLE = 0,
+    EMPTY_TILE,
     WATER_UR, /*!< up -> right */
     WATER_RD, /*!< right -> down */
     WATER_DL, /*!< down -> left */
@@ -31,11 +31,11 @@ enum Area : unsigned char {
  */
 
 enum Direction : unsigned char {
-    
+
     UP = 0,
     DOWN,
     LEFT,
     RIGHT
 };
 
-#endif /* ENUM_HPP_INCLUDED */	
+#endif /* ENUM_HPP_INCLUDED */
