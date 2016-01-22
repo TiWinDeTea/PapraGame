@@ -22,7 +22,7 @@ It should be created according to the following (line by line)
 + Width of the map
 + Starting point of player 1 (x y)
     + On the same line, starting direction of player 1 (up, down, left, right)
-+ Same for the playe 2
++ Same for the player 2
 + Map itself with characters :
     + ``o`` for the obstacle (rock, asteroïd, cactus, …)
     + ``.`` for the blank tile (grass, void space, sand, …)
