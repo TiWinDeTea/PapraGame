@@ -54,20 +54,27 @@ CHARACTERS += a b c d e f g h i j k l m n o p q r s t u v w x y z
 CHARACTERS += 0 1 2 3 4 5 6 7 8 9 / \\ - _ . + \ 
 STRLEN = $(strip $(eval __temp := $(subst $(sp),x,$1))$(foreach a,$(CHARACTERS),$(eval __temp := $$(subst $a,x,$(__temp))))$(eval __temp := $(subst x,x ,$(__temp)))$(words $(__temp)))
 
+.PHONY: silent
+silent:
+	@make --silent $(EXEFINAL)
+
+.PHONY: all
+all: $(EXEFINAL)
+
 .PHONY: $(EXENAME)
 $(EXENAME): $(EXEFINAL)
 
 $(EXEFINAL): $(EXEFINALOBJ)
 	@$(DISPLAY) "\n\033[1m\033[92m+\033[0m Building \033[33m$(EXEFINAL)\033[0m from \033[33m$(OBJDIR)$(EXENAME).o\033[0m..."
 	@$(MKDIR) $(BUILDDIR)
-	@$(COMPILER) $(COMPFLAGS) $(LIBSDIR) $(LINKS) $(OBJDIR)$(EXENAME).o -o $(EXEFINAL)
+	$(COMPILER) $(COMPFLAGS) $(LIBSDIR) $(LINKS) $(OBJDIR)$(EXENAME).o -o $(EXEFINAL)
 	@for i in `seq 1 $(shell expr 65 - $(call STRLEN,$(OBJDIR)$(EXENAME).o) - $(call STRLEN,$(EXEFINAL)))`; do $(DISPLAY) " "; done
 	@$(DISPLAY) " -> Done\n"
 	@$(DISPLAY) "\n"
 
 $(EXEFINALOBJ): $(OBJECTS)
 	@$(DISPLAY) "\n\n\033[1m\033[92m+\033[0m Merging objects files into \033[33m$(EXEFINALOBJ)\033[0m..."
-	@$(LD) $(OBJECTS) -o $(EXEFINALOBJ)
+	$(LD) $(OBJECTS) -o $(EXEFINALOBJ)
 	@for i in `seq 1 $(shell expr 52 - $(call STRLEN,$(EXEFINALOBJ)))`; do $(DISPLAY) " "; done
 	@$(DISPLAY) " -> Done\n"
 
@@ -75,7 +82,7 @@ $(EXEFINALOBJ): $(OBJECTS)
 $(OBJDIR)%.o: %$(FILEIDENTIFIER)
 	@$(DISPLAY) "\n\033[1m\033[92m+\033[0m Building \033[33m$@\033[0m from \033[33m$^\033[0m..."
 	@$(MKDIR) $(OBJDIR)
-	@$(COMPILER) $(COMPFLAGS) $(INCLUDEDIR) -c $^ -o $@
+	$(COMPILER) $(COMPFLAGS) $(INCLUDEDIR) -c $^ -o $@
 	@for i in `seq 1 $(shell expr 65 - $(call STRLEN,$^) - $(call STRLEN,$@))`; do $(DISPLAY) " "; done
 	@$(DISPLAY) " -> Done"
 
