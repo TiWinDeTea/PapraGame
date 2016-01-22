@@ -36,7 +36,7 @@
 #define TEXTURE_WATER_UP_RIGHT      "WaterUR"
 #define TEXTURE_WATER_UP_LEFT       "WaterUL"
 #define TEXTURE_WATER_LEFT_RIGHT    "WaterLR"
-#define TEXTURE_WATER_LEFT_DOWN     "WaterLD"
+#define TEXTURE_WATER_LEFT_DOWN     "WaterDL"
 #define TEXTURE_WATER_RIGHT_DOWN    "WaterRD"
 #define TEXTURE_EMPTY_TILE          "Grass"
 #define TEXTURE_OBSTACLE            "Rock"

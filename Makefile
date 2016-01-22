@@ -25,7 +25,8 @@
 
 FILEIDENTIFIER = .cpp
 COMPILER       = g++
-COMPFLAGS      =  -Wdisabled-optimization -Wvector-operation-performance -Winvalid-pch -Wunused -Wconversion -Wuseless-cast -Wlogical-op -Wuninitialized -Wdouble-promotion -Wformat -Wmissing-include-dirs -Wall -pedantic -pedantic-errors -Wmain -Wswitch-default -Wunreachable-code -Winline -Wfloat-equal -Wundef -Wcast-align -Wredundant-decls -Winit-self -Wshadow -Wnon-virtual-dtor -O3 -Wswitch-enum -Wmissing-declarations -Wzero-as-null-pointer-constant -std=c++14
+COMPFLAGS      =  -Wdisabled-optimization -Wvector-operation-performance -Winvalid-pch -Wunused -Wconversion -Wuseless-cast -Wlogical-op -Wuninitialized -Wdouble-promotion -Wformat -Wmissing-include-dirs -Wall -pedantic -pedantic-errors -Wmain -Wswitch-default -Wunreachable-code -Winline -Wfloat-equal -Wundef -Wcast-align -Wredundant-decls -Winit-self -Wshadow -Wnon-virtual-dtor -O3 -Wswitch-enum -Wmissing-declarations -Wzero-as-null-pointer-constant
+COMPSTANDARD   = -std=c++14
 DEBUGGER       = gdb
 LEAKCHECKER    = valgrind --leak-check=full --show-leak-kinds=all
 DISPLAY        = printf
@@ -48,6 +49,7 @@ EXEFINAL       = $(BUILDDIR)$(EXENAME).elf
 SOURCES        = $(foreach src,$(SOURCENAME),$(SOURCEDIR)$(src)$(FILEIDENTIFIER))
 OBJECTS        = $(foreach src,$(SOURCENAME),$(OBJDIR)$(src).o)
 VPATH          = $(SOURCEDIR)
+COMPFLAGS     += $(COMPSTANDARD)
 
 CHARACTERS := A B C D E F G H I J K L M N O P Q R S T U V W X Y Z
 CHARACTERS += a b c d e f g h i j k l m n o p q r s t u v w x y z
@@ -87,14 +89,14 @@ $(OBJDIR)%.o: %$(FILEIDENTIFIER)
 	@$(DISPLAY) " -> Done"
 
 .PHONY: debug
-debug: COMPFLAGS = -g
+debug: COMPFLAGS = -g $(COMPSTANDARD)
 debug: $(EXEFINAL)
-	@(DEBUGGER) $(EXEFINAL)
+	$(DEBUGGER) $(EXEFINAL)
 
 .PHONY: memleak
-memleak: COMPFLAGS = -g
+memleak: COMPFLAGS = -g $(COMPSTANDARD)
 memleak: $(EXEFINAL)
-	@$(LEAKCHECKER) $(EXEFINAL)
+	$(LEAKCHECKER) $(EXEFINAL)
 
 .PHONY: clean
 clean:

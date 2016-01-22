@@ -20,7 +20,7 @@ void Game::launch(){
 		TEXTURE_DUCKY_LEFT,
 		TEXTURE_DUCKY_RIGHT
 	};
-	std::string map_textures_path[8] = {
+	std::string map_textures_path[7] = {
 		TEXTURE_OBSTACLE,
 		TEXTURE_EMPTY_TILE,
 		TEXTURE_WATER_UP_RIGHT,
@@ -39,11 +39,9 @@ void Game::launch(){
 			loading_success = loading_success && duck_texture[i][1][j].loadFromFile(path + ducky_textures_path[j] + player_id + FILETYPE);
 		}
 	}
-	for (unsigned char i = 8 ; i-- ;) {
+	for (unsigned char i = 7 ; i-- ;) {
 		loading_success = loading_success && map_texture[i].loadFromFile(path + map_textures_path[i] + FILETYPE);
 	}
-
-	loading_success = loading_success && egg_texture.loadFromFile(path + TEXTURE_EGG + FILETYPE);
 
 	if (!loading_success || !(this->loadMap())) {
 		std::cout << "Failed to load game ressources" << std::endl;
@@ -72,7 +70,7 @@ bool Game::loadMap(){
 		for (unsigned int i = 0 ; i < PLAYER_NUMBER ; ++i) {
 			map_file >> player_spawn[i].x;
 			map_file >> player_spawn[i].y;
-			std::getline(map_file, value);
+			map_file >> value;
 			if (value == "UP")
 				player_initial_dir[i] = UP;
 			else if (value == "DOWN")
@@ -88,8 +86,8 @@ bool Game::loadMap(){
 		}
 		Area** map_interpreted = static_cast<Area**>(malloc(y_map_size * x_map_size * sizeof(Area)));
 		for (unsigned int i = 0 ; i < y_map_size ; ++i) {
-			std::getline(map_file, value);
-			for (unsigned int j = 0 ; j < y_map_size ; ++j) {
+			map_file >> value;
+			for (unsigned int j = 0 ; j < x_map_size ; ++j) {
 				switch(value[j])
 				{
 					case IDENTIFIER_EMPTY_TILE:
