@@ -26,7 +26,7 @@
 FILEIDENTIFIER = .cpp
 COMPILER       = g++
 COMPFLAGS      =  -Wdisabled-optimization -Wvector-operation-performance -Winvalid-pch -Wunused -Wconversion -Wuseless-cast -Wlogical-op -Wuninitialized -Wdouble-promotion -Wformat -Wmissing-include-dirs -Wall -pedantic -pedantic-errors -Wmain -Wswitch-default -Wunreachable-code -Winline -Wfloat-equal -Wundef -Wcast-align -Wredundant-decls -Winit-self -Wshadow -Wnon-virtual-dtor -O3 -Wswitch-enum -Wmissing-declarations -Wzero-as-null-pointer-constant
-COMPSTANDARD   = -std=c++14
+COMPSTANDARD   = -std=c++11
 DEBUGGER       = gdb
 LEAKCHECKER    = valgrind --leak-check=full --show-leak-kinds=all
 DISPLAY        = printf
