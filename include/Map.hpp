@@ -56,21 +56,21 @@ class Map {
 		/**
 		 * @brief Change the coordinates of the egg and print him.
 		 * @param egg_coord The coordinate of the egg
-                 * @param window The window for sfml and to print the map
+		 * @param window The window for sfml and to print the map
 		 */
 		void popEgg (Coord egg_coord, sf::RenderWindow window);
 
 		/**
 		 * @brief Print a send case in the screen.
 		 * @param coord The coordinate of the case we want to convert.
-                 * @param window the window for sfml and to print the map.
+		 * @param window the window for sfml and to print the map.
 		 */
 
 		void print(Coord coord, sf::RenderWindow& window);
 
 		/**
 		 * @brief printAll Print all the map.
-                 * @param window the window for sfml and to print the map
+		 * @param window the window for sfml and to print the map
 		 */
 		void printAll(sf::RenderWindow& window);
 		
