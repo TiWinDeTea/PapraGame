@@ -20,7 +20,7 @@ It should be created according to the following (line by line)
 + Length of the map
 + Width of the map
 + Starting point of player 1 (x y)
-    + On the same line, starting direction of the player 1 (up, down, left, right)
+    + On the same line, starting direction of player 1 (up, down, left, right)
 + Same for the playe 2
 + Map itself with characters :
     + ``o`` for the obstacle (rock, asteroïd, cactus, …)
@@ -52,7 +52,8 @@ You can get this game from the Time Winder Dev Team [github repo](https://github
 
 ##Copyright
 <br/>
-License : Mozilla Public License Version 2.0
+License : Mozilla Public License Version 2.0 
+
 [Read the license file](LICENSE.md)
 
 Disclaimer of Warranty
@@ -74,8 +75,11 @@ Disclaimer of Warranty
 ##Compile
 
 In order to compile PapraGame executable, go to the project's root with a terminal, and use the command
+
 ``$ make``
+
 An executable named `PapraGame.elf` should be generated in the `res/` folder
+
 You may delete the `obj/` folder if you like to.
 
 ##Contribute
