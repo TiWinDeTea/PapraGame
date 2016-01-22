@@ -49,11 +49,9 @@ void Duck::powerUp(sf::RenderWindow window){
 			--new_coord.y;
 			break;
 		case RIGHT:
+		default:
 			new_dir = LEFT;
 			--new_coord.x;
-			break;
-		default:
-			break;
 	}
 	duckies.push_back(Ducky(new_coord, st_coordinates, new_dir));
 	ducky_sprite[duckies.back().direction].setPosition(static_cast<float>(duckies.back().coordinates.x * 32), static_cast<float>(duckies.back().coordinates.y * 32));
