@@ -12,12 +12,12 @@ Coor::Coord(unsigned int initial_x, unsigned int initial_y){
     y = initial_y;
 }
 
-inline bool operator==(const Coord& a, const Coord& b)
+bool operator==(const Coord& a, const Coord& b)
 {
     return (a.x() == b.x() && a.y() == b.y());
 }
 
-inline bool operator!=(const Coord& a, const Coord& b)
+bool operator!=(const Coord& a, const Coord& b)
 {
     return !(a == b);
 }

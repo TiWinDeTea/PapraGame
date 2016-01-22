@@ -40,11 +40,11 @@ class Coord{
 /**
  * @brief == operator for Coord
  */
-inline bool operator==(const Coord& a, const Coord& b);
+bool operator==(const Coord& a, const Coord& b);
 
 /**
  * @brief != operator for Coord
  */
-inline bool operator!=(const Coord& a, const Coord& b);
+bool operator!=(const Coord& a, const Coord& b);
 
 #endif /*COORD_HPP_INCLUDED*/

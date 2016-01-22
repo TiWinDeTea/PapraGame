@@ -59,7 +59,7 @@ void Duck::powerUp(sf::RenderWindow window){
 }
 
 void Duck::move(sf::RenderWindow& window, Direction new_direction){
-for(unsigned char i = static_cast<unsigned char>(duckies.size()); i > 0; --i){ if(duckies[i].coordinates != duckies[i - 1].coordinates)
+	for(unsigned char i = static_cast<unsigned char>(duckies.size()); i > 0; --i){ if(duckies[i].coordinates != duckies[i - 1].coordinates)
 			duckies[i].move(duckies[i - 1].direction);
 	}
 	if(duckies.front().coordinates != coordinates){

@@ -71,12 +71,12 @@ void Map::popEgg (Coord egg_coord, sf::RenderWindow window){
 
 
 Map& Map::operator=(const Map& mymap){
-	Map newmap;
-	newmap.x_size = mymap.x_size;
-	newmap.y_size = mymap.y_size;
+	x_size = mymap.x_size;
+	y_size = mymap.y_size;
 	for (unsigned int i = NB_TEXTURE ; i-- ;) {
-		newmap.sprites[i] = mymap.sprites[i];
+		sprites[i] = mymap.sprites[i];
 	}
-	newmap.egg_sprite = mymap.egg_sprite;
-	newmap.map = mymap.map;
+	egg_sprite = mymap.egg_sprite;
+	map = mymap.map;
+	return *this;
 }

@@ -33,7 +33,7 @@ void Game::launch(){
 	char player_id;
 
 	for (unsigned int i = PLAYER_NUMBER ; i-- ;) {
-		player_id = i + '0';
+		player_id = static_cast<char>(i + '0');
 		for (unsigned int j = 4 ; j-- ;) {
 			loading_success = loading_success && duck_texture[i][0][j].loadFromFile(path + duck_textures_path[j] + player_id + FILETYPE);
 			loading_success = loading_success && duck_texture[i][1][j].loadFromFile(path + ducky_textures_path[j] + player_id + FILETYPE);
@@ -60,7 +60,7 @@ void Game::launch(){
 }
 
 bool Game::loadMap(){
-	std::ifstream map_file(std::string(path + MAPFILE).c_str(), std::ios::in | std::ios::binary);
+	std::ifstream map_file(path + MAPFILE, std::ios::in | std::ios::binary);
 	unsigned int x_map_size, y_map_size;
 	std::string value;
 
@@ -126,6 +126,7 @@ bool Game::loadMap(){
 
 		game_map = Map(x_map_size, y_map_size, map_interpreted, map_texture, egg_texture);
 		free(map_interpreted);
+		return true;
 	}
 	else
 		return false;
