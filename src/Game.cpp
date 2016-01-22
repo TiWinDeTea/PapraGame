@@ -123,7 +123,7 @@ bool Game::loadMap(){
 			}
 		}
 
-		game_map = Map(x_map_size, y_map_size, map_interpreted, map_texture, egg_texture);
+		game_map = Map(x_map_size, y_map_size, map_interpreted, map_texture, &egg_texture);
 		return true;
 	}
 	else
@@ -143,6 +143,12 @@ void Game::start()
 	players_keys[1].push_back(sf::Keyboard::S);
 	players_keys[1].push_back(sf::Keyboard::Q);
 	players_keys[1].push_back(sf::Keyboard::D);
+
+	Coord egg_coo;
+	egg_coo.x = 5;
+	egg_coo.y = 7;
+	game_map.popEgg(egg_coo, game_window);
+
 	sf::Event event;
 	while (game_window.isOpen())
 	{
@@ -175,7 +181,7 @@ void Game::start()
 		}
 
 		sf::sleep(sf::milliseconds(100));
-		game_map.printAll(game_window);
+		game_map.print(game_window);
 		game_window.display();
 	}
 }
