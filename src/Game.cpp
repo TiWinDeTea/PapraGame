@@ -143,7 +143,7 @@ bool Game::loadMap(){
 
 void Game::start()
 {
-	unsigned int tmp(0);
+	unsigned int tmp(20);
 	std::vector< std::vector<sf::Keyboard::Key> > player_keys;
 	player_keys.push_back(std::vector<sf::Keyboard::Key>());
 	player_keys[0].push_back(sf::Keyboard::Up);
@@ -167,8 +167,6 @@ void Game::start()
 
 	while (game_window.isOpen())
 	{
-		game_window.clear();
-		game_map.print(game_window);
 		while (game_window.pollEvent(event))
 		{
 			if(event.type == sf::Event::Closed)
@@ -191,6 +189,8 @@ void Game::start()
 
 		if(tmp > 20){
 			tmp = 0;
+			game_window.clear();
+			game_map.print(game_window);
 			for(unsigned char i = PLAYER_NUMBER; i--;)
 				player[i].move(game_window, player_dir[i]);
 
