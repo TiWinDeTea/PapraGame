@@ -19,13 +19,13 @@ Map::Map(const unsigned int x, const unsigned int y, std::vector< std::vector<Ar
 { 
     for (unsigned int i = 0; i < x; i++){
         map.push_back(std::vector<Area>());
-    	for (unsigned int j = 0; j < y; j ++){
+    	for (unsigned int j = 0; j < y; j++){
                 map[i].push_back(smap[i][j]);
     	}
     }
 
     for (unsigned int i = 0; i < NB_TEXTURE; i++){
-	sprites[i].setTexture(texture[i]);
+		sprites[i].setTexture(texture[i]);
     }
     egg_sprite.setTexture(*egg_texture);
 }
@@ -36,8 +36,8 @@ void Map::print (sf::RenderWindow& window){
     
     Coord tile;
     
-	for (tile.y = 0; tile.y < y_size; ++tile.y){	
-		for (tile.x = 0; tile.x < x_size; ++tile.x){	    
+	for (tile.x = 0; tile.x < x_size; ++tile.x){
+		for (tile.y = 0; tile.y < y_size; ++tile.y){
 			this->print(tile, window);
 		}
 	}
@@ -50,7 +50,7 @@ void Map::print (sf::RenderWindow& window){
 
 void Map::print (Coord tile, sf::RenderWindow& window){
 
-    sprites[map[tile.x][tile.y]].setPosition(static_cast<float>(tile.y*RESOLUTION_X_IMAGE), static_cast<float>(tile.x*RESOLUTION_Y_IMAGE));
+    sprites[map[tile.x][tile.y]].setPosition(static_cast<float>(tile.x*RESOLUTION_X_IMAGE), static_cast<float>(tile.y*RESOLUTION_Y_IMAGE));
     window.draw(sprites[map[tile.x][tile.y]]);
 
 }

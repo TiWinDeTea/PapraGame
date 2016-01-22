@@ -96,35 +96,37 @@ bool Game::loadMap(){
 			}
 		}
 		std::vector< std::vector<Area> > map_interpreted;
-		for (unsigned int i = 0 ; i < x_map_size ; ++i) {
+		for(unsigned int i = 0; i < x_map_size; ++i)
 			map_interpreted.push_back(std::vector<Area>());
+
+		for (unsigned int i = 0 ; i < y_map_size ; ++i) {
 			map_file >> value;
-			for (unsigned int j = 0 ; j < y_map_size ; ++j) {
+			for (unsigned int j = 0 ; j < x_map_size ; ++j) {
 				switch(value[j])
 				{
 					case IDENTIFIER_EMPTY_TILE:
-						map_interpreted[i].push_back(EMPTY_TILE);
+						map_interpreted[j].push_back(EMPTY_TILE);
 						break;
 					case IDENTIFIER_OBSTACLE:
-						map_interpreted[i].push_back(OBSTACLE);
+						map_interpreted[j].push_back(OBSTACLE);
 						break;
 					case IDENTIFIER_WATER_LEFT_DOWN:
-						map_interpreted[i].push_back(WATER_DL);
+						map_interpreted[j].push_back(WATER_DL);
 						break;
 					case IDENTIFIER_WATER_LEFT_RIGHT:
-						map_interpreted[i].push_back(WATER_LR);
+						map_interpreted[j].push_back(WATER_LR);
 						break;
 					case IDENTIFIER_WATER_RIGHT_DOWN:
-						map_interpreted[i].push_back(WATER_RD);
+						map_interpreted[j].push_back(WATER_RD);
 						break;
 					case IDENTIFIER_WATER_UP_DOWN:
-						map_interpreted[i].push_back(WATER_UD);
+						map_interpreted[j].push_back(WATER_UD);
 						break;
 					case IDENTIFIER_WATER_UP_LEFT:
-						map_interpreted[i].push_back(WATER_LU);
+						map_interpreted[j].push_back(WATER_LU);
 						break;
 					case IDENTIFIER_WATER_UP_RIGHT:
-						map_interpreted[i].push_back(WATER_UR);
+						map_interpreted[j].push_back(WATER_UR);
 						break;
 					default:
 						std::cout << "Bad map" << std::endl;
