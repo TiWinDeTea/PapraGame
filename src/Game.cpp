@@ -192,7 +192,6 @@ void Game::start()
 		game_map.print(game_window);
 		if(tmp == 0){
 			tmp = 16;
-			game_map.print(game_window);
 			for(unsigned char i = PLAYER_NUMBER; i--;)
 				player[i].move(game_window, player_dir[i]);
 		}
