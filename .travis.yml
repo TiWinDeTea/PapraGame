@@ -4,7 +4,6 @@ compiler:
 
 before_install:
  - echo "yes" | sudo add-apt-repository ppa:kalakris/cmake
- - echo "yes" | sudo add-apt-repository ppa:boost-latest/ppa
  - echo "yes" | sudo add-apt-repository ppa:ubuntu-toolchain-r/test
  - sudo apt-get -qq update
  - sudo apt-get -qq install build-essential libtool gcc-4.9 g++-4.9 make cmake openssl
@@ -19,7 +18,7 @@ before_install:
  - cd SFML-2.2
  - mkdir build
  - cd build
- - cmake . --build ../ -G "Unix Makefiles" -DCMAKE_CXX_FLAGS="-std=c++0x"
+ - cmake . --build ../ -G "Unix Makefiles" -DCMAKE_CXX_FLAGS="-std=c++0x" -DCMAKE_INSTALL_PREFIX="/usr"
  - sudo make install
  - cd ../../
 
