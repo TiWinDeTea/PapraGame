@@ -63,7 +63,7 @@ void Duck::powerUp(sf::RenderWindow& window){
 }
 
 void Duck::move(sf::RenderWindow& window, Direction new_direction){
-	for(unsigned char i = static_cast<unsigned char>(duckies.size() - 1); i > 0 ; i--){ 
+	for(unsigned char i = static_cast<unsigned char>(duckies.size() - 1); i > 0 ; i--){
 		if(duckies[i].coordinates != duckies[i - 1].coordinates)
 			duckies[i].move(duckies[i - 1].direction);
 	}
@@ -96,13 +96,47 @@ unsigned char Duck::size(){
 	return static_cast<unsigned char>(duckies.size());
 }
 
-void Duck::print(sf::RenderWindow& window){
+void Duck::print(sf::RenderWindow& window, float shift){
 
 	for(unsigned char i = static_cast<unsigned char>(duckies.size()); i--;){
-		ducky_sprite[duckies[i].direction].setPosition(static_cast<float>(duckies[i].coordinates.x * 32), static_cast<float>(duckies[i].coordinates.y * 32));
+		switch (duckies[i].direction){
+			case UP:
+				ducky_sprite[duckies[i].direction].setPosition(static_cast<float>(duckies[i].coordinates.x * 32), static_cast<float>(duckies[i].coordinates.y * 32) - shift);
+				break;
+			case LEFT:
+				ducky_sprite[duckies[i].direction].setPosition(static_cast<float>(duckies[i].coordinates.x * 32) - shift, static_cast<float>(duckies[i].coordinates.y * 32));
+				break;
+			case DOWN:
+				ducky_sprite[duckies[i].direction].setPosition(static_cast<float>(duckies[i].coordinates.x * 32), static_cast<float>(duckies[i].coordinates.y * 32) + shift);
+				break;
+			case RIGHT:
+				ducky_sprite[duckies[i].direction].setPosition(static_cast<float>(duckies[i].coordinates.x * 32) + shift, static_cast<float>(duckies[i].coordinates.y * 32));
+				break;
+			default:
+				break;
+		}
 		window.draw(ducky_sprite[duckies[i].direction]);
 	}
 
-	duck_sprite[direction].setPosition(static_cast<float>(coordinates.x * 32), static_cast<float>(coordinates.y * 32));
+	switch (direction){
+		case UP:
+			duck_sprite[direction].setPosition(static_cast<float>(coordinates.x * 32), static_cast<float>(coordinates.y * 32) - shift);
+			break;
+		case LEFT:
+			duck_sprite[direction].setPosition(static_cast<float>(coordinates.x * 32) - shift, static_cast<float>(coordinates.y * 32));
+			break;
+		case DOWN:
+			duck_sprite[direction].setPosition(static_cast<float>(coordinates.x * 32), static_cast<float>(coordinates.y * 32) + shift);
+			break;
+		case RIGHT:
+			duck_sprite[direction].setPosition(static_cast<float>(coordinates.x * 32) + shift, static_cast<float>(coordinates.y * 32));
+			break;
+		default:
+			break;
+	}
 	window.draw(duck_sprite[direction]);
+}
+
+void Duck::print(sf::RenderWindow& window){
+	this->print(window, -32);
 }

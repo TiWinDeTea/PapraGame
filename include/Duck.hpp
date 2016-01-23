@@ -74,6 +74,13 @@ class Duck : public Ducky{
 		/**
 		 * @brief Prints the duck and the duckies
 		 * @param window Game's window
+		 * @param shift  Duck's shift
+		 */
+		void print(sf::RenderWindow& window, float shift);
+
+		/**
+		 * @brief Prints the duck and its duckies
+		 * @param window Game's window
 		 */
 		void print(sf::RenderWindow& window);
 

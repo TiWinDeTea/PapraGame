@@ -145,7 +145,7 @@ bool Game::loadMap(){
 
 void Game::start()
 {
-	unsigned int tmp(20);
+	int tmp(1);
 	std::vector< std::vector<sf::Keyboard::Key> > player_keys;
 	player_keys.push_back(std::vector<sf::Keyboard::Key>());
 	player_keys[0].push_back(sf::Keyboard::Up);
@@ -187,16 +187,20 @@ void Game::start()
 			}
 		}
 		sf::sleep(sf::milliseconds(30));
-		++tmp;
+		--tmp;
 
-		if(tmp > 20){
-			tmp = 0;
-			game_window.clear();
+		game_map.print(game_window);
+		if(tmp == 0){
+			tmp = 16;
 			game_map.print(game_window);
 			for(unsigned char i = PLAYER_NUMBER; i--;)
 				player[i].move(game_window, player_dir[i]);
-
-			game_window.display();
 		}
+		else{
+			for (unsigned char i = PLAYER_NUMBER ; i-- ;) {
+				player[i].print(game_window, -static_cast<float>(tmp) * 2);
+			}
+		}
+		game_window.display();
 	}
 }
