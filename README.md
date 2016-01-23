@@ -1,6 +1,8 @@
 PapraGame Project
 ============
 
+[![Build Status](https://travis-ci.org/TiWinDeTea/PapraGame.svg?branch=master)](https://travis-ci.org/TiWinDeTea/PapraGame)
+
 ##About
 <br/>
 PapraGame is a game featuring ducks !
