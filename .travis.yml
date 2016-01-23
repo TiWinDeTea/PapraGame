@@ -3,15 +3,20 @@ compiler:
  - g++
 
 before_install:
+ - echo "yes" | sudo add-apt-repository ppa:kalakris/cmake
+ - echo "yes" | sudo add-apt-repository ppa:boost-latest/ppa
+ - echo "yes" | sudo add-apt-repository ppa:ubuntu-toolchain-r/test
+ - sudo apt-get -qq update
+ - sudo apt-get -qq install build-essential libtool gcc-4.9 g++-4.9 make cmake openssl
+ - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.9 50
  - wget https://github.com/LaurentGomila/SFML/archive/2.2.tar.gz -O /tmp/sfml.tar.gz
  - tar -zxvf /tmp/sfml.tar.gz
  - cd SFML-2.2
  - mkdir build
  - cd build
- - cmake . --build ../ -G "Unix Makefiles" -DCMAKE_CXX_FLAGS="-std=c++11"
+ - cmake . --build ../ -G "Unix Makefiles" -DCMAKE_CXX_FLAGS="-std=c++0x"
  - sudo make install
  - cd ../../
- - cd build
 
 script:
- - make
+ - make all
