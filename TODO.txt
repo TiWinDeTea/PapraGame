@@ -1,0 +1,10 @@
+Plusieurs map à la fois ? > nommées map0, map1, ... ; avec nom de la map dans le fichier ; choix de la map au démarrage ?
+
+Solo ?
+
+Fix duck/ducky sprites
+
+Collisions (obv)
+Quand tout à droite, retour à gauche
+
+Dans map : nombre de joueurs ?
