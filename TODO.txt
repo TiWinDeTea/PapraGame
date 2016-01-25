@@ -1,10 +1,15 @@
-Plusieurs map ‡ la fois ? > nommÈes map0, map1, ... ; avec nom de la map dans le fichier ; choix de la map au dÈmarrage ?
+Plusieurs map √† la fois ? > nomm√©es map0, map1, ... ; avec nom de la map dans le fichier ; choix de la map au d√©marrage ?
 
-Solo ?
+Creation d'autres sprites pour Duck & Ducky (vaisseau, Monster Truck ...)
+"Animation" sur deux frames.
 
-Fix duck/ducky sprites
+Power up ? (lance missile, catapulte, rayon plasma...)
+
+Deathmatch (plus de ducky).
+
+R√©seaux (lan, wifi...)
 
 Collisions (obv)
-Quand tout ‡ droite, retour ‡ gauche
+Quand tout √† droite, retour √† gauche
 
 Dans map : nombre de joueurs ?
