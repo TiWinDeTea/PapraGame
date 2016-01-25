@@ -227,8 +227,10 @@ void Game::start()
 					--j;
 					if(i != j){
 						if(player[i].getCoord() == player[j].getCoord()){
-							player[i].damaged();
-							player[j].damaged();
+							player[i].damaged(player_initial_dir[i]);
+							player[j].damaged(player_initial_dir[j]);
+							player_dir[i] = player_initial_dir[i];
+							player_dir[j] = player_initial_dir[j];
 							damaged = true;
 						}
 					}
@@ -237,13 +239,16 @@ void Game::start()
 					while(k > 0 && !damaged){
 						--k;
 						if(player[i].getCoord() == player[j].duckies[k].getCoord()){
-							player[i].damaged();
+							player[i].damaged(player_initial_dir[i]);
+							player_dir[i] = player_initial_dir[i];
 							damaged = true;
 						}
 					}
 				}
-				if(game_map.map[player[i].getCoord().x][player[i].getCoord().y] == OBSTACLE)
-					player[i].damaged();
+				if(game_map.map[player[i].getCoord().x][player[i].getCoord().y] == OBSTACLE){
+					player[i].damaged(player_initial_dir[i]);
+                    player_dir[i] = player_initial_dir[i];
+				}
 			}
 			for(unsigned char i = player_number; i--;){
 				if(player[i].getCoord() == game_map.getEggCoord()){

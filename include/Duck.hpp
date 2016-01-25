@@ -49,8 +49,9 @@ class Duck : public Ducky{
 
 		/**
 		 * @brief Apply damages to the duck and respawn it
+		 * @param initial_dir Initial direction of the duck
 		 */
-		void damaged();
+		void damaged(Direction initial_dir);
 
 		/**
 		 * @brief Add a ducky to the duck family

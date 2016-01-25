@@ -25,13 +25,15 @@ Duck::Duck(sf::Texture duck_textures[4], sf::Texture duckies_textures[4], Coord 
 	}
 }
 
-void Duck::damaged(){
+void Duck::damaged(Direction initial_dir){
 
 	if(this->size() > 0){
 
 		duckies.pop_back();
 		coordinates = st_coordinates;
 		invulnerability = MOVES_INVULNERABLE;
+		direction = initial_dir;
+
 
 		for(unsigned char i = 0; i < static_cast<unsigned char>(duckies.size()); ++i){
 			duckies[i].resetCoord();
