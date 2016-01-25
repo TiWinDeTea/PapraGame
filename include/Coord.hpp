@@ -37,6 +37,12 @@ class Coord{
 		 * @brief Default constructor
 		 */
 		Coord(){};
+
+		Coord& operator=(const Coord& coo);
+
+		Coord& operator+=(const Direction& dir);
+
+		Coord& operator-=(const Direction& dir);
 };
 
 /**
@@ -53,5 +59,7 @@ bool operator!=(const Coord& a, const Coord& b);
  * @brief + operator for Coord and Direction
  */
 Coord operator+(const Coord& coo, const Direction& dir);
+
+Coord operator-(const Coord& coo, const Direction& dir);
 
 #endif /*COORD_HPP_INCLUDED*/

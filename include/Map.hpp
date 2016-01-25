@@ -86,6 +86,7 @@ class Map {
 
 		unsigned int x_size;
 		unsigned int y_size;
+		std::vector< std::vector<Area> > map;
 
 	private :
 
@@ -93,7 +94,6 @@ class Map {
 		sf::Sprite sprites[NB_TEXTURE];
 		Coord coordinate_egg;
 		sf::Sprite egg_sprite;
-		std::vector< std::vector<Area> > map;
 };
 
 #endif /* MAPP_HPP_INCLUDED */

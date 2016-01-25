@@ -86,9 +86,10 @@ class Duck : public Ducky{
 
 		std::vector<sf::Keyboard::Key> keys; // keys order: up, down, left, right
 
+		std::vector<Ducky> duckies;
+
 	private:
 
-		std::vector<Ducky> duckies;
 		char invulnerability;
 		sf::Sprite duck_sprite[4];
 		sf::Sprite ducky_sprite[4];

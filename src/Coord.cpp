@@ -22,9 +22,25 @@ bool operator!=(const Coord& a, const Coord& b)
     return !(a == b);
 }
 
-Coord operator+(const Coord& coo, const Direction& dir)
+Coord& Coord::operator=(const Coord& coord){
+	x = coord.x;
+	y = coord.y;
+	return *this;
+}
+
+Coord& Coord::operator+=(const Direction& dir){
+	*this = *this + dir;
+	return *this;
+}
+
+Coord& Coord::operator-=(const Direction& dir){
+	*this = *this - dir;
+	return *this;
+}
+
+Coord operator+(const Coord& coord, const Direction& dir)
 {
-	Coord new_coord = coo;
+	Coord new_coord = coord;
 	switch(dir){
 		case UP:
 			--new_coord.y;
@@ -37,6 +53,28 @@ Coord operator+(const Coord& coo, const Direction& dir)
 			break;
 		case RIGHT:
 			++new_coord.x;
+			break;
+		default:
+			break;
+	}
+	return new_coord;
+}
+
+Coord operator-(const Coord& coord, const Direction& dir)
+{
+	Coord new_coord = coord;
+	switch(dir){
+		case UP:
+			++new_coord.y;
+			break;
+		case LEFT:
+			++new_coord.x;
+			break;
+		case DOWN:
+			--new_coord.y;
+			break;
+		case RIGHT:
+			--new_coord.x;
 			break;
 		default:
 			break;

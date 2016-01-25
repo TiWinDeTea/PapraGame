@@ -200,14 +200,14 @@ void Game::start()
 				game_window.close();
 			else if(event.type == sf::Event::KeyPressed){
 				for(unsigned char i = player_number; i--;){
-					if(event.key.code == player[i].keys[0])
-						player_dir[i] = UP;
-					else if(event.key.code == player[i].keys[1])
-						player_dir[i] = DOWN;
-					else if(event.key.code == player[i].keys[2])
-						player_dir[i] = LEFT;
-					else if(event.key.code == player[i].keys[3])
-						player_dir[i] = RIGHT;
+					if(event.key.code == player[i].keys[0] && player[i].getDirection() != DOWN)
+					    player_dir[i] = UP;
+					else if(event.key.code == player[i].keys[1] && player[i].getDirection() != UP)
+					    player_dir[i] = DOWN;
+					else if(event.key.code == player[i].keys[2] && player[i].getDirection() != RIGHT)
+					    player_dir[i] = LEFT;
+					else if(event.key.code == player[i].keys[3] && player[i].getDirection() != LEFT)
+					    player_dir[i] = RIGHT;
 				}
 			}
 		}
@@ -220,6 +220,32 @@ void Game::start()
 			for(unsigned char i = player_number; i--;){
 				player[i].move(game_window, player_dir[i]);
 
+				bool damaged(false);
+				unsigned int j = player_number;
+				while(j > 0 && !damaged){
+
+					--j;
+					if(i != j){
+						if(player[i].getCoord() == player[j].getCoord()){
+							player[i].damaged();
+							player[j].damaged();
+							damaged = true;
+						}
+					}
+
+					unsigned char k = player[j].size();
+					while(k > 0 && !damaged){
+						--k;
+						if(player[i].getCoord() == player[j].duckies[k].getCoord()){
+							player[i].damaged();
+							damaged = true;
+						}
+					}
+				}
+				if(game_map.map[player[i].getCoord().x][player[i].getCoord().y] == OBSTACLE)
+					player[i].damaged();
+			}
+			for(unsigned char i = player_number; i--;){
 				if(player[i].getCoord() == game_map.getEggCoord()){
 					player[i].powerUp(game_window);
 					game_map.popEgg(game_window);
