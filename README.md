@@ -39,7 +39,7 @@ It should be created according to the following (line by line)
 <br/>
 + Maxime PINARD - developer (maxime.pin@live.fr)
 + Lucas LAZARE - developer (lazarelucas@yahoo.fr)
-+ Julien BARBIER - developer (julien.barbier@utbm.fr)
++ Julien BARBIER - developer (a little), graphic designer (julien.barbier@utbm.fr)
 
 ##Download
 <br/>
