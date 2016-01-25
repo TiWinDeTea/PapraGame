@@ -89,8 +89,6 @@ void Game::launch(){
 			player[i] = Duck(duck_texture[i][0], duck_texture[i][1], player_spawn[i], player_initial_dir[i], player_keys[i]);
 		}
 
-		srand(static_cast<unsigned int>(time(NULL)));
-
 		this->start();
 	}
 }
@@ -191,11 +189,8 @@ void Game::start()
 	for(unsigned char i = player_number; i--;)
 		player_dir.push_back(player[i].getDirection());
 
-	Coord egg_cood;
-	egg_cood.x = 5;
-	egg_cood.y = 7;
 	sf::Event event;
-	game_map.popEgg(egg_cood, game_window);
+	game_map.popEgg(game_window);
 
 	while (game_window.isOpen())
 	{
@@ -224,12 +219,10 @@ void Game::start()
 			tmp = 16;
 			for(unsigned char i = player_number; i--;){
 				player[i].move(game_window, player_dir[i]);
-				if(player[i].getCoord() == egg_cood){
-					player[i].powerUp(game_window);
-					egg_cood.x = rand()%game_map.x_size;
-					egg_cood.y = rand()%game_map.y_size;
-					game_map.popEgg(egg_cood, game_window);
 
+				if(player[i].getCoord() == game_map.getEggCoord()){
+					player[i].powerUp(game_window);
+					game_map.popEgg(game_window);
 				}
 				player[i].print(game_window);
 			}

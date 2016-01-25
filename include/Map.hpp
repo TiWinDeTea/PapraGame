@@ -11,6 +11,9 @@
 #include <SFML/Graphics.hpp>
 #include <enum.hpp>
 #include <vector>
+#include <cstdlib>
+#include <ctime>
+#include <iostream>
 
 #define NB_TEXTURE 8
 #define RESOLUTION_X_IMAGE 32
@@ -54,11 +57,10 @@ class Map {
 		Map(const unsigned int x, const unsigned int y, std::vector< std::vector<Area> > smap, sf::Texture texture[NB_TEXTURE], sf::Texture* egg_texture);
 
 		/**
-		 * @brief Change the coordinates of the egg and print him.
-		 * @param egg_coord The coordinate of the egg
+		 * @brief Pops an egg at a random non-obstacle tile
 		 * @param window The window for sfml and to print the map
 		 */
-		void popEgg (Coord egg_coord, sf::RenderWindow& window);
+		void popEgg (sf::RenderWindow& window);
 
 		/**
 		 * @brief Print a send case in the screen.
@@ -73,6 +75,12 @@ class Map {
 		 * @param window the window for sfml and to print the map
 		 */
 		void print(sf::RenderWindow& window);
+
+		/**
+		 * @brief Gets the egg's coordinates
+		 * @return The egg's coord
+		 */
+		Coord getEggCoord(){ return coordinate_egg; }
 		
 		Map& operator=(const Map& mymap);
 
@@ -81,6 +89,7 @@ class Map {
 
 	private :
 
+		std::vector<Coord> free_tile;
 		sf::Sprite sprites[NB_TEXTURE];
 		Coord coordinate_egg;
 		sf::Sprite egg_sprite;

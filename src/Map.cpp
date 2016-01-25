@@ -16,32 +16,34 @@
  */
 
 Map::Map(const unsigned int x, const unsigned int y, std::vector< std::vector<Area> > smap, sf::Texture texture[NB_TEXTURE], sf::Texture* egg_texture) : x_size(x), y_size(y)
-{ 
-    for (unsigned int i = 0; i < x; i++){
-        map.push_back(std::vector<Area>());
-    	for (unsigned int j = 0; j < y; j++){
-                map[i].push_back(smap[i][j]);
-    	}
-    }
+{
+	srand(static_cast<unsigned int>(time(NULL)));
+	for (unsigned int i = 0; i < x; i++){
+		map.push_back(std::vector<Area>());
+		for (unsigned int j = 0; j < y; j++){
+			map[i].push_back(smap[i][j]);
+		}
+	}
 
-    for (unsigned int i = 0; i < NB_TEXTURE; i++){
+	for (unsigned int i = 0; i < NB_TEXTURE; i++){
 		sprites[i].setTexture(texture[i]);
-    }
-    egg_sprite.setTexture(*egg_texture);
+	}
+	egg_sprite.setTexture(*egg_texture);
 }
 
 /*printAll : procedure to print all the map.
  */
 void Map::print (sf::RenderWindow& window){
-    
-    Coord tile;
-    
+
+	Coord tile;
+
 	for (tile.x = 0; tile.x < x_size; ++tile.x){
 		for (tile.y = 0; tile.y < y_size; ++tile.y){
 			this->print(tile, window);
 		}
 	}
-	this->popEgg(coordinate_egg, window);
+	egg_sprite.setPosition(static_cast<float>(coordinate_egg.x * RESOLUTION_X_IMAGE),static_cast<float>( coordinate_egg.y * RESOLUTION_Y_IMAGE));
+	window.draw(egg_sprite);
 }
 
 /*print : print a tile of the map.
@@ -50,20 +52,31 @@ void Map::print (sf::RenderWindow& window){
 
 void Map::print (Coord tile, sf::RenderWindow& window){
 
-    sprites[map[tile.x][tile.y]].setPosition(static_cast<float>(tile.x*RESOLUTION_X_IMAGE), static_cast<float>(tile.y*RESOLUTION_Y_IMAGE));
-    window.draw(sprites[map[tile.x][tile.y]]);
+	sprites[map[tile.x][tile.y]].setPosition(static_cast<float>(tile.x*RESOLUTION_X_IMAGE), static_cast<float>(tile.y*RESOLUTION_Y_IMAGE));
+	window.draw(sprites[map[tile.x][tile.y]]);
 
 }
 
-/*popEgg : change the coordinate of the egg and print it.
- * egg_coord : new coordinate of the egg.
- */
+void Map::popEgg (sf::RenderWindow& window){
 
-void Map::popEgg (Coord egg_coord, sf::RenderWindow& window){
-
-    coordinate_egg = egg_coord;
-    egg_sprite.setPosition(static_cast<float>(coordinate_egg.x * RESOLUTION_X_IMAGE),static_cast<float>( coordinate_egg.y * RESOLUTION_Y_IMAGE));
-    window.draw(egg_sprite);
+	/* FIXME : Why does putting me in the map constructor for only checking coordinates once does not work ?????? */
+	std::vector<Coord> free_tile;
+	for (unsigned int i = x_size ; i-- ;){
+		for (unsigned int j = y_size ; j-- ;){
+			if (map[i][j] != OBSTACLE){
+				free_tile.push_back(Coord(i, j));
+			}
+		}
+	}
+	
+	if (free_tile.size() != 0)
+		coordinate_egg = free_tile[rand()%free_tile.size()];
+	else{
+		std::cout << "Bad map : full of obstacles" << std::endl;
+		coordinate_egg = Coord(0,0);
+	}
+	egg_sprite.setPosition(static_cast<float>(coordinate_egg.x * RESOLUTION_X_IMAGE),static_cast<float>( coordinate_egg.y * RESOLUTION_Y_IMAGE));
+	window.draw(egg_sprite);
 
 }
 
