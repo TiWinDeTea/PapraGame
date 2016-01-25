@@ -177,13 +177,13 @@ void Game::start()
 				game_window.close();
 			else if(event.type == sf::Event::KeyPressed){
 				for(unsigned char i = PLAYER_NUMBER; i--;){
-					if(sf::Keyboard::isKeyPressed(player[i].keys[0]))
+					if(event.key.code == player[i].keys[0])
 					    player_dir[i] = UP;
-					else if(sf::Keyboard::isKeyPressed(player[i].keys[1]))
+					else if(event.key.code == player[i].keys[1])
 					    player_dir[i] = DOWN;
-					else if(sf::Keyboard::isKeyPressed(player[i].keys[2]))
+					else if(event.key.code == player[i].keys[2])
 					    player_dir[i] = LEFT;
-					else if(sf::Keyboard::isKeyPressed(player[i].keys[3]))
+					else if(event.key.code == player[i].keys[3])
 					    player_dir[i] = RIGHT;
 				}
 			}
