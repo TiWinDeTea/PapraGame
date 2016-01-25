@@ -7,6 +7,8 @@
 #ifndef COORD_HPP_INCLUDED
 #define COORD_HPP_INCLUDED
 
+#include <enum.hpp>
+
  /**
  * @file Coord.hpp
  * @author Maxime PINARD
@@ -46,5 +48,10 @@ bool operator==(const Coord& a, const Coord& b);
  * @brief != operator for Coord
  */
 bool operator!=(const Coord& a, const Coord& b);
+
+/**
+ * @brief + operator for Coord and Direction
+ */
+Coord operator+(const Coord& coo, const Direction& dir);
 
 #endif /*COORD_HPP_INCLUDED*/

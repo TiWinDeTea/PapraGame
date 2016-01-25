@@ -21,3 +21,25 @@ bool operator!=(const Coord& a, const Coord& b)
 {
     return !(a == b);
 }
+
+Coord operator+(const Coord& coo, const Direction& dir)
+{
+	Coord new_coord = coo;
+	switch(dir){
+		case UP:
+			--new_coord.y;
+			break;
+		case LEFT:
+			--new_coord.x;
+			break;
+		case DOWN:
+			++new_coord.y;
+			break;
+		case RIGHT:
+			++new_coord.x;
+			break;
+		default:
+			break;
+	}
+	return new_coord;
+}
