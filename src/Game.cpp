@@ -59,8 +59,21 @@ void Game::launch(){
 	else {
 		winner = 0;
 		game_window.create(sf::VideoMode(pxl_length, pxl_height), "PapraGame ~ A game with Ducks !", sf::Style::Titlebar | sf::Style::Close);
+
+			std::vector< std::vector<sf::Keyboard::Key> > player_keys;
+			player_keys.push_back(std::vector<sf::Keyboard::Key>());
+			player_keys[0].push_back(sf::Keyboard::Up);
+			player_keys[0].push_back(sf::Keyboard::Down);
+			player_keys[0].push_back(sf::Keyboard::Left);
+			player_keys[0].push_back(sf::Keyboard::Right);
+			player_keys.push_back(std::vector<sf::Keyboard::Key>());
+			player_keys[1].push_back(sf::Keyboard::Z);
+			player_keys[1].push_back(sf::Keyboard::S);
+			player_keys[1].push_back(sf::Keyboard::Q);
+			player_keys[1].push_back(sf::Keyboard::D);
+
 		for (unsigned int i = PLAYER_NUMBER ; i-- ;) {
-			player[i] = Duck(duck_texture[i][0], duck_texture[i][1], player_spawn[i], player_initial_dir[i]);
+			player[i] = Duck(duck_texture[i][0], duck_texture[i][1], player_spawn[i], player_initial_dir[i], player_keys[i]);
 		}
 
 		this->start();
@@ -146,17 +159,6 @@ bool Game::loadMap(){
 void Game::start()
 {
 	int tmp(1);
-	std::vector< std::vector<sf::Keyboard::Key> > player_keys;
-	player_keys.push_back(std::vector<sf::Keyboard::Key>());
-	player_keys[0].push_back(sf::Keyboard::Up);
-	player_keys[0].push_back(sf::Keyboard::Down);
-	player_keys[0].push_back(sf::Keyboard::Left);
-	player_keys[0].push_back(sf::Keyboard::Right);
-	player_keys.push_back(std::vector<sf::Keyboard::Key>());
-	player_keys[1].push_back(sf::Keyboard::Z);
-	player_keys[1].push_back(sf::Keyboard::S);
-	player_keys[1].push_back(sf::Keyboard::Q);
-	player_keys[1].push_back(sf::Keyboard::D);
 	std::vector<Direction> player_dir;
 	for(unsigned char i = PLAYER_NUMBER; i--;)
 		player_dir.push_back(player[i].getDirection());
@@ -175,13 +177,13 @@ void Game::start()
 				game_window.close();
 			else if(event.type == sf::Event::KeyPressed){
 				for(unsigned char i = PLAYER_NUMBER; i--;){
-					if(sf::Keyboard::isKeyPressed(player_keys[i][0]))
+					if(sf::Keyboard::isKeyPressed(player[i].keys[0]))
 					    player_dir[i] = UP;
-					else if(sf::Keyboard::isKeyPressed(player_keys[i][1]))
+					else if(sf::Keyboard::isKeyPressed(player[i].keys[1]))
 					    player_dir[i] = DOWN;
-					else if(sf::Keyboard::isKeyPressed(player_keys[i][2]))
+					else if(sf::Keyboard::isKeyPressed(player[i].keys[2]))
 					    player_dir[i] = LEFT;
-					else if(sf::Keyboard::isKeyPressed(player_keys[i][3]))
+					else if(sf::Keyboard::isKeyPressed(player[i].keys[3]))
 					    player_dir[i] = RIGHT;
 				}
 			}

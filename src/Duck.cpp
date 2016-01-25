@@ -6,8 +6,9 @@
 
 #include <Duck.hpp>
 
-Duck::Duck(sf::Texture duck_textures[4], sf::Texture duckies_textures[4], Coord starting_coordinates, Direction initial_direction){
+Duck::Duck(sf::Texture duck_textures[4], sf::Texture duckies_textures[4], Coord starting_coordinates, Direction initial_direction, std::vector<sf::Keyboard::Key> control_keys){
 
+	keys = control_keys;
 	st_coordinates = starting_coordinates;
 	coordinates = starting_coordinates;
 	for(unsigned char i = 4 ; i--;){

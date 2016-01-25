@@ -35,7 +35,7 @@ class Duck : public Ducky{
 		 * @param starting_coordinates Coordinates of the ducky spawn
 		 * @param initial_direction    Direction of the duck at spawn
 		 */
-		Duck(sf::Texture duck_textures[4], sf::Texture duckies_textures[4], Coord starting_coordinates, Direction initial_direction);
+		Duck(sf::Texture duck_textures[4], sf::Texture duckies_textures[4], Coord starting_coordinates, Direction initial_direction, std::vector<sf::Keyboard::Key> control_keys);
 
 		/**
 		 * @brief Default constructor
@@ -83,6 +83,8 @@ class Duck : public Ducky{
 		 * @param window Game's window
 		 */
 		void print(sf::RenderWindow& window);
+
+		std::vector<sf::Keyboard::Key> keys; // keys order: up, down, left, right
 
 	private:
 
