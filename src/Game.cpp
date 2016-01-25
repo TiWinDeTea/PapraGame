@@ -6,6 +6,15 @@
 
 #include <Game.hpp>
 
+Game::~Game()
+{
+	for (unsigned char i = player_number ; i-- ;) {
+		free(duck_texture[i][0]);
+		free(duck_texture[i][1]);
+		free(duck_texture[i]);
+	}
+}
+
 void Game::launch(){
 
 	if (biome_path == "none") {
@@ -39,21 +48,25 @@ void Game::launch(){
 		biome_path + TEXTURE_WATER_UP_DOWN,
 		biome_path + TEXTURE_WATER_LEFT_RIGHT
 	};
-	bool loading_success = egg_texture.loadFromFile(path + ducks_path + TEXTURE_EGG + FILETYPE);
-	char player_id;
+	bool loading_success = true;
+	for (unsigned char i = 8 ; i-- ;) {
+		loading_success = loading_success && map_texture[i].loadFromFile(path + map_textures_path[i] + FILETYPE);
+	}
 
-	for (unsigned int i = PLAYER_NUMBER ; i-- ;) {
+
+	loading_success = loading_success && egg_texture.loadFromFile(path + ducks_path + TEXTURE_EGG + FILETYPE);
+	loading_success = this->loadMap();
+
+	char player_id;
+	for (unsigned char i = player_number ; i-- ;) {
 		player_id = static_cast<char>(i + '0');
 		for (unsigned int j = 4 ; j-- ;) {
 			loading_success = loading_success && duck_texture[i][0][j].loadFromFile(path + duck_textures_path[j] + player_id + FILETYPE);
 			loading_success = loading_success && duck_texture[i][1][j].loadFromFile(path + ducky_textures_path[j] + player_id + FILETYPE);
 		}
 	}
-	for (unsigned char i = 8 ; i-- ;) {
-		loading_success = loading_success && map_texture[i].loadFromFile(path + map_textures_path[i] + FILETYPE);
-	}
 
-	if (!loading_success || !(this->loadMap())) {
+	if (!loading_success) {
 		std::cout << "Failed to load game ressources" << std::endl;
 	}
 	else {
@@ -72,7 +85,7 @@ void Game::launch(){
 			player_keys[1].push_back(sf::Keyboard::Q);
 			player_keys[1].push_back(sf::Keyboard::D);
 
-		for (unsigned int i = PLAYER_NUMBER ; i-- ;) {
+		for (unsigned char i = player_number ; i-- ;) {
 			player[i] = Duck(duck_texture[i][0], duck_texture[i][1], player_spawn[i], player_initial_dir[i], player_keys[i]);
 		}
 
@@ -89,27 +102,12 @@ bool Game::loadMap(){
 
 	if (map_file) {
 		map_file >> value; // ignoring first line : already interpreted
+		map_file >> game_speed;
 		map_file >> x_map_size;
 		map_file >> y_map_size;
 		pxl_height = 32*y_map_size;
 		pxl_length = 32*x_map_size;
-		for (unsigned int i = 0 ; i < PLAYER_NUMBER ; ++i) {
-			map_file >> player_spawn[i].x;
-			map_file >> player_spawn[i].y;
-			map_file >> value;
-			if (value == "up")
-				player_initial_dir[i] = UP;
-			else if (value == "down")
-				player_initial_dir[i] = DOWN;
-			else if (value == "left")
-				player_initial_dir[i] = LEFT;
-			else if (value == "right")
-				player_initial_dir[i] = RIGHT;
-			else{
-				std::cout << "Not a valid direction : " << value << std::endl;
-				std::cout << "(On player " << i << ")" << std::endl;
-			}
-		}
+
 		std::vector< std::vector<Area> > map_interpreted;
 		for(unsigned int i = 0; i < x_map_size; ++i)
 			map_interpreted.push_back(std::vector<Area>());
@@ -150,6 +148,34 @@ bool Game::loadMap(){
 				}
 			}
 		}
+		map_file >> value;
+		do{
+			sf::Texture** texture_array = (sf::Texture**) calloc(2, sizeof(sf::Texture*));
+			texture_array[0] = (sf::Texture*) calloc(4, sizeof(sf::Texture));
+			texture_array[1] = (sf::Texture*) calloc(4, sizeof(sf::Texture));
+			duck_texture.push_back(texture_array);
+			player.push_back(Duck());
+			player_spawn.push_back(Coord());
+			player_initial_dir.push_back(Direction());
+
+			map_file >> player_spawn[player_number].x;
+			map_file >> player_spawn[player_number].y;
+			if (value == "up")
+				player_initial_dir[player_number] = UP;
+			else if (value == "down")
+				player_initial_dir[player_number] = DOWN;
+			else if (value == "left")
+				player_initial_dir[player_number] = LEFT;
+			else if (value == "right")
+				player_initial_dir[player_number] = RIGHT;
+			else{
+				std::cout << "Not a valid direction : " << value << std::endl;
+				std::cout << "(On player " << player_number << ")" << std::endl;
+				return false;
+			}
+			++player_number;
+			map_file >> value;
+		}while (value != "eof");
 
 		game_map = Map(x_map_size, y_map_size, map_interpreted, map_texture, &egg_texture);
 		return true;
@@ -162,7 +188,7 @@ void Game::start()
 {
 	int tmp(1);
 	std::vector<Direction> player_dir;
-	for(unsigned char i = PLAYER_NUMBER; i--;)
+	for(unsigned char i = player_number; i--;)
 		player_dir.push_back(player[i].getDirection());
 
 	Coord egg_cood;
@@ -178,25 +204,25 @@ void Game::start()
 			if(event.type == sf::Event::Closed)
 				game_window.close();
 			else if(event.type == sf::Event::KeyPressed){
-				for(unsigned char i = PLAYER_NUMBER; i--;){
+				for(unsigned char i = player_number; i--;){
 					if(event.key.code == player[i].keys[0])
-					    player_dir[i] = UP;
+						player_dir[i] = UP;
 					else if(event.key.code == player[i].keys[1])
-					    player_dir[i] = DOWN;
+						player_dir[i] = DOWN;
 					else if(event.key.code == player[i].keys[2])
-					    player_dir[i] = LEFT;
+						player_dir[i] = LEFT;
 					else if(event.key.code == player[i].keys[3])
-					    player_dir[i] = RIGHT;
+						player_dir[i] = RIGHT;
 				}
 			}
 		}
-		sf::sleep(sf::milliseconds(30));
+		sf::sleep(sf::milliseconds(game_speed));
 		--tmp;
 
 		game_map.print(game_window);
 		if(tmp == 0){
 			tmp = 16;
-			for(unsigned char i = PLAYER_NUMBER; i--;){
+			for(unsigned char i = player_number; i--;){
 				player[i].move(game_window, player_dir[i]);
 				if(player[i].getCoord() == egg_cood){
 					player[i].powerUp(game_window);
@@ -209,7 +235,7 @@ void Game::start()
 			}
 		}
 		else{
-			for (unsigned char i = PLAYER_NUMBER ; i-- ;) {
+			for (unsigned char i = player_number ; i-- ;) {
 				player[i].print(game_window, -static_cast<float>(tmp) * 2);
 			}
 		}

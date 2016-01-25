@@ -7,12 +7,14 @@ PapraGame Project
 <br/>
 PapraGame is a game featuring ducks !
 
-It's a two players versus snake-like. To win, you have to be the first to get 5 duckies (you start with 2).
-You can get duckies either by catching an egg, or by stealing one to your opponent (you can steal him/her a ducky by forcing him/her to punch you in the face or in your own duckies).
+It's a two players versus snake-like (but it may be played in solo aswell). To win, you have to be the first to get 5 duckies (you start with 2).
+You can get duckies either by catching an egg, or by stealing one to your opponent(s) (you can steal him/her a ducky by forcing him/her to punch you in the face or in your own duckies).
 
 Several biomes are available (changes the graphics), and the map can be easily modified.
 
 /!\ Under developement.
+Only a maximum of 2 players for now, up to 4 in the future.
+Will probably be available for Local Network aswell later.
 <br/>
 
 ###Map editing
@@ -20,11 +22,9 @@ Several biomes are available (changes the graphics), and the map can be easily m
 You can edit the map opening the map file (in the folder `build/res/`) with your favorite text editor
 It should be created according to the following (line by line)
 + Biome (sand, grass, space, snow, …)
++ The game 'slowness'
 + Length of the map
 + Width of the map
-+ Starting point of player 1 (x y)
-    + On the same line, starting direction of player 1 (up, down, left, right)
-+ Same for the player 2
 + Map itself with characters :
     + ``o`` for the obstacle (rock, asteroïd, cactus, …)
     + ``.`` for the blank tile (grass, void space, sand, …)
@@ -34,6 +34,11 @@ It should be created according to the following (line by line)
     + ``3`` for west-south
     + ``7`` for east-north
     + ``9`` for west-north
++ Starting point of player 1 (x y)
+    + On the same line, starting direction of player 1 (up, down, left, right)
++ Same for other player (if there are any)
++ eof
+(eof stands for End Of File)
 
 ##Authors
 <br/>
@@ -43,7 +48,7 @@ It should be created according to the following (line by line)
 
 ##Download
 <br/>
-You can get this game from the Time Winder Dev Team [github repo](https://github.com/TiWinDeTea/PapraGame).
+You can get the game sources from the Time Winder Dev Team [github repo](https://github.com/TiWinDeTea/PapraGame).
 <br/>
 
 ##Requirements

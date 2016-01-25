@@ -26,7 +26,6 @@
 #include <cstdlib>
 #include <ctime>
 
-#define PLAYER_NUMBER               2
 #define TEXTURE_DUCK_LEFT           "DuckL_"
 #define TEXTURE_DUCK_RIGHT          "DuckR_"
 #define TEXTURE_DUCK_UP             "DuckU_"
@@ -63,9 +62,9 @@ class Game{
 
 public:
 
-	~Game(){};
-	Game(){path = "res/"; biome_path = "none"; ducks_path = "ducks/";}
-	Game(std::string path1, std::string path2, std::string path3){path = path1; biome_path = path2; ducks_path = path3;}
+	~Game();
+	Game(){path = "res/"; biome_path = "none"; ducks_path = "ducks/"; player_number = 0;}
+	Game(std::string path1, std::string path2, std::string path3){path = path1; biome_path = path2; ducks_path = path3; player_number = 0;}
 
 	void launch();
 
@@ -76,16 +75,18 @@ private:
 	bool someoneWon();
 
 	Map game_map;
-	Duck player[PLAYER_NUMBER];
-	Coord player_spawn[PLAYER_NUMBER];
-	Direction player_initial_dir[PLAYER_NUMBER];
+	std::vector<Duck> player;
+	std::vector<Coord> player_spawn;
+	std::vector<Direction> player_initial_dir;
 	unsigned char winner;
-	sf::Texture duck_texture[PLAYER_NUMBER][2][4];
+	std::vector<sf::Texture**> duck_texture;
 	sf::Texture map_texture[8];
 	sf::Texture egg_texture;
 	sf::RenderWindow game_window;
 	unsigned int pxl_length, pxl_height;
 	std::string path, biome_path, ducks_path;
+	unsigned char player_number;
+	unsigned int game_speed;
 };
 
 #endif /* GAME_HPP_INCLUDED */
