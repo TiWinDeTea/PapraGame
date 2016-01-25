@@ -89,7 +89,6 @@ void Duck::move(sf::RenderWindow& window, Direction new_direction){
 			break;
 	}
 	direction = new_direction;
-	this->print(window);
 }
 
 unsigned char Duck::size(){

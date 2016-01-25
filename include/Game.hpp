@@ -23,6 +23,8 @@
 #include <SFML/Window.hpp>
 #include <iostream>
 #include <fstream>
+#include <cstdlib>
+#include <ctime>
 
 #define PLAYER_NUMBER               2
 #define TEXTURE_DUCK_LEFT           "DuckL_"

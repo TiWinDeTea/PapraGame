@@ -76,10 +76,11 @@ class Map {
 		
 		Map& operator=(const Map& mymap);
 
-	private :
-
 		unsigned int x_size;
 		unsigned int y_size;
+
+	private :
+
 		sf::Sprite sprites[NB_TEXTURE];
 		Coord coordinate_egg;
 		sf::Sprite egg_sprite;
