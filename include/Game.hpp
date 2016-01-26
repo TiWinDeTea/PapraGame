@@ -23,6 +23,7 @@
 #include <SFML/Window.hpp>
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include <cstdlib>
 #include <ctime>
 #include <dirent.h>
@@ -85,6 +86,7 @@ private:
 	bool loadMap();
 	void start();
 	bool someoneWon();
+	std::vector<sf::Keyboard::Key> loadKeys(std::string selected_player);
 
 	Map game_map;
 	std::vector<Duck> player;

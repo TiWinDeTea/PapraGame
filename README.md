@@ -12,6 +12,8 @@ You can get duckies either by catching an egg, or by stealing one to your oppone
 
 Several biomes are available (changes the graphics), and the map can be easily modified.
 
+You may change your keys settings within the ``keys.conf`` file
+
 /!\ Under developement.
 Only a maximum of 2 players for now, up to 4 in the future.
 Will probably be available for Local Network aswell later.

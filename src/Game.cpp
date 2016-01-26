@@ -79,20 +79,10 @@ void Game::launch(){
 		winner = 0;
 		game_window.create(sf::VideoMode(pxl_length, pxl_height), "PapraGame ~ A game with Ducks !", sf::Style::Titlebar | sf::Style::Close);
 
-			std::vector< std::vector<sf::Keyboard::Key> > player_keys;
-			player_keys.push_back(std::vector<sf::Keyboard::Key>());
-			player_keys[0].push_back(sf::Keyboard::Up);
-			player_keys[0].push_back(sf::Keyboard::Down);
-			player_keys[0].push_back(sf::Keyboard::Left);
-			player_keys[0].push_back(sf::Keyboard::Right);
-			player_keys.push_back(std::vector<sf::Keyboard::Key>());
-			player_keys[1].push_back(sf::Keyboard::Z);
-			player_keys[1].push_back(sf::Keyboard::S);
-			player_keys[1].push_back(sf::Keyboard::Q);
-			player_keys[1].push_back(sf::Keyboard::D);
-
 		for (unsigned char i = player_number ; i-- ;) {
-			player[i] = Duck(duck_texture[i][0], duck_texture[i][1], player_spawn[i], player_initial_dir[i], player_keys[i]);
+			std::string tmp("player ");
+			tmp.push_back(static_cast<char>(i + '1'));
+			player[i] = Duck(duck_texture[i][0], duck_texture[i][1], player_spawn[i], player_initial_dir[i], this->loadKeys(tmp));
 		}
 
 		this->start();
@@ -212,18 +202,17 @@ bool Game::loadMap(){
 			duck_texture.push_back(texture_array);
 			player.push_back(Duck());
 			player_spawn.push_back(Coord());
-			player_initial_dir.push_back(Direction());
 
 			map_file >> player_spawn[player_number].x;
 			map_file >> player_spawn[player_number].y;
 			if (value == "up")
-				player_initial_dir[player_number] = UP;
+				player_initial_dir.push_back(UP);
 			else if (value == "down")
-				player_initial_dir[player_number] = DOWN;
+				player_initial_dir.push_back(DOWN);
 			else if (value == "left")
-				player_initial_dir[player_number] = LEFT;
+				player_initial_dir.push_back(LEFT);
 			else if (value == "right")
-				player_initial_dir[player_number] = RIGHT;
+				player_initial_dir.push_back(RIGHT);
 			else{
 				std::cout << "Not a valid direction : " << value << std::endl;
 				std::cout << "(On player " << player_number << ")" << std::endl;
@@ -261,13 +250,22 @@ void Game::start()
 			else if(event.type == sf::Event::KeyPressed){
 				for(unsigned char i = player_number; i--;){
 					if(event.key.code == player[i].keys[0] && (player[i].getDirection() != DOWN || player[i].size() == 0))
-					    player_dir[i] = UP;
+						player_dir[i] = UP;
 					else if(event.key.code == player[i].keys[1] && (player[i].getDirection() != UP || player[i].size() == 0))
-					    player_dir[i] = DOWN;
+						player_dir[i] = DOWN;
 					else if(event.key.code == player[i].keys[2] && (player[i].getDirection() != RIGHT || player[i].size() == 0))
-					    player_dir[i] = LEFT;
+						player_dir[i] = LEFT;
 					else if(event.key.code == player[i].keys[3] && (player[i].getDirection() != LEFT || player[i].size() == 0))
-					    player_dir[i] = RIGHT;
+						player_dir[i] = RIGHT;
+				}
+				if (event.key.code == sf::Keyboard::Escape) {
+					do{
+						sf::sleep(sf::milliseconds(50));
+						game_window.pollEvent(event);
+						if (sf::Event::Closed == event.type) {
+							game_window.close();
+						}
+					}while(game_window.isOpen() && (sf::Event::KeyPressed != event.type || event.key.code != sf::Keyboard::Escape));
 				}
 			}
 		}
@@ -334,3 +332,89 @@ void Game::start()
 		game_window.display();
 	}
 }
+
+std::vector<sf::Keyboard::Key> Game::loadKeys(std::string selected_player){
+	std::ifstream keys_file(path + "keys.conf", std::ios::in | std::ios::binary);
+	std::vector<sf::Keyboard::Key> answer;
+
+	if (keys_file.fail()) {
+		std::cout << "Failed to open" << path << "keys.conf (was looking for " << selected_player << ")" << std::endl;
+	}
+	else{
+		sf::Keyboard::Key keys[4];
+		bool key_loading_successful[4] = {false, false, false, false};
+		std::string line, argument, value;
+
+		while (std::getline(keys_file, line))
+		{
+			if (line[0] != '#') {
+
+				std::istringstream parser(line);
+				std::getline(parser, argument, ':');
+				std::getline(parser, value);
+				value.erase(0, 1);
+				unsigned char selected;
+				if (argument.size() >= selected_player.size() + 1) {
+					if (argument.substr(0, selected_player.size()) == selected_player){
+						switch(argument.substr(selected_player.size() + 1)[0]){
+							case 'u':
+								selected = 3;
+								break;
+							case 'd':
+								selected = 2;
+								break;
+							case 'l':
+								selected = 1;
+								break;
+							case 'r':
+								selected = 0;
+								break;
+							default:
+								selected = 4;
+								break;
+						}
+						if (selected != 4) {
+							char val = value[0];
+							key_loading_successful[selected] = true;
+							if (val >= 'a' && val <= 'z') {
+								keys[selected] = static_cast<sf::Keyboard::Key>(val - 'a');
+							}
+							else if (val <= '9' && val >= '0'){
+								keys[selected] = static_cast<sf::Keyboard::Key>(val - '0' + 75);
+							}
+							else{
+								switch(val){
+									case 'U':
+										keys[selected] = sf::Keyboard::Up;
+										break;
+									case 'D':
+										keys[selected] = sf::Keyboard::Down;
+										break;
+									case 'L':
+										keys[selected] = sf::Keyboard::Left;
+										break;
+									case 'R':
+										keys[selected] = sf::Keyboard::Right;
+										break;
+									default:
+										key_loading_successful[selected] = false;
+										break;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		if (!key_loading_successful[0] || !key_loading_successful[1] || !key_loading_successful[2] || !key_loading_successful[3]) {
+			std::cout << "Failed to load keys for " << selected_player << std::endl;
+		}
+		else{
+			for (unsigned char i = 4 ; i-- ;) {
+				answer.push_back(keys[i]);
+			}
+		}
+	}
+	return answer;
+}
+
