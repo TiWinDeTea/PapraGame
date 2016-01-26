@@ -30,15 +30,14 @@ void Duck::damaged(Direction initial_dir){
 	if(this->size() > 0){
 
 		duckies.pop_back();
-		coordinates = st_coordinates;
-		invulnerability = MOVES_INVULNERABLE;
-		direction = initial_dir;
-
 
 		for(unsigned char i = 0; i < static_cast<unsigned char>(duckies.size()); ++i){
 			duckies[i].resetCoord();
 		}
 	}
+	coordinates = st_coordinates;
+	invulnerability = MOVES_INVULNERABLE;
+	direction = initial_dir;
 }
 
 void Duck::powerUp(sf::RenderWindow& window){
@@ -52,12 +51,15 @@ void Duck::powerUp(sf::RenderWindow& window){
 }
 
 void Duck::move(sf::RenderWindow& window, Direction new_direction){
-	for(unsigned char i = static_cast<unsigned char>(duckies.size() - 1); i > 0 ; i--){
-		if(duckies[i].coordinates != duckies[i - 1].coordinates)
-			duckies[i].move(duckies[i - 1].direction);
-	}
-	if(duckies.front().coordinates != coordinates){
-		duckies.front().move(direction);
+	
+	if(duckies.size() > 0){
+		for(unsigned char i = static_cast<unsigned char>(duckies.size() - 1); i > 0 ; i--){
+			if(duckies[i].coordinates != duckies[i - 1].coordinates)
+				duckies[i].move(duckies[i - 1].direction);
+		}
+		if(duckies.front().coordinates != coordinates){
+			duckies.front().move(direction);
+		}
 	}
 
 	coordinates += new_direction;
