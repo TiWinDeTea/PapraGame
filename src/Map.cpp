@@ -71,8 +71,8 @@ void Map::init(){
 	}
 	if (free_tile.size() == 0)
 		std::cout << "Bad map : Full of obstacles" << std::endl;
-	if (warp.size() == 1)
-		std::cout << "Bad map : you should have no warps or at least 2" << std::endl;
+	else if (warp.size() == 1)
+		std::cout << "Bad map : you should have no warp at all or at least 2" << std::endl;
 }
 
 void Map::popEgg (sf::RenderWindow& window){

@@ -113,12 +113,13 @@ void Game::getMapFile(){
 				return false;
 			#endif
 		};
-		std::cout << "Found files :" << std::endl;
+		std::cout << "Found maps :" << std::endl;
 		while ((redfile = readdir(directory)) != NULL){
 			std::string tmp( redfile->d_name );
-			if (isFile(path + "maps/" + tmp)) {
+			if (isFile(path + "maps/" + tmp) && tmp.size() > 4 && tmp.substr(tmp.size() - 4) == ".map") {
 				maps.push_back("maps/" + tmp);
-				std::cout << '\t' << maps.size() << ". " << maps.back() << std::endl;
+				tmp.erase(tmp.size() - 4);
+				std::cout << '\t' << maps.size() << ". " << tmp << std::endl;
 			}
 		}
 		if (maps.size() == 0) {
