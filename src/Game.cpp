@@ -260,7 +260,13 @@ void Game::start()
 		}
 		else{
 			for (unsigned char i = player_number ; i-- ;) {
-				player[i].print(game_window, -static_cast<float>(tmp) * 2);
+				if(player[i].isInvulnerable()){
+					if(tmp < 8)
+						player[i].print(game_window, -static_cast<float>(tmp) * 2);
+				}
+				else{
+					player[i].print(game_window, -static_cast<float>(tmp) * 2);
+				}
 			}
 		}
 		game_window.display();

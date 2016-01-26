@@ -18,7 +18,7 @@
 #include <Ducky.hpp>
 
 #define DUCKIES_INITIAL_NUMBER 2
-#define MOVES_INVULNERABLE 3
+#define MOVES_INVULNERABLE 5
 
 /**
  * @class Duck Duck.hpp
@@ -84,6 +84,8 @@ class Duck : public Ducky{
 		 * @param window Game's window
 		 */
 		void print(sf::RenderWindow& window);
+
+		bool isInvulnerable(){return !(invulnerability == 0);};
 
 		std::vector<sf::Keyboard::Key> keys; // keys order: up, down, left, right
 
