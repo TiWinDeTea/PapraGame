@@ -16,6 +16,8 @@
  */
 
 #include <Ducky.hpp>
+#include <SFML/Graphics.hpp>
+#include <vector>
 
 #define DUCKIES_INITIAL_NUMBER 2
 #define MOVES_INVULNERABLE 5
@@ -85,6 +87,12 @@ class Duck : public Ducky{
 		 */
 		void print(sf::RenderWindow& window);
 
+		/**
+		 * @brief Sets the coordinates of a duck when he gets warped
+		 * @param warp_arrival New coordinates
+		 */
+		void warped(Coord warp_arrival);
+
 		bool isInvulnerable(){return !(invulnerability == 0);};
 
 		std::vector<sf::Keyboard::Key> keys; // keys order: up, down, left, right
@@ -94,6 +102,7 @@ class Duck : public Ducky{
 	private:
 
 		char invulnerability;
+		bool warped_at_this_turn;
 		sf::Sprite duck_sprite[4];
 		sf::Sprite ducky_sprite[4];
 };

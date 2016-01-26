@@ -8,6 +8,7 @@
 
 Duck::Duck(sf::Texture duck_textures[4], sf::Texture duckies_textures[4], Coord starting_coordinates, Direction initial_direction, std::vector<sf::Keyboard::Key> control_keys){
 
+	warped_at_this_turn = false;
 	keys = control_keys;
 	st_coordinates = starting_coordinates;
 	coordinates = starting_coordinates;
@@ -53,14 +54,20 @@ void Duck::powerUp(sf::RenderWindow& window){
 }
 
 void Duck::move(Direction new_direction, unsigned int x_map_size, unsigned int y_map_size){
-	
+
 	if(duckies.size() > 0){
 		for(unsigned char i = static_cast<unsigned char>(duckies.size() - 1); i > 0 ; i--){
 			if(duckies[i].coordinates != duckies[i - 1].coordinates)
-				duckies[i].move(duckies[i - 1].direction, x_map_size, y_map_size);
+				duckies[i].move(duckies[i - 1].direction, duckies[i - 1].coordinates);
 		}
 		if(duckies.front().coordinates != coordinates){
-			duckies.front().move(direction, x_map_size, y_map_size);
+			if (warped_at_this_turn){
+				duckies.front().move(direction, x_map_size, y_map_size);
+				warped_at_this_turn = false;
+			}
+			else{
+				duckies.front().move(direction, coordinates);
+			}
 		}
 	}
 
@@ -145,4 +152,9 @@ void Duck::print(sf::RenderWindow& window, float shift){
 
 void Duck::print(sf::RenderWindow& window){
 	this->print(window, -32);
+}
+
+void Duck::warped(Coord warp_arrival){
+	coordinates = warp_arrival;
+	warped_at_this_turn = true;
 }

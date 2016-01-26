@@ -63,6 +63,9 @@ void Map::init(){
 		for (unsigned int j = y_size ; j-- ;){
 			if (map[i][j] != OBSTACLE){
 				free_tile.push_back(Coord(i, j));
+				if (map[i][j] == WARP){
+					warp.push_back(Coord(i, j));
+				}
 			}
 		}
 	}
@@ -81,6 +84,26 @@ void Map::popEgg (sf::RenderWindow& window){
 
 }
 
+bool Map::isWarp(Coord tile){
+
+	for (unsigned int i = static_cast<unsigned int>(warp.size()); i-- ;)
+		if (warp[i] == tile)
+			return true;
+	return false;
+}
+
+Coord Map::getWarp(Coord current_tile){
+	std::vector<Coord> possible_warp;
+
+	for (unsigned int i = static_cast<unsigned int>(warp.size()) ; i-- ;)
+		if (warp[i] != current_tile)
+			possible_warp.push_back(warp[i]);
+	if (possible_warp.size() == 0) {
+		std::cout << "Bad map : only one warp" << std::endl;
+		return current_tile;
+	}
+	return possible_warp[rand()%possible_warp.size()];
+}
 
 Map& Map::operator=(const Map& mymap){
 	x_size = mymap.x_size;

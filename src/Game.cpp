@@ -43,7 +43,7 @@ void Game::launch(){
 		ducks_path + TEXTURE_DUCKY_LEFT,
 		ducks_path + TEXTURE_DUCKY_RIGHT
 	};
-	std::string map_textures_path[8] = {
+	std::string map_textures_path[9] = {
 		biome_path + TEXTURE_OBSTACLE,
 		biome_path + TEXTURE_EMPTY_TILE,
 		biome_path + TEXTURE_WATER_UP_RIGHT,
@@ -51,10 +51,11 @@ void Game::launch(){
 		biome_path + TEXTURE_WATER_LEFT_DOWN,
 		biome_path + TEXTURE_WATER_UP_LEFT,
 		biome_path + TEXTURE_WATER_UP_DOWN,
-		biome_path + TEXTURE_WATER_LEFT_RIGHT
+		biome_path + TEXTURE_WATER_LEFT_RIGHT,
+		biome_path + TEXTURE_WARP
 	};
 	bool loading_success = true;
-	for (unsigned char i = 8 ; i-- ;) {
+	for (unsigned char i = 9 ; i-- ;) {
 		loading_success = loading_success && map_texture[i].loadFromFile(path + map_textures_path[i] + FILETYPE);
 	}
 
@@ -193,8 +194,11 @@ bool Game::loadMap(){
 					case IDENTIFIER_WATER_UP_RIGHT:
 						map_interpreted[j].push_back(WATER_UR);
 						break;
+					case IDENTIFIER_WARP:
+						map_interpreted[j].push_back(WARP);
+						break;
 					default:
-						std::cout << "Bad map" << std::endl;
+						std::cout << "Bad map (found character " << value[j] << " )" << std::endl;
 						return false;
 						break;
 				}
@@ -256,13 +260,13 @@ void Game::start()
 				game_window.close();
 			else if(event.type == sf::Event::KeyPressed){
 				for(unsigned char i = player_number; i--;){
-					if(event.key.code == player[i].keys[0] && player[i].getDirection() != DOWN)
+					if(event.key.code == player[i].keys[0] && (player[i].getDirection() != DOWN || player[i].size() == 0))
 					    player_dir[i] = UP;
-					else if(event.key.code == player[i].keys[1] && player[i].getDirection() != UP)
+					else if(event.key.code == player[i].keys[1] && (player[i].getDirection() != UP || player[i].size() == 0))
 					    player_dir[i] = DOWN;
-					else if(event.key.code == player[i].keys[2] && player[i].getDirection() != RIGHT)
+					else if(event.key.code == player[i].keys[2] && (player[i].getDirection() != RIGHT || player[i].size() == 0))
 					    player_dir[i] = LEFT;
-					else if(event.key.code == player[i].keys[3] && player[i].getDirection() != LEFT)
+					else if(event.key.code == player[i].keys[3] && (player[i].getDirection() != LEFT || player[i].size() == 0))
 					    player_dir[i] = RIGHT;
 				}
 			}
@@ -274,6 +278,8 @@ void Game::start()
 		if(tmp == 0){
 			tmp = 16;
 			for(unsigned char i = player_number; i--;){
+				if(game_map.isWarp(player[i].getCoord()))
+					player[i].warped(game_map.getWarp(player[i].getCoord()));
 				player[i].move(player_dir[i], game_map.x_size, game_map.y_size);
 
 				bool damaged(false);

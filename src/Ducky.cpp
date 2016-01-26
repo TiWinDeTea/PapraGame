@@ -18,6 +18,11 @@ Ducky::Ducky(Coord act_coordinates, Coord starting_coordinates, Direction dir){
 	direction = dir;
 }
 
+void Ducky::move(Direction new_dir, Coord new_coords){
+	direction = new_dir;
+	coordinates = new_coords;
+}
+
 void Ducky::move(Direction new_dir, unsigned int x_map_size, unsigned int y_map_size){
 	direction = new_dir;
 	switch(direction){

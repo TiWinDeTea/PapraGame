@@ -23,7 +23,8 @@ enum Area : unsigned char {
     WATER_DL, /*!< down -> left */
     WATER_LU, /*!< left -> up */
     WATER_UD, /*!< up -> down */
-    WATER_LR /*!< left-> right */
+    WATER_LR, /*!< left-> right */
+    WARP
 };
 
 /**

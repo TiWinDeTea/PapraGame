@@ -52,6 +52,7 @@
 #define TEXTURE_WATER_RIGHT_DOWN    "WaterRD"
 #define TEXTURE_EMPTY_TILE          "EmptyTile"
 #define TEXTURE_OBSTACLE            "Obstacle"
+#define TEXTURE_WARP                "Warp"
 #define TEXTURE_EGG                 "Egg"
 #define FILETYPE                    ".png"
 #define IDENTIFIER_WATER_UP_DOWN    '|'
@@ -61,6 +62,7 @@
 #define IDENTIFIER_WATER_LEFT_DOWN  '1'
 #define IDENTIFIER_WATER_RIGHT_DOWN '3'
 #define IDENTIFIER_EMPTY_TILE       '.'
+#define IDENTIFIER_WARP             'x'
 #define IDENTIFIER_OBSTACLE         'o'
 
 /**
@@ -90,7 +92,7 @@ private:
 	std::vector<Direction> player_initial_dir;
 	unsigned char winner;
 	std::vector<sf::Texture**> duck_texture;
-	sf::Texture map_texture[8];
+	sf::Texture map_texture[9];
 	sf::Texture egg_texture;
 	sf::RenderWindow game_window;
 	unsigned int pxl_length, pxl_height;

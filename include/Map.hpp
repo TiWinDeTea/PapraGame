@@ -15,7 +15,7 @@
 #include <ctime>
 #include <iostream>
 
-#define NB_TEXTURE 8
+#define NB_TEXTURE 9
 #define RESOLUTION_X_IMAGE 32
 #define RESOLUTION_Y_IMAGE 32
 
@@ -86,6 +86,20 @@ class Map {
 		 * @return The egg's coord
 		 */
 		Coord getEggCoord(){ return coordinate_egg; }
+
+		/**
+		 * @brief returns random warp's coordinates
+		 * @param current_tile Coordinates of the current warp
+		 * @return             Warp's coordinates
+		 */
+		Coord getWarp(Coord current_tile);
+
+		/**
+		 * @brief tells if a place is a warpzone
+		 * @param tile Tile to check
+		 * @return     true if the tile is on a warp, false otherwise
+		 */
+		bool isWarp(Coord tile);
 		
 		Map& operator=(const Map& mymap);
 
@@ -95,6 +109,7 @@ class Map {
 
 	private :
 
+		std::vector<Coord> warp;
 		std::vector<Coord> free_tile;
 		sf::Sprite sprites[NB_TEXTURE];
 		Coord coordinate_egg;

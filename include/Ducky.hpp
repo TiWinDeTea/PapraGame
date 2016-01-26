@@ -56,6 +56,13 @@ class Ducky{
 
 		/**
 		 * @brief Moves the ducky
+		 * @param new_dir    New direction
+		 * @param new_coords New coordinate
+		 */
+		void move(Direction new_dir, Coord new_coords);
+
+		/**
+		 * @brief Moves the ducky
 		 * @param new_dir New direction
 		 */
 		void move(Direction new_dir, unsigned int x_map_size, unsigned int y_map_size);

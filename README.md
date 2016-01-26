@@ -34,6 +34,7 @@ It should be created according to the following (line by line)
     + ``3`` for west-south
     + ``7`` for east-north
     + ``9`` for west-north
+    + ``x`` for warps
 + Starting point of player 1 (x y)
     + On the same line, starting direction of player 1 (up, down, left, right)
 + Same for other player (if there are any)
