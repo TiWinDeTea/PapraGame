@@ -18,20 +18,32 @@ Ducky::Ducky(Coord act_coordinates, Coord starting_coordinates, Direction dir){
 	direction = dir;
 }
 
-void Ducky::move(Direction new_dir){
+void Ducky::move(Direction new_dir, unsigned int x_map_size, unsigned int y_map_size){
 	direction = new_dir;
 	switch(direction){
 		case UP:
-			--coordinates.y;
-			break;
-		case DOWN:
-			++coordinates.y;
+			if(coordinates.y == 0)
+				coordinates.y = y_map_size - 1;
+			else
+				--coordinates.y;
 			break;
 		case LEFT:
-			--coordinates.x;
+			if(coordinates.x == 0)
+				coordinates.x = x_map_size - 1;
+			else
+				--coordinates.x;
+			break;
+		case DOWN:
+			if(coordinates.y == y_map_size - 1)
+				coordinates.y = 0;
+			else
+				++coordinates.y;
 			break;
 		case RIGHT:
-			++coordinates.x;
+			if(coordinates.x == x_map_size - 1)
+				coordinates.x = 0;
+			else
+				++coordinates.x;
 			break;
 		default:
 			break;

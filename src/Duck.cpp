@@ -50,19 +50,46 @@ void Duck::powerUp(sf::RenderWindow& window){
 	window.draw(ducky_sprite[duckies.back().direction]);
 }
 
-void Duck::move(sf::RenderWindow& window, Direction new_direction){
+void Duck::move(Direction new_direction, unsigned int x_map_size, unsigned int y_map_size){
 	
 	if(duckies.size() > 0){
 		for(unsigned char i = static_cast<unsigned char>(duckies.size() - 1); i > 0 ; i--){
 			if(duckies[i].coordinates != duckies[i - 1].coordinates)
-				duckies[i].move(duckies[i - 1].direction);
+				duckies[i].move(duckies[i - 1].direction, x_map_size, y_map_size);
 		}
 		if(duckies.front().coordinates != coordinates){
-			duckies.front().move(direction);
+			duckies.front().move(direction, x_map_size, y_map_size);
 		}
 	}
 
-	coordinates += new_direction;
+	switch(new_direction){
+		case UP:
+			if(coordinates.y == 0)
+				coordinates.y = y_map_size - 1;
+			else
+				--coordinates.y;
+			break;
+		case LEFT:
+			if(coordinates.x == 0)
+				coordinates.x = x_map_size - 1;
+			else
+				--coordinates.x;
+			break;
+		case DOWN:
+			if(coordinates.y == y_map_size - 1)
+				coordinates.y = 0;
+			else
+				++coordinates.y;
+			break;
+		case RIGHT:
+			if(coordinates.x == x_map_size - 1)
+				coordinates.x = 0;
+			else
+				++coordinates.x;
+			break;
+		default:
+			break;
+	}
 	direction = new_direction;
 }
 

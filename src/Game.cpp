@@ -218,7 +218,7 @@ void Game::start()
 		if(tmp == 0){
 			tmp = 16;
 			for(unsigned char i = player_number; i--;){
-				player[i].move(game_window, player_dir[i]);
+				player[i].move(player_dir[i], game_map.x_size, game_map.y_size);
 
 				bool damaged(false);
 				unsigned int j = player_number;

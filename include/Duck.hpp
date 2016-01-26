@@ -64,7 +64,7 @@ class Duck : public Ducky{
 		 * @param window  Game's window
 		 * @param new_dir New direction
 		 */
-		void move(sf::RenderWindow& window, Direction new_direction);
+		void move(Direction new_direction, unsigned int x_map_size, unsigned int y_map_size);
 
 		/**
 		 * @brief Return the number of duckies
