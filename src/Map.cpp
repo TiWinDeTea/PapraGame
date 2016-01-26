@@ -69,6 +69,10 @@ void Map::init(){
 			}
 		}
 	}
+	if (free_tile.size() == 0)
+		std::cout << "Bad map : Full of obstacles" << std::endl;
+	if (warp.size() == 1)
+		std::cout << "Bad map : you should have no warps or at least 2" << std::endl;
 }
 
 void Map::popEgg (sf::RenderWindow& window){
@@ -76,7 +80,6 @@ void Map::popEgg (sf::RenderWindow& window){
 	if (free_tile.size() != 0)
 		coordinate_egg = free_tile[rand()%free_tile.size()];
 	else{
-		std::cout << "Bad map : full of obstacles" << std::endl;
 		coordinate_egg = Coord(0,0);
 	}
 	egg_sprite.setPosition(static_cast<float>(coordinate_egg.x * RESOLUTION_X_IMAGE),static_cast<float>( coordinate_egg.y * RESOLUTION_Y_IMAGE));
@@ -93,15 +96,14 @@ bool Map::isWarp(Coord tile){
 }
 
 Coord Map::getWarp(Coord current_tile){
-	std::vector<Coord> possible_warp;
+	if (warp.size() <= 1) {
+		return current_tile;
+	}
 
+	std::vector<Coord> possible_warp;
 	for (unsigned int i = static_cast<unsigned int>(warp.size()) ; i-- ;)
 		if (warp[i] != current_tile)
 			possible_warp.push_back(warp[i]);
-	if (possible_warp.size() == 0) {
-		std::cout << "Bad map : only one warp" << std::endl;
-		return current_tile;
-	}
 	return possible_warp[rand()%possible_warp.size()];
 }
 
