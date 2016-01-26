@@ -17,11 +17,16 @@ Game::~Game()
 
 void Game::launch(){
 
+	this->getMapFile();
 	if (biome_path == "none") {
-		std::ifstream map_file(path + MAPFILE, std::ios::in | std::ios::binary);
+		std::ifstream map_file(path + map_file_name, std::ios::in | std::ios::binary);
 		if (map_file){
 			map_file >> biome_path;
 			biome_path += '/';
+		}
+		else{
+			std::cout << "Failed to open " << path + map_file_name << std::endl;
+			return;
 		}
 		map_file.close();
 	}
@@ -93,8 +98,57 @@ void Game::launch(){
 	}
 }
 
+void Game::getMapFile(){
+	DIR* directory = opendir(std::string(path + "maps").c_str());
+	struct dirent* redfile = NULL;
+	map_file_name = "map";
+
+	if( directory == NULL ){
+		std::cout << "Could not open the folder " << path << "maps/" << std::endl;
+		std::cout << "Assuming " << path << "map to be the map's file" << std::endl;
+	}
+	else{
+		int choice;
+		std::vector<std::string> maps;
+		auto isFile = [](std::string const& local_path) -> bool {
+			#ifdef OS_WINDOWS
+			std::ifstream file (local_path.c_str(), std::ios::in);
+			return (file.fail());
+			#else
+			struct stat s;
+			if( stat(local_path.c_str() ,&s ) == 0)
+				return !(s.st_mode & S_IFDIR);
+			else
+				return false;
+			#endif
+		};
+		std::cout << "Found files :" << std::endl;
+		while ((redfile = readdir(directory)) != NULL){
+			std::string tmp( redfile->d_name );
+			if (isFile(path + "maps/" + tmp)) {
+				maps.push_back("maps/" + tmp);
+				std::cout << '\t' << maps.size() << ". " << maps.back() << std::endl;
+			}
+		}
+		if (maps.size() == 0) {
+			std::cout << "No file found !" << std::endl;
+			std::cout << "Assuming" << path << "map to be the map's file" << std::endl;
+		}
+		else{
+			std::cout << std::endl << "Your map choice (enter the number) : ";
+			std::cin >> choice;
+			while(choice <= 0 || choice > static_cast<signed>(maps.size()))
+			{
+				std::cout << "Invalid input. Please retry : ";
+				std::cin >> choice;
+			}
+			map_file_name = maps[choice - 1];
+		}
+	}
+}
+
 bool Game::loadMap(){
-	std::ifstream map_file(path + MAPFILE, std::ios::in | std::ios::binary);
+	std::ifstream map_file(path + map_file_name, std::ios::in | std::ios::binary);
 	unsigned int x_map_size, y_map_size;
 	std::string value;
 
@@ -176,6 +230,7 @@ bool Game::loadMap(){
 		}while (value != "eof");
 
 		game_map = Map(x_map_size, y_map_size, map_interpreted, map_texture, &egg_texture);
+		game_map.init();
 		return true;
 	}
 	else
@@ -191,6 +246,7 @@ void Game::start()
 
 	sf::Event event;
 	game_map.popEgg(game_window);
+	game_map.popEgg(game_window); // Map thuging
 
 	while (game_window.isOpen())
 	{

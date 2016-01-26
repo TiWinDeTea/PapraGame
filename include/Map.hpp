@@ -57,6 +57,11 @@ class Map {
 		Map(const unsigned int x, const unsigned int y, std::vector< std::vector<Area> > smap, sf::Texture texture[NB_TEXTURE], sf::Texture* egg_texture);
 
 		/**
+		 * @brief Initialises the map
+		 */
+		void init();
+
+		/**
 		 * @brief Pops an egg at a random non-obstacle tile
 		 * @param window The window for sfml and to print the map
 		 */

@@ -57,10 +57,8 @@ void Map::print (Coord tile, sf::RenderWindow& window){
 
 }
 
-void Map::popEgg (sf::RenderWindow& window){
+void Map::init(){
 
-	/* FIXME : Why does putting me in the map constructor for only checking coordinates once does not work ?????? */
-	std::vector<Coord> free_tile;
 	for (unsigned int i = x_size ; i-- ;){
 		for (unsigned int j = y_size ; j-- ;){
 			if (map[i][j] != OBSTACLE){
@@ -68,7 +66,10 @@ void Map::popEgg (sf::RenderWindow& window){
 			}
 		}
 	}
-	
+}
+
+void Map::popEgg (sf::RenderWindow& window){
+
 	if (free_tile.size() != 0)
 		coordinate_egg = free_tile[rand()%free_tile.size()];
 	else{

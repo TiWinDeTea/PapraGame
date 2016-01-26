@@ -25,6 +25,16 @@
 #include <fstream>
 #include <cstdlib>
 #include <ctime>
+#include <dirent.h>
+#if defined(_WIN32) || defined(_WIN64) || defined(WIN32) || defined(WIN64)
+	#include <windows.h>
+	#define OS_WINDOWS
+#else
+	#include <unistd.h>
+	#include <iostream>
+	#include <sys/stat.h> 
+	#include <sys/types.h>
+#endif
 
 #define TEXTURE_DUCK_LEFT           "DuckL_"
 #define TEXTURE_DUCK_RIGHT          "DuckR_"
@@ -44,7 +54,6 @@
 #define TEXTURE_OBSTACLE            "Obstacle"
 #define TEXTURE_EGG                 "Egg"
 #define FILETYPE                    ".png"
-#define MAPFILE                     "map"
 #define IDENTIFIER_WATER_UP_DOWN    '|'
 #define IDENTIFIER_WATER_UP_RIGHT   '9'
 #define IDENTIFIER_WATER_UP_LEFT    '7'
@@ -70,6 +79,7 @@ public:
 
 private:
 
+	void getMapFile();
 	bool loadMap();
 	void start();
 	bool someoneWon();
@@ -84,7 +94,7 @@ private:
 	sf::Texture egg_texture;
 	sf::RenderWindow game_window;
 	unsigned int pxl_length, pxl_height;
-	std::string path, biome_path, ducks_path;
+	std::string path, biome_path, ducks_path, map_file_name;
 	unsigned char player_number;
 	unsigned int game_speed;
 };
