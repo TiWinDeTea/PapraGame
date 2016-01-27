@@ -15,7 +15,7 @@
  * return the map created.
  */
 
-Map::Map(const unsigned int x, const unsigned int y, std::vector< std::vector<Area> > smap, sf::Texture texture[NB_TEXTURE], sf::Texture* egg_texture) : x_size(x), y_size(y)
+Map::Map(const unsigned int x, const unsigned int y, std::vector< std::vector<Area> > smap, sf::Texture texture[NB_TEXTURE], sf::Texture* egg_texture, sf::Texture* explosion_texture) : x_size(x), y_size(y)
 {
 	srand(static_cast<unsigned int>(time(NULL)));
 	for (unsigned int i = 0; i < x; i++){
@@ -29,6 +29,7 @@ Map::Map(const unsigned int x, const unsigned int y, std::vector< std::vector<Ar
 		sprites[i].setTexture(texture[i]);
 	}
 	egg_sprite.setTexture(*egg_texture);
+	explosion_sprite.setTexture(*explosion_texture);
 }
 
 /*printAll : procedure to print all the map.
@@ -116,4 +117,10 @@ Map& Map::operator=(const Map& mymap){
 	egg_sprite = mymap.egg_sprite;
 	map = mymap.map;
 	return *this;
+}
+
+void Map::printExplosion(sf::RenderWindow& window, Coord coord){
+
+	explosion_sprite.setPosition(static_cast<float>(10 * 32), static_cast<float>(10 * 32));
+	window.draw(explosion_sprite);
 }

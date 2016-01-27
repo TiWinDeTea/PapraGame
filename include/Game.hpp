@@ -55,6 +55,7 @@
 #define TEXTURE_OBSTACLE            "Obstacle"
 #define TEXTURE_WARP                "Warp"
 #define TEXTURE_EGG                 "Egg"
+#define TEXTURE_EXPLOSION           "Explosion"
 #define FILETYPE                    ".png"
 #define IDENTIFIER_WATER_UP_DOWN    '|'
 #define IDENTIFIER_WATER_UP_RIGHT   '9'
@@ -96,6 +97,7 @@ private:
 	std::vector<sf::Texture**> duck_texture;
 	sf::Texture map_texture[9];
 	sf::Texture egg_texture;
+	sf::Texture explosion_texture;
 	sf::RenderWindow game_window;
 	unsigned int pxl_length, pxl_height;
 	std::string path, biome_path, ducks_path, map_file_name;

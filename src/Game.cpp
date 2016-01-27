@@ -61,6 +61,7 @@ void Game::launch(){
 
 
 	loading_success = loading_success && egg_texture.loadFromFile(path + ducks_path + TEXTURE_EGG + FILETYPE);
+	loading_success = loading_success && explosion_texture.loadFromFile(path + ducks_path + TEXTURE_EXPLOSION + FILETYPE);
 	loading_success = this->loadMap();
 
 	char player_id;
@@ -226,7 +227,7 @@ bool Game::loadMap(){
 			map_file >> value;
 		}while (value != "eof");
 
-		game_map = Map(x_map_size, y_map_size, map_interpreted, map_texture, &egg_texture);
+		game_map = Map(x_map_size, y_map_size, map_interpreted, map_texture, &egg_texture, &explosion_texture);
 		game_map.init();
 		return true;
 	}
@@ -310,6 +311,7 @@ void Game::start()
 					}
 				}
 				if(game_map.map[player[i].getCoord().x][player[i].getCoord().y] == OBSTACLE){
+                    game_map.printExplosion(game_window, player[i].getCoord());
 					player[i].damaged(player_initial_dir[i]);
 					player_dir[i] = player_initial_dir[i];
 				}
@@ -336,6 +338,7 @@ void Game::start()
 				else{
 					player[i].print(game_window, -static_cast<float>(tmp) * 2);
 				}
+                    game_map.printExplosion(game_window, player[i].getCoord());
 			}
 		}
 		game_window.display();
@@ -440,4 +443,3 @@ std::vector<sf::Keyboard::Key> Game::loadKeys(std::string selected_player){
 	}
 	return answer;
 }
-

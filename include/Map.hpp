@@ -54,7 +54,7 @@ class Map {
 		 * @param texture[NB_TEXTURE] Array which will contain the texture for this game.
 		 * @param egg_texture Contain the texture of the egg.
 		 */
-		Map(const unsigned int x, const unsigned int y, std::vector< std::vector<Area> > smap, sf::Texture texture[NB_TEXTURE], sf::Texture* egg_texture);
+		Map(const unsigned int x, const unsigned int y, std::vector< std::vector<Area> > smap, sf::Texture texture[NB_TEXTURE], sf::Texture* egg_texture, sf::Texture* explosion_texture);
 
 		/**
 		 * @brief Initialises the map
@@ -65,7 +65,7 @@ class Map {
 		 * @brief Pops an egg at a random non-obstacle tile
 		 * @param window The window for sfml and to print the map
 		 */
-		void popEgg (sf::RenderWindow& window);
+		void popEgg(sf::RenderWindow& window);
 
 		/**
 		 * @brief Print a send case in the screen.
@@ -100,6 +100,8 @@ class Map {
 		 * @return     true if the tile is on a warp, false otherwise
 		 */
 		bool isWarp(Coord tile);
+
+		void printExplosion(sf::RenderWindow& window, Coord coord);
 		
 		Map& operator=(const Map& mymap);
 
@@ -114,6 +116,7 @@ class Map {
 		sf::Sprite sprites[NB_TEXTURE];
 		Coord coordinate_egg;
 		sf::Sprite egg_sprite;
+		sf::Sprite explosion_sprite;
 };
 
 #endif /* MAPP_HPP_INCLUDED */
