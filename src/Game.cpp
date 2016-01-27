@@ -85,7 +85,7 @@ void Game::launch(){
 			tmp.push_back(static_cast<char>(i + '1'));
 			player[i] = Duck(duck_texture[i][0], duck_texture[i][1], player_spawn[i], player_initial_dir[i], this->loadKeys(tmp));
 		}
-	
+
 		explosion_sprite.setTexture(explosion_texture);
 
 		this->start();
@@ -361,12 +361,10 @@ void Game::start()
 		std::cout << std::endl;
 		std::cout << "Player " << static_cast<short>(winner) << " won !" << std::endl;
 		std::cout << "Congratulations !" << std::endl << std::endl;
-#ifdef OS_WINDOWS
-		std::cout << "Press any key to quit" << std::endl;
-		getch();
-#else
 		std::cout << "Press Enter to quit" << std::endl;
+#ifndef OS_WINDOWS
 		getchar();
+#else
 		getchar();
 #endif
 	}
