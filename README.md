@@ -19,8 +19,13 @@ Only a maximum of 2 players for now, up to 4 in the future.
 Will probably be available for Local Network aswell later.
 <br/>
 
+###Gameplay
+<br/>
+You can choose the keys for each player in the res/keys.conf file ; Pause by pressing Escape (the game also pauses if it looses the focus).
+When you hit an obstacle, you will be unvulnerable for 5 turns. Strange violet stuff that may appears in a map are warps. Going into a warp will teleport you to another random warp. Beware the walls !
+
 ###Map editing
-<br>
+<br/>
 You can edit the map opening the map file (in the folder `build/res/`) with your favorite text editor
 It should be created according to the following (line by line)
 + Biome (sand, grass, space, snow, …)
