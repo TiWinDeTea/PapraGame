@@ -101,6 +101,7 @@ private:
 	std::string path, biome_path, ducks_path, map_file_name;
 	unsigned char player_number;
 	unsigned int game_speed;
+	unsigned short egg_victory;
 };
 
 #endif /* GAME_HPP_INCLUDED */

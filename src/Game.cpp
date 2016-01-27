@@ -147,6 +147,7 @@ bool Game::loadMap(){
 	if (map_file) {
 		map_file >> value; // ignoring first line : already interpreted
 		map_file >> game_speed;
+		map_file >> egg_victory;
 		map_file >> x_map_size;
 		map_file >> y_map_size;
 		pxl_height = 32*y_map_size;
@@ -189,7 +190,7 @@ bool Game::loadMap(){
 						map_interpreted[j].push_back(WARP);
 						break;
 					default:
-						std::cout << "Bad map (found character " << value[j] << " )" << std::endl;
+						std::cout << "Bad map (found character " << value[j] << ")" << std::endl;
 						return false;
 						break;
 				}
@@ -308,12 +309,17 @@ void Game::start()
 				}
 				if(game_map.map[player[i].getCoord().x][player[i].getCoord().y] == OBSTACLE){
 					player[i].damaged(player_initial_dir[i]);
-                    player_dir[i] = player_initial_dir[i];
+					player_dir[i] = player_initial_dir[i];
 				}
 			}
 			for(unsigned char i = player_number; i--;){
 				if(player[i].getCoord() == game_map.getEggCoord()){
 					player[i].powerUp(game_window);
+
+					if (player[i].size() == egg_victory && egg_victory != 0) {
+						winner = static_cast<unsigned char>(i + 1);
+						game_window.close();
+					}
 					game_map.popEgg(game_window);
 				}
 				player[i].print(game_window);
@@ -331,6 +337,20 @@ void Game::start()
 			}
 		}
 		game_window.display();
+
+		if (winner != 0){
+			std::cout << std::endl;
+			std::cout << "Player " << static_cast<short>(winner) << " won !" << std::endl;
+			std::cout << "Congratulations !" << std::endl << std::endl;
+#ifdef OS_WINDOWS
+			std::cout << "Press any key to quit" << std::endl;
+			getch();
+#else
+			std::cout << "Press Enter to quit" << std::endl;
+			getchar();
+			getchar();
+		}
+#endif
 	}
 }
 

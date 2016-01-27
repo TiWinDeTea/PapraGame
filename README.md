@@ -25,6 +25,7 @@ You can edit the map opening the map file (in the folder `build/res/`) with your
 It should be created according to the following (line by line)
 + Biome (sand, grass, space, snow, …)
 + The game 'slowness'
++ Number of eggs required to win (0 for infinity)
 + Length of the map
 + Width of the map
 + Map itself with characters :
