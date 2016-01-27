@@ -251,6 +251,7 @@ void Game::start()
 	game_map.popEgg(game_window); // Map thuging
 
 	std::vector<Coord> explosions_coord;
+	game_window.requestFocus();
 
 	while (game_window.isOpen())
 	{
@@ -270,15 +271,11 @@ void Game::start()
 						player_dir[i] = RIGHT;
 				}
 				if (event.key.code == sf::Keyboard::Escape) {
-					do{
-						sf::sleep(sf::milliseconds(50));
-						game_window.pollEvent(event);
-						if (sf::Event::Closed == event.type) {
-							game_window.close();
-						}
-					}while(game_window.isOpen() && (sf::Event::KeyPressed != event.type || event.key.code != sf::Keyboard::Escape));
+					this->pauseGame(true);
 				}
 			}
+			else if (!(game_window.hasFocus()))
+					this->pauseGame(false);
 		}
 		sf::sleep(sf::milliseconds(game_speed));
 		--tmp;
@@ -458,4 +455,28 @@ std::vector<sf::Keyboard::Key> Game::loadKeys(std::string selected_player){
 void Game::printExplosion(Coord coord){
 	explosion_sprite.setPosition(static_cast<float>(coord.x * 32), static_cast<float>(coord.y * 32));
 	game_window.draw(explosion_sprite);
+}
+
+void Game::pauseGame(bool player_request){
+	sf::Event event;
+	std::cout << "Game paused" << std::endl;
+    if(player_request){
+        std::cout << "Press Escape to resume" << std::endl;
+		do{
+			sf::sleep(sf::milliseconds(100));
+			game_window.pollEvent(event);
+			if (sf::Event::Closed == event.type) {
+				game_window.close();
+			}
+        }while(game_window.isOpen() && (sf::Event::KeyPressed != event.type || event.key.code != sf::Keyboard::Escape));
+	}
+	else{
+	    std::cout << "(lost focus)" << std::endl;
+		do{
+			sf::sleep(sf::milliseconds(150));
+			game_window.pollEvent(event);
+			if (sf::Event::Closed == event.type)
+				game_window.close();
+		}while(game_window.isOpen() && !(game_window.hasFocus()));
+	}
 }
