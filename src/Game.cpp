@@ -62,7 +62,7 @@ void Game::launch(){
 
 	loading_success = loading_success && egg_texture.loadFromFile(path + ducks_path + TEXTURE_EGG + FILETYPE);
 	loading_success = loading_success && explosion_texture.loadFromFile(path + ducks_path + TEXTURE_EXPLOSION + FILETYPE);
-	loading_success = this->loadMap();
+	loading_success = loading_success && this->loadMap();
 
 	char player_id;
 	for (unsigned char i = player_number ; i-- ;) {
@@ -135,8 +135,10 @@ void Game::getMapFile(){
 				std::cout << "Invalid input. Please retry : ";
 				std::cin >> choice;
 			}
+#ifdef OS_WINDOWS
 			std::fflush(stdin);
 			std::cin.clear();
+#endif
 			map_file_name = maps[choice - 1];
 		}
 	}
@@ -227,7 +229,7 @@ bool Game::loadMap(){
 			map_file >> value;
 		}while (value != "eof");
 
-		game_map = Map(x_map_size, y_map_size, map_interpreted, map_texture, &egg_texture, &explosion_texture);
+		game_map = Map(x_map_size, y_map_size, map_interpreted, map_texture, &egg_texture);
 		game_map.init();
 		return true;
 	}
@@ -245,6 +247,9 @@ void Game::start()
 	sf::Event event;
 	game_map.popEgg(game_window);
 	game_map.popEgg(game_window); // Map thuging
+
+	sf::Sprite explosion;
+	explosion.setTexture(explosion_texture);
 
 	while (game_window.isOpen())
 	{
@@ -311,7 +316,6 @@ void Game::start()
 					}
 				}
 				if(game_map.map[player[i].getCoord().x][player[i].getCoord().y] == OBSTACLE){
-                    game_map.printExplosion(game_window, player[i].getCoord());
 					player[i].damaged(player_initial_dir[i]);
 					player_dir[i] = player_initial_dir[i];
 				}
@@ -338,23 +342,23 @@ void Game::start()
 				else{
 					player[i].print(game_window, -static_cast<float>(tmp) * 2);
 				}
-                    game_map.printExplosion(game_window, player[i].getCoord());
 			}
 		}
 		game_window.display();
 
-		if (winner != 0){
-			std::cout << std::endl;
-			std::cout << "Player " << static_cast<short>(winner) << " won !" << std::endl;
-			std::cout << "Congratulations !" << std::endl << std::endl;
+	}
+
+	if (winner != 0){
+		std::cout << std::endl;
+		std::cout << "Player " << static_cast<short>(winner) << " won !" << std::endl;
+		std::cout << "Congratulations !" << std::endl << std::endl;
 #ifdef OS_WINDOWS
-			std::cout << "Press any key to quit" << std::endl;
-			getch();
+		std::cout << "Press any key to quit" << std::endl;
+		getch();
 #else
-			std::cout << "Press Enter to quit" << std::endl;
-			getchar();
-			getchar();
-		}
+		std::cout << "Press Enter to quit" << std::endl;
+		getchar();
+		getchar();
 #endif
 	}
 }
