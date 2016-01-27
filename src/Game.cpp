@@ -104,7 +104,7 @@ void Game::getMapFile(){
 		auto isFile = [](std::string const& local_path) -> bool {
 			#ifdef OS_WINDOWS
 			std::ifstream file (local_path.c_str(), std::ios::in);
-			return (file.fail());
+			return !(file.fail());
 			#else
 			struct stat s;
 			if( stat(local_path.c_str() ,&s ) == 0)
@@ -134,6 +134,8 @@ void Game::getMapFile(){
 				std::cout << "Invalid input. Please retry : ";
 				std::cin >> choice;
 			}
+			std::fflush(stdin);
+			std::cin.clear();
 			map_file_name = maps[choice - 1];
 		}
 	}
