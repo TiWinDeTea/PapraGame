@@ -86,8 +86,8 @@ class Ducky{
 
 	private:
 		
-		Coord coordinates, st_coordinates;
 		Direction direction;
+		Coord coordinates, st_coordinates;
 };
 
 #endif /* DUCKY_HPP_INCLUDED */

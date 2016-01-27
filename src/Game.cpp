@@ -85,6 +85,8 @@ void Game::launch(){
 			tmp.push_back(static_cast<char>(i + '1'));
 			player[i] = Duck(duck_texture[i][0], duck_texture[i][1], player_spawn[i], player_initial_dir[i], this->loadKeys(tmp));
 		}
+	
+		explosion_sprite.setTexture(explosion_texture);
 
 		this->start();
 	}
@@ -248,8 +250,7 @@ void Game::start()
 	game_map.popEgg(game_window);
 	game_map.popEgg(game_window); // Map thuging
 
-	sf::Sprite explosion;
-	explosion.setTexture(explosion_texture);
+	std::vector<Coord> explosions_coord;
 
 	while (game_window.isOpen())
 	{
@@ -285,6 +286,7 @@ void Game::start()
 		game_map.print(game_window);
 		if(tmp == 0){
 			tmp = 16;
+			explosions_coord.erase(explosions_coord.begin(), explosions_coord.end());
 			for(unsigned char i = player_number; i--;){
 				if(game_map.isWarp(player[i].getCoord()))
 					player[i].warped(game_map.getWarp(player[i].getCoord()));
@@ -297,6 +299,8 @@ void Game::start()
 					--j;
 					if(i != j){
 						if(player[i].getCoord() == player[j].getCoord()){
+							explosions_coord.push_back(player[i].getCoord() - player[i].getDirection());
+							explosions_coord.push_back(player[j].getCoord() - player[j].getDirection());
 							player[i].damaged(player_initial_dir[i]);
 							player[j].damaged(player_initial_dir[j]);
 							player_dir[i] = player_initial_dir[i];
@@ -309,6 +313,7 @@ void Game::start()
 					while(k > 0 && !damaged){
 						--k;
 						if(player[i].getCoord() == player[j].duckies[k].getCoord()){
+							explosions_coord.push_back(player[i].getCoord() - player[i].getDirection());
 							player[i].damaged(player_initial_dir[i]);
 							player_dir[i] = player_initial_dir[i];
 							damaged = true;
@@ -316,6 +321,7 @@ void Game::start()
 					}
 				}
 				if(game_map.map[player[i].getCoord().x][player[i].getCoord().y] == OBSTACLE){
+					explosions_coord.push_back(player[i].getCoord() - player[i].getDirection());
 					player[i].damaged(player_initial_dir[i]);
 					player_dir[i] = player_initial_dir[i];
 				}
@@ -343,6 +349,9 @@ void Game::start()
 					player[i].print(game_window, -static_cast<float>(tmp) * 2);
 				}
 			}
+		}
+		for(unsigned int i = static_cast<unsigned int>(explosions_coord.size()); i--;){
+			printExplosion(explosions_coord[i]);
 		}
 		game_window.display();
 
@@ -446,4 +455,9 @@ std::vector<sf::Keyboard::Key> Game::loadKeys(std::string selected_player){
 		}
 	}
 	return answer;
+}
+
+void Game::printExplosion(Coord coord){
+	explosion_sprite.setPosition(static_cast<float>(coord.x * 32), static_cast<float>(coord.y * 32));
+	game_window.draw(explosion_sprite);
 }

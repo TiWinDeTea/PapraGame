@@ -88,6 +88,7 @@ private:
 	void start();
 	bool someoneWon();
 	std::vector<sf::Keyboard::Key> loadKeys(std::string selected_player);
+	void printExplosion(Coord coord);
 
 	Map game_map;
 	std::vector<Duck> player;
@@ -97,6 +98,7 @@ private:
 	std::vector<sf::Texture**> duck_texture;
 	sf::Texture map_texture[9];
 	sf::Texture egg_texture, explosion_texture;
+	sf::Sprite explosion_sprite;
 	sf::RenderWindow game_window;
 	unsigned int pxl_length, pxl_height;
 	std::string path, biome_path, ducks_path, map_file_name;
