@@ -14,9 +14,8 @@ Several biomes are available (changes the graphics), and the map can be easily m
 
 You may change your keys settings within the ``keys.conf`` file
 
-/!\ Under developement.
-Only a maximum of 2 players for now, up to 4 in the future.
-Will probably be available for Local Network aswell later.
+/!\ Under developement. Latest version : v0.4 -- Crepitum Anatum
+We are currently working make this game fully graphical, together with a Network part.
 <br/>
 
 ###Gameplay
@@ -58,6 +57,7 @@ It should be created according to the following (line by line)
 ##Download
 <br/>
 You can get the game sources from the Time Winder Dev Team [github repo](https://github.com/TiWinDeTea/PapraGame).
+Binaries and sources of the v0.4 are available on [github](https://github.com/TiWinDeTea/PapraGame/releases/tag/v0.4) aswell
 <br/>
 
 ##Requirements
