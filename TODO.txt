@@ -1,15 +1,7 @@
-Plusieurs map à la fois ? > nommées map0, map1, ... ; avec nom de la map dans le fichier ; choix de la map au démarrage ?
-
-Creation d'autres sprites pour Duck & Ducky (vaisseau, Monster Truck ...)
-"Animation" sur deux frames.
-
-Power up ? (lance missile, catapulte, rayon plasma...)
-
-Deathmatch (plus de ducky).
+﻿"Animation" sur deux frames.
 
 Réseaux (lan, wifi...)
 
-Collisions (obv)
-Quand tout à droite, retour à gauche
+Menu GUI
 
-Dans map : nombre de joueurs ?
+Nombre de cannetons affichés dans un coin de l'écran
