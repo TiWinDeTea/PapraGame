@@ -9,7 +9,7 @@ int main(int argc, char* argv[]){
 	}
 	else{
 		if (std::string(argv[1]) == "--version") {
-			std::cout << "PapraGame v0.3" << std::endl <<
+			std::cout << "PapraGame v0.4 -- Crepitum Anatum" << std::endl <<
 				"Copyright c 2016 TiWinDeTea (https://github.com/TiWinDeTea)" << std::endl <<
 				std::endl <<
 				"Covered Software is provided under this License on an \"as is\"" << std::endl <<

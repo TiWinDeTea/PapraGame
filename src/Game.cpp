@@ -6,6 +6,52 @@
 
 #include <Game.hpp>
 
+/* GIMP RGBA C-Source image dump (icon.c) */
+static const struct {
+  int           width;
+  int           height;
+  int           bytes_per_pixel; /* 2:RGB16, 3:RGB, 4:RGBA */
+  unsigned char pixel_data[16 * 16 * 4 + 1];
+} sfml_icon = {
+  16, 16, 4,
+  "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"
+  "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"
+  "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"
+  "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"
+  "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"
+  "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"
+  "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"
+  "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\377\0\0\0\377\0\0\0\377\0\0\0\377"
+  "\0\0\0\377\0\0\0\377\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"
+  "\0\0\0\0\0\0\0\0\0\0\0\0\0\377\26k\0\377\26k\0\377\26k\0\377\0\0\0\377\377"
+  "\377\377\377\31)x\377\0\0\0\377\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"
+  "\0\0\0\0\0\0\0\0\0\0\377\26k\0\377\26k\0\377\26k\0\377\26k\0\377\0\0\0\377"
+  "\0\0\0\377\0\0\0\377\0\0\0\377\0\0\0\377\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"
+  "\0\0\0\0\0\0\0\0\0\0\0\377\26k\0\377\26k\0\377\26k\0\377\26k\0\377\26k\0"
+  "\377\26k\0\377\26k\0\377\26k\0\377\0\0\0\377\305\202\1\377\305\202\1\377"
+  "\371\244\0\377\371\244\0\377\371\244\0\377\0\0\0\0\0\0\0\377\26k\0\377\26"
+  "k\0\377\26k\0\377\26k\0\377\26k\0\377\26k\0\377\26k\0\377\26k\0\377\0\0\0"
+  "\377\371\244\0\377\371\244\0\377\371\244\0\377\371\244\0\377\0\0\0\0\0\0"
+  "\0\0\0\0\0\0\0\0\0\377\0\0\0\377\26k\0\377\26k\0\377\26k\0\377\26k\0\377"
+  "\26k\0\377\0\0\0\377\0\0\0\377\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"
+  "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\377\0\0\0\377\377\377\377\377\377\377\377\377"
+  "\377\377\377\377\377\377\377\377\0\0\0\377\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"
+  "\0\0\0\0\0\0\0\0\0\0\0\0\377\0\0\0\377\0\0\0\377\0\0\0\377\377\377\377\377"
+  "\377\377\377\377\377\377\377\377\377\377\377\377\377\377\377\377\0\0\0\377"
+  "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\377\377\377\377\377\377"
+  "\377\377\377\377\377\377\377\377\377\377\0\0\0\377\377\377\377\377\0\0\0"
+  "\377\0\0\0\377\377\377\377\377\377\377\377\377\0\0\0\377\0\0\0\0\0\0\0\0"
+  "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\377\0\0\0\377\0\0\0\377\0\0\0\377\377\377"
+  "\377\377\377\377\377\377\377\377\377\377\377\377\377\377\0\0\0\377\377\377"
+  "\377\377\377\377\377\377\0\0\0\377\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"
+  "\377\0\0\0\377\377\377\377\377\377\377\377\377\377\377\377\377\377\377\377"
+  "\377\377\377\377\377\0\0\0\377\377\377\377\377\377\377\377\377\377\377\377"
+  "\377\0\0\0\377\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\377\377\377\377\377\377\377"
+  "\377\0\0\0\377\0\0\0\377\0\0\0\377\0\0\0\377\0\0\0\377\377\377\377\377\377"
+  "\377\377\377\377\377\377\377\0\0\0\377\0\0\0\377\0\0\0\0\0\0\0\0\0\0\0\0"
+  "\0\0\0\0",
+};
+
 Game::~Game()
 {
 	for (unsigned char i = player_number ; i-- ;) {
@@ -19,13 +65,13 @@ void Game::launch(){
 
 	this->getMapFile();
 	if (biome_path == "none") {
-		std::ifstream map_file(path + map_file_name, std::ios::in | std::ios::binary);
+		std::ifstream map_file(map_file_name, std::ios::in | std::ios::binary);
 		if (map_file){
 			map_file >> biome_path;
 			biome_path += '/';
 		}
 		else{
-			std::cout << "Failed to open " << path + map_file_name << std::endl;
+			std::cout << "Failed to open " << map_file_name << std::endl;
 			return;
 		}
 		map_file.close();
@@ -87,13 +133,14 @@ void Game::launch(){
 		}
 
 		explosion_sprite.setTexture(explosion_texture);
+        game_window.setIcon( sfml_icon.width,  sfml_icon.height,  sfml_icon.pixel_data );
 
 		this->start();
 	}
 }
 
 void Game::getMapFile(){
-	DIR* directory = opendir(std::string(path + "maps").c_str());
+	DIR* directory = opendir(std::string("maps").c_str());
 	struct dirent* redfile = NULL;
 	map_file_name = "map";
 
@@ -119,7 +166,7 @@ void Game::getMapFile(){
 		std::cout << "Found maps :" << std::endl;
 		while ((redfile = readdir(directory)) != NULL){
 			std::string tmp( redfile->d_name );
-			if (isFile(path + "maps/" + tmp) && tmp.size() > 4 && tmp.substr(tmp.size() - 4) == ".map") {
+			if (isFile("maps/" + tmp) && tmp.size() > 4 && tmp.substr(tmp.size() - 4) == ".map") {
 				maps.push_back("maps/" + tmp);
 				tmp.erase(tmp.size() - 4);
 				std::cout << '\t' << maps.size() << ". " << tmp << std::endl;
@@ -147,7 +194,7 @@ void Game::getMapFile(){
 }
 
 bool Game::loadMap(){
-	std::ifstream map_file(path + map_file_name, std::ios::in | std::ios::binary);
+	std::ifstream map_file(map_file_name, std::ios::in | std::ios::binary);
 	unsigned int x_map_size, y_map_size;
 	std::string value;
 
@@ -213,6 +260,7 @@ bool Game::loadMap(){
 			player_spawn.push_back(Coord());
 
 			map_file >> player_spawn[player_number].x;
+			--player_spawn[player_number].x;
 			map_file >> player_spawn[player_number].y;
 			if (value == "up")
 				player_initial_dir.push_back(UP);
@@ -361,14 +409,13 @@ void Game::start()
 		std::cout << "Press Enter to quit" << std::endl;
 #ifndef OS_WINDOWS
 		getchar();
-#else
-		getchar();
 #endif
+		getchar();
 	}
 }
 
 std::vector<sf::Keyboard::Key> Game::loadKeys(std::string selected_player){
-	std::ifstream keys_file(path + "keys.conf", std::ios::in | std::ios::binary);
+	std::ifstream keys_file("keys.conf", std::ios::in | std::ios::binary);
 	std::vector<sf::Keyboard::Key> answer;
 
 	if (keys_file.fail()) {
