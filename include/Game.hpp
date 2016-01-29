@@ -92,7 +92,7 @@ private:
 	bool someoneWon();
 	std::vector<sf::Keyboard::Key> loadKeys(std::string selected_player);
 	void printExplosion(sf::RenderWindow& game_window, Coord coord);
-	void pauseGame(sf::RenderWindow& game_window, bool player_request);
+	bool pauseGame(sf::RenderWindow& game_window, bool player_request);
 
 	Map game_map;
 	std::vector<Duck> player;

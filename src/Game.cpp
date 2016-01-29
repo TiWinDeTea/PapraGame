@@ -148,7 +148,7 @@ void Game::launch(sf::RenderWindow& game_window, std::string map_name){
 		}
 
 		explosion_sprite.setTexture(explosion_texture);
-        game_window.setIcon( sfml_icon.width,  sfml_icon.height,  sfml_icon.pixel_data );
+		game_window.setIcon( sfml_icon.width,  sfml_icon.height,  sfml_icon.pixel_data );
 
 		this->start(game_window);
 	}
@@ -280,7 +280,8 @@ void Game::start(sf::RenderWindow& game_window)
 						player_dir[i] = RIGHT;
 				}
 				if (event.key.code == sf::Keyboard::Escape) {
-					this->pauseGame(game_window, true);
+					if (!(this->pauseGame(game_window, true)))
+						return;
 				}
 			}
 			else if (!(game_window.hasFocus()))
@@ -464,19 +465,20 @@ void Game::printExplosion(sf::RenderWindow& game_window, Coord coord){
 	game_window.draw(explosion_sprite);
 }
 
-void Game::pauseGame(sf::RenderWindow& game_window, bool player_request){
+bool Game::pauseGame(sf::RenderWindow& game_window, bool player_request){
 	sf::Event event;
 	std::cout << "Game paused" << std::endl;
 	if(player_request){
-		std::cout << "Press Escape to resume" << std::endl;
 		do{
 			if (game_window.waitEvent(event) && sf::Event::Closed == event.type) {
 				game_window.close();
 			}
-		}while(game_window.isOpen() && (sf::Event::KeyPressed != event.type || event.key.code != sf::Keyboard::Escape));
+			else if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape) {
+				return false;
+			}
+		}while(game_window.isOpen() && (sf::Event::KeyPressed != event.type || event.key.code != sf::Keyboard::Return));
 	}
 	else{
-		std::cout << "(lost focus)" << std::endl;
 		do{
 			sf::sleep(sf::milliseconds(20));
 			if (game_window.waitEvent(event) && sf::Event::Closed == event.type) {
@@ -484,4 +486,5 @@ void Game::pauseGame(sf::RenderWindow& game_window, bool player_request){
 			}
 		}while(!(game_window.hasFocus()));
 	}
+	return true;
 }
