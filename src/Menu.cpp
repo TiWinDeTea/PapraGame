@@ -131,8 +131,8 @@ void Menu::mainMenu(){
 				}
 			}
 
-			Game game(res_path, biome_path, ducks_path);
 			if(done){
+				Game game(res_path, biome_path, ducks_path);
 				switch(user_choice){
 
 					case 0:
