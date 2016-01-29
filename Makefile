@@ -40,9 +40,9 @@ OBJDIR         = $(BUILDDIR)obj/
 SOURCEDIR      = src/
 INCLUDEDIR     = -I/usr/include -Iinclude/
 LIBSDIR        = -L/usr/lib
-SOURCENAME     = Coord Ducky Duck Map Game Menu main
+SOURCENAME     = Coord Ducky Duck Map Game NetworkGame Menu main
 EXENAME        = PapraGame
-LINKS          = -lstdc++ -lsfml-system -lsfml-window -lsfml-graphics
+LINKS          = -lstdc++ -lsfml-system -lsfml-window -lsfml-graphics -lsfml-network
 
 EXEFINALOBJ    = $(OBJDIR)$(EXENAME).o
 EXEFINAL       = $(BUILDDIR)$(EXENAME).elf
