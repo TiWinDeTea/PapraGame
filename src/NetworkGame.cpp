@@ -206,12 +206,9 @@ void GameClient::launch(sf::RenderWindow& game_window){
 
 		sf::Packet packet;
 		std::string biome_path;
-		unsigned int speed;
-		unsigned char map_height, map_width;
 		std::vector< std::vector<Area> > map_as_area;
 		unsigned char nbr_player;
 		std::vector<Coord> player_spawn;
-		std::vector<Direction> player_initial_dir;
 
 		server.receive(packet);
 		if (biome_path == "nope"){
@@ -220,7 +217,7 @@ void GameClient::launch(sf::RenderWindow& game_window){
 			std::string tmp;
 			packet >> tmp;
 		}
-		packet >> speed >> map_width >> map_height;
+		packet >> map_width >> map_height;
 		biome_path += '/';
 
 		for (unsigned int i = 0 ; i < map_height; ++i) {
@@ -302,7 +299,15 @@ void GameClient::launch(sf::RenderWindow& game_window){
 			explosion_sprite.setTexture(explosion_texture);
 
 			game_map = Map(map_width, map_height, map_as_area, map_texture, &egg_texture);
-
+			direction = NOPE;
+			int dir;
+			do {
+				packet.clear();
+				server.receive(packet);
+				if((packet >> dir))
+					direction = static_cast<Direction>(dir);
+			} while(direction = NOPE);
+			
 			this->start(game_window);
 		}
 	}
@@ -394,7 +399,59 @@ std::vector<sf::Keyboard::Key> GameClient::loadKeys(std::string selected_player)
 }
 
 void GameClient::start(sf::RenderWindow& game_window){
-
-
-
+	sf::Packet packet;
+	sf::Event event;
+	bool ended, damaged, power_up;
+	unsigned char winner;
+	int tmpint, egg_x, egg_y;
+	game_window.setSize(sf::Vector2u(map_width*32, map_height*32));
+	game_window.setView(sf::View(sf::FloatRect(0, 0, static_cast<float>(map_width*32), static_cast<float>(map_height*32))));
+	game_window.requestFocus();
+	do {
+		packet.clear();
+		server.receive(packet);
+		packet >> ended;
+		if (ended) {
+				
+			packet >> winner;
+		} else {
+			for (unsigned int i = player.size() - 1; i--;){
+				packet >> damaged;
+				if (!damaged){
+					packet >> tmpint >> power_up;
+					direction = static_cast<Direction>(tmpint);
+					player[i].move(direction,map_width, map_height);
+					if (power_up){
+						packet >> egg_x >> egg_y;
+						game_map.popEgg(Coord(egg_x,egg_y));
+					}
+				} else { 
+					player[i].damaged(player_initial_dir[i]);
+				}
+			}
+			packet.clear();
+			while (game_window.pollEvent(event)){
+				if(event.type == sf::Event::Closed){
+					game_window.close();
+					packet << static_cast<int>(NOPE);
+					server.send(packet);
+				}
+				else if(event.type == sf::Event::KeyPressed){
+					if(event.key.code == player[0].keys[0] && (player[0].getDirection() != DOWN || player[0].size() == 0))
+						direction = UP;
+					else if(event.key.code == player[0].keys[1] && (player[0].getDirection() != UP || player[0].size() == 0))
+						direction = DOWN;
+					else if(event.key.code == player[0].keys[2] && (player[0].getDirection() != RIGHT || player[0].size() == 0))
+						direction = LEFT;
+					else if(event.key.code == player[0].keys[3] && (player[0].getDirection() != LEFT || player[0].size() == 0))
+						direction = RIGHT;
+				}
+			}
+			if (game_window.isOpen()){
+				packet << static_cast<int>(direction);
+				server.send(packet);
+			}
+			
+		}
+	} while (!ended);
 }

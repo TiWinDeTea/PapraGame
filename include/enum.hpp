@@ -36,7 +36,8 @@ enum Direction : unsigned char {
     UP = 0,
     DOWN,
     LEFT,
-    RIGHT
+    RIGHT,
+	NOPE
 };
 
 #endif /* ENUM_HPP_INCLUDED */

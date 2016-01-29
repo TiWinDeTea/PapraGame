@@ -107,7 +107,10 @@ class GameClient{
 
 		void start(sf::RenderWindow& game_window);
 		std::vector<sf::Keyboard::Key> loadKeys(std::string selected_player);
-
+		
+		unsigned int map_height, map_width;
+		std::vector<Direction> player_initial_dir;
+		Direction direction;
 		bool local;
 		std::vector<Duck> player;
 		sf::TcpSocket server;
