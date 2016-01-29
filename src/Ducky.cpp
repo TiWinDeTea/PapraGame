@@ -50,6 +50,7 @@ void Ducky::move(Direction new_dir, unsigned int x_map_size, unsigned int y_map_
 			else
 				++coordinates.x;
 			break;
+		case NOPE:
 		default:
 			break;
 	}

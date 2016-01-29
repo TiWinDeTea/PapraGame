@@ -14,7 +14,6 @@ GameServer::~GameServer(){
 
 GameServer::GameServer(std::string ressources, std::string biome_path, std::string map_file_name){
 
-	unsigned int speed;
 	std::vector< std::vector<Area> > map_as_area;
 	unsigned char nbr_player = 0;
 	std::string tmpstr;
@@ -23,7 +22,7 @@ GameServer::GameServer(std::string ressources, std::string biome_path, std::stri
 	if (biome_path == "nope")
 		map_file >> biome_path;
 	else map_file >> tmpstr;
-	map_file >> speed >> egg_victory >> map_width >> map_height;
+	map_file >> game_speed >> egg_victory >> map_width >> map_height;
 
 	for (unsigned int i = map_width ; i-- ;) {
 		map_as_area.push_back(std::vector<Area>());
@@ -115,7 +114,6 @@ void GameServer::getClients(std::string biome_path, std::vector< std::vector<Are
 	potential_client.setBlocking(false);
 	listener.setBlocking(false);
 
-	bool quitted = false;
 	char data[25];
 	size_t volume_received = 0;
 
@@ -131,7 +129,7 @@ void GameServer::getClients(std::string biome_path, std::vector< std::vector<Are
 		sf::IpAddress client_ip;
 		unsigned short client_port;
 		potential_client.receive(data, 25, volume_received, client_ip, client_port);
-		
+
 		sf::sleep(sf::milliseconds(25));
 
 		if (volume_received == 25 && std::string(data) == "PapraGame ~ Game request") {
@@ -150,7 +148,7 @@ void GameServer::getClients(std::string biome_path, std::vector< std::vector<Are
 			}
 		}
 
-	}while(!quitted && clients.size() < player.size());
+	}while(!(instantGetChar() != '\n') && clients.size() < player.size());
 }
 
 char GameServer::instantGetChar(){
@@ -172,6 +170,111 @@ char GameServer::instantGetChar(){
 #endif
 }
 
+void GameServer::launch(){
+	sf::Packet packet;
+	for (size_t i = clients.size() - 1 ; i--;){
+		packet.clear();
+		packet << static_cast<int>(player_initial_dir[i]);
+		clients[i]->send(packet);
+	}
+	this->start();
+}
+
+void GameServer::start(){
+
+	std::vector<Direction> player_dir = player_initial_dir;
+
+	unsigned char winner(0);
+	sf::Packet packet;
+
+	game_map.popEgg();
+	game_map.popEgg(); // Map thuging #2
+
+	do{
+		packet << false;
+
+		for(unsigned char i((unsigned char)(player.size())); i--;){
+
+			if(game_map.isWarp(player[i].getCoord()))
+				player[i].warped(game_map.getWarp(player[i].getCoord()));
+
+			player[i].move(player_dir[i], game_map.x_size, game_map.y_size);
+
+			bool damaged(false);
+			unsigned int j = static_cast<unsigned int>(player.size() - 1);
+
+			while(j > 0 && !damaged){
+
+				--j;
+				if(i != j){
+					if(player[i].getCoord() == player[j].getCoord()){
+						player[i].damaged(player_initial_dir[i]);
+						player[j].damaged(player_initial_dir[j]);
+						player_dir[i] = player_initial_dir[i];
+						player_dir[j] = player_initial_dir[j];
+						damaged = true;
+					}
+				}
+
+				unsigned char k = player[j].size();
+				while(k > 0 && !damaged){
+					--k;
+					if(player[i].getCoord() == player[j].duckies[k].getCoord()){
+						player[i].damaged(player_initial_dir[i]);
+						player_dir[i] = player_initial_dir[i];
+						damaged = true;
+					}
+				}
+			}
+			if(game_map.map[player[i].getCoord().x][player[i].getCoord().y] == OBSTACLE){
+				player[i].damaged(player_initial_dir[i]);
+				player_dir[i] = player_initial_dir[i];
+			}
+
+			packet << damaged;
+
+			if (!damaged){
+
+				packet << player_dir[i];
+
+				if(player[i].getCoord() == game_map.getEggCoord()){
+					player[i].powerUp();
+
+					if (player[i].size() == egg_victory && egg_victory != 0) {
+						winner = static_cast<unsigned char>(i + 1);
+					}
+					game_map.popEgg();
+
+					packet << true << game_map.getEggCoord().x << game_map.getEggCoord().y;
+				}
+			}
+		}
+		
+		for (unsigned char i((unsigned char)(clients.size())) ; i-- ;) {
+			clients[i]->send(packet);
+		}
+		
+		for (unsigned char i((unsigned char)(clients.size())) ; i-- ;) {
+			packet.clear();
+			clients[i]->receive(packet);
+			int dir_as_int;
+			packet >> dir_as_int;
+			player_dir[i] = static_cast<Direction>(dir_as_int);
+			if (player_dir[i] == NOPE) {
+				
+			}
+		}
+
+		sf::sleep(sf::milliseconds(game_speed));
+
+		packet.clear();
+	}while(winner == 0);
+
+	packet << true << winner;
+	for (size_t i(clients.size() - 1) ; i-- ;) {
+		clients[i]->send(packet);
+	}
+}
 
 void GameClient::launch(sf::RenderWindow& game_window){
 

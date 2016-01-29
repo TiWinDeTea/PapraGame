@@ -133,6 +133,7 @@ void Menu::mainMenu(){
 
 			if(done){
 				Game game(res_path, biome_path, ducks_path);
+				std::string tmp;
 				switch(user_choice){
 
 					case 0:
@@ -142,6 +143,22 @@ void Menu::mainMenu(){
 						break;
 
 					case 1:
+						std::cout << "Server ? [y/n] : ";
+						std::cin >> tmp;
+						if (tmp == "y") {
+							GameServer server("res/", "nope", this->mapMenu());
+							sf::Thread server_thread(&GameServer::launch, &server);
+							server_thread.launch();
+							GameClient client(false);
+							client.launch(window);
+							server_thread.wait();
+						}
+						else
+						{
+							GameClient client(false);
+							client.launch(window);
+
+						}
 						done = false;
 						break;
 

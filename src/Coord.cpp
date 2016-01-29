@@ -54,6 +54,7 @@ Coord operator+(const Coord& coord, const Direction& dir)
 		case RIGHT:
 			++new_coord.x;
 			break;
+		case NOPE:
 		default:
 			break;
 	}
@@ -76,6 +77,7 @@ Coord operator-(const Coord& coord, const Direction& dir)
 		case RIGHT:
 			--new_coord.x;
 			break;
+		case NOPE:
 		default:
 			break;
 	}

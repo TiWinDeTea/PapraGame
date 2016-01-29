@@ -86,8 +86,6 @@ private:
 	std::vector<Duck> player;
 	std::vector<Coord> player_spawn;
 	std::vector<Direction> player_initial_dir;
-	unsigned char winner;
-	unsigned char player_number;
 	unsigned int game_speed;
 	unsigned short egg_victory;
 	unsigned int map_height, map_width;
@@ -99,7 +97,7 @@ class GameClient{
 	public:
 
 		~GameClient(){};
-		GameClient(bool is_local = false){local = is_local;}
+		GameClient(bool is_local){local = is_local;}
 		GameClient(std::string bp="nope", bool is_local = false){local_biome_path = bp; local = is_local;}
 		void launch(sf::RenderWindow& game_window);
 

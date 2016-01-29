@@ -19,10 +19,12 @@
 #include <vector>
 #include <iostream>
 #include <Coord.hpp>
+#include <SFML/System.hpp>
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
 #include <enum.hpp>
 #include <Game.hpp>
+#include <NetworkGame.hpp>
 #include <dirent.h>
 #if defined(_WIN32) || defined(_WIN64) || defined(WIN32) || defined(WIN64)
 	#include <windows.h>
@@ -30,7 +32,7 @@
 #else
 	#include <unistd.h>
 	#include <iostream>
-	#include <sys/stat.h> 
+	#include <sys/stat.h>
 	#include <sys/types.h>
 #endif
 

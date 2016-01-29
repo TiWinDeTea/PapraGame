@@ -95,6 +95,7 @@ void Duck::move(Direction new_direction, unsigned int x_map_size, unsigned int y
 			else
 				++coordinates.x;
 			break;
+		case NOPE:
 		default:
 			break;
 	}
@@ -124,6 +125,7 @@ void Duck::print(sf::RenderWindow& window, float shift){
 			case RIGHT:
 				ducky_sprite[duckies[i].direction].setPosition(static_cast<float>(duckies[i].coordinates.x * 32) + shift, static_cast<float>(duckies[i].coordinates.y * 32));
 				break;
+			case NOPE:
 			default:
 				break;
 		}
@@ -143,6 +145,7 @@ void Duck::print(sf::RenderWindow& window, float shift){
 		case RIGHT:
 			duck_sprite[direction].setPosition(static_cast<float>(coordinates.x * 32) + shift, static_cast<float>(coordinates.y * 32));
 			break;
+		case NOPE:
 		default:
 			break;
 	}
