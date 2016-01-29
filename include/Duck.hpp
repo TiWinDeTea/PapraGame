@@ -57,9 +57,8 @@ class Duck : public Ducky{
 
 		/**
 		 * @brief Add a ducky to the duck family
-		 * @param window Game's window
 		 */
-		void powerUp(sf::RenderWindow& window);
+		void powerUp();
 
 		/**
 		 * @brief Moves the duck and the duckies

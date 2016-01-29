@@ -334,7 +334,7 @@ void Game::start(sf::RenderWindow& game_window)
 			}
 			for(unsigned char i = player_number; i--;){
 				if(player[i].getCoord() == game_map.getEggCoord()){
-					player[i].powerUp(game_window);
+					player[i].powerUp();
 
 					if (player[i].size() == egg_victory && egg_victory != 0) {
 						winner = static_cast<unsigned char>(i + 1);
