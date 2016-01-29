@@ -10,7 +10,7 @@ Menu::Menu(){
 	window.create(sf::VideoMode(MENU_X_RESOLUTION, MENU_Y_RESOLUTION), "PapraGame ~ A game with Ducks !", sf::Style::Titlebar | sf::Style::Close);
 
 	if (!font.loadFromFile("res/fonts/slkscr.ttf"))
-	    std::cout << "Error loading font" << std::endl;
+		std::cout << "Error loading font" << std::endl;
 
 	res_path = RES_PATH;
 	biome_path = BIOME_PATH;
@@ -114,6 +114,16 @@ void Menu::mainMenu(){
 				if(user_choice < 0)
 					user_choice = static_cast<char>(user_choice + nbr_of_choices);
 			}
+			else if(event.type == sf::Event::MouseButtonPressed){
+				if(event.mouseButton.button == sf::Mouse::Button::Left){
+					for(unsigned char i = nbr_of_choices; i--;){
+						if(rectangle[i].getGlobalBounds().contains(sf::Vector2f(static_cast<float>(event.mouseButton.x), static_cast<float>(event.mouseButton.y)))){
+							user_choice = i;
+							done = true;
+						}
+					}
+				}
+			}
 
 			Game game(res_path, biome_path, ducks_path);
 			if(done){
@@ -137,6 +147,10 @@ void Menu::mainMenu(){
 				window.setSize(sf::Vector2u(MENU_X_RESOLUTION, MENU_Y_RESOLUTION));
 				window.setView(sf::View(sf::FloatRect(0, 0, MENU_X_RESOLUTION, MENU_Y_RESOLUTION)));
 			}
+		}
+		for(unsigned char i = nbr_of_choices; i--;){
+			if(rectangle[i].getGlobalBounds().contains(sf::Vector2f(sf::Mouse::getPosition(window))))
+				user_choice = i;
 		}
 
 		window.clear();
@@ -270,6 +284,20 @@ std::string Menu::mapMenu(){
 				if(user_choice < 0)
 					user_choice = static_cast<char>(user_choice + nbr_of_choices);
 			}
+			else if(event.type == sf::Event::MouseButtonPressed){
+				if(event.mouseButton.button == sf::Mouse::Button::Left){
+					for(unsigned char i = nbr_of_choices; i--;){
+						if(rectangle[i].getGlobalBounds().contains(sf::Vector2f(static_cast<float>(event.mouseButton.x), static_cast<float>(event.mouseButton.y)))){
+							user_choice = i;
+							done = true;
+						}
+					}
+				}
+			}
+		}
+		for(unsigned char i = nbr_of_choices; i--;){
+			if(rectangle[i].getGlobalBounds().contains(sf::Vector2f(sf::Mouse::getPosition(window))))
+				user_choice = i;
 		}
 
 		window.clear();
