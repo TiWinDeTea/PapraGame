@@ -124,6 +124,12 @@ void Menu::mainMenu(){
 					}
 				}
 			}
+			else if(event.type == sf::Event::MouseMoved){
+				for(unsigned char i = nbr_of_choices; i--;){
+					if(rectangle[i].getGlobalBounds().contains(sf::Vector2f(sf::Mouse::getPosition(window))))
+						user_choice = i;
+				}
+			}
 
 			Game game(res_path, biome_path, ducks_path);
 			if(done){
@@ -147,10 +153,6 @@ void Menu::mainMenu(){
 				window.setSize(sf::Vector2u(MENU_X_RESOLUTION, MENU_Y_RESOLUTION));
 				window.setView(sf::View(sf::FloatRect(0, 0, MENU_X_RESOLUTION, MENU_Y_RESOLUTION)));
 			}
-		}
-		for(unsigned char i = nbr_of_choices; i--;){
-			if(rectangle[i].getGlobalBounds().contains(sf::Vector2f(sf::Mouse::getPosition(window))))
-				user_choice = i;
 		}
 
 		window.clear();
@@ -284,6 +286,12 @@ std::string Menu::mapMenu(){
 				if(user_choice < 0)
 					user_choice = static_cast<char>(user_choice + nbr_of_choices);
 			}
+			else if(event.type == sf::Event::MouseMoved){
+				for(unsigned char i = nbr_of_choices; i--;){
+					if(rectangle[i].getGlobalBounds().contains(sf::Vector2f(sf::Mouse::getPosition(window))))
+						user_choice = i;
+				}
+			}
 			else if(event.type == sf::Event::MouseButtonPressed){
 				if(event.mouseButton.button == sf::Mouse::Button::Left){
 					for(unsigned char i = nbr_of_choices; i--;){
@@ -294,10 +302,7 @@ std::string Menu::mapMenu(){
 					}
 				}
 			}
-		}
-		for(unsigned char i = nbr_of_choices; i--;){
-			if(rectangle[i].getGlobalBounds().contains(sf::Vector2f(sf::Mouse::getPosition(window))))
-				user_choice = i;
+			
 		}
 
 		window.clear();
