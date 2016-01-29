@@ -478,7 +478,10 @@ void Game::pauseGame(sf::RenderWindow& game_window, bool player_request){
 	else{
 		std::cout << "(lost focus)" << std::endl;
 		do{
-			sf::sleep(sf::milliseconds(150));
-		}while(game_window.isOpen() && !(game_window.hasFocus()));
+			sf::sleep(sf::milliseconds(20));
+			if (game_window.waitEvent(event) && sf::Event::Closed == event.type) {
+				game_window.close();
+			}
+		}while(!(game_window.hasFocus()));
 	}
 }
