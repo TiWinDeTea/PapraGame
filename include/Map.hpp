@@ -47,10 +47,18 @@ class Map {
 		Map (){};
 
 		/**
+		 * @brief Map constructor
+		 * @param x    Width of the map
+		 * @param y    Height of the map
+		 * @param smap The map itself of width x and height y
+		 */
+		Map (unsigned int x, unsigned int y, std::vector< std::vector<Area> > smap);
+
+		/**
 		 * @brief Creation of map with all the parametre needed.
-		 * @param x The lenght of the map
-		 * @param y The width of the map
-		 * @param smap[x][y] The map himself with the lenght and the width.
+		 * @param x The Width of the map
+		 * @param y The Heith of the map
+		 * @param smap[x][y] The map itself with the lenght and the width.
 		 * @param texture[NB_TEXTURE] Array which will contain the texture for this game.
 		 * @param egg_texture Contain the texture of the egg.
 		 */
@@ -63,9 +71,14 @@ class Map {
 
 		/**
 		 * @brief Pops an egg at a random non-obstacle tile
-		 * @param window The window for sfml and to print the map
 		 */
-		void popEgg(sf::RenderWindow& window);
+		void popEgg();
+
+		/**
+		 * @brief Sets the coordinates of the egg
+		 * @param new_coord New egg's coordinates
+		 */
+		void popEgg(Coord new_coord);
 
 		/**
 		 * @brief Print a send case in the screen.

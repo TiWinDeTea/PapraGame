@@ -43,14 +43,13 @@ void Duck::damaged(Direction initial_dir){
 	direction = initial_dir;
 }
 
-void Duck::powerUp(sf::RenderWindow& window){
+void Duck::powerUp(){
 
 	if(duckies.size() > 0)
 		duckies.push_back(Ducky(duckies.back().coordinates, st_coordinates, duckies.back().direction));
 	else
 		duckies.push_back(Ducky(coordinates, st_coordinates, direction));
 	ducky_sprite[duckies.back().direction].setPosition(static_cast<float>(duckies.back().coordinates.x * 32), static_cast<float>(duckies.back().coordinates.y * 32));
-	window.draw(ducky_sprite[duckies.back().direction]);
 }
 
 void Duck::move(Direction new_direction, unsigned int x_map_size, unsigned int y_map_size){

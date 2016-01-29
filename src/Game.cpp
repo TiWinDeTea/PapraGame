@@ -256,8 +256,8 @@ void Game::start(sf::RenderWindow& game_window)
 		player_dir.push_back(player[i].getDirection());
 
 	sf::Event event;
-	game_map.popEgg(game_window);
-	game_map.popEgg(game_window); // Map thuging
+	game_map.popEgg();
+	game_map.popEgg(); // Map thuging
 
 	std::vector<Coord> explosions_coord;
 	game_window.requestFocus();
@@ -334,12 +334,12 @@ void Game::start(sf::RenderWindow& game_window)
 			}
 			for(unsigned char i = player_number; i--;){
 				if(player[i].getCoord() == game_map.getEggCoord()){
-					player[i].powerUp(game_window);
+					player[i].powerUp();
 
 					if (player[i].size() == egg_victory && egg_victory != 0) {
 						winner = static_cast<unsigned char>(i + 1);
 					}
-					game_map.popEgg(game_window);
+					game_map.popEgg();
 				}
 				player[i].print(game_window);
 			}

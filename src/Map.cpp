@@ -6,14 +6,16 @@
 
 #include <Map.hpp>
 
-/*Map::Map : function to create with parametre the map for the game.
- * All the parametre must be different of undefined.
- * x : the lenght of the map.
- * y : the width of the map.
- * texture : array of texture wich contain all the texture needed to print the map.
- * egg_sprite : texture of the egg.
- * return the map created.
- */
+Map::Map(unsigned int x, unsigned int y, std::vector< std::vector<Area> > smap) : x_size(x), y_size(y)
+{
+	srand(static_cast<unsigned int>(time(NULL)));
+	for (unsigned int i = 0; i < x; i++){
+		map.push_back(std::vector<Area>());
+		for (unsigned int j = 0; j < y; j++){
+			map[i].push_back(smap[i][j]);
+		}
+	}
+}
 
 Map::Map(const unsigned int x, const unsigned int y, std::vector< std::vector<Area> > smap, sf::Texture texture[NB_TEXTURE], sf::Texture* egg_texture) : x_size(x), y_size(y)
 {
@@ -75,16 +77,17 @@ void Map::init(){
 		std::cout << "Bad map : you should have no warp at all or at least 2" << std::endl;
 }
 
-void Map::popEgg (sf::RenderWindow& window){
+void Map::popEgg (){
 
 	if (free_tile.size() != 0)
 		coordinate_egg = free_tile[rand()%free_tile.size()];
 	else{
 		coordinate_egg = Coord(0,0);
 	}
-	egg_sprite.setPosition(static_cast<float>(coordinate_egg.x * RESOLUTION_X_IMAGE),static_cast<float>( coordinate_egg.y * RESOLUTION_Y_IMAGE));
-	window.draw(egg_sprite);
+}
 
+void Map::popEgg (Coord new_coord){
+	coordinate_egg = new_coord;
 }
 
 bool Map::isWarp(Coord tile){
