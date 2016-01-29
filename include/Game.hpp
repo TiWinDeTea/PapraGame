@@ -74,8 +74,6 @@
  */
 class Game{
 
-friend class NetworkGame;
-
 public:
 
 	~Game();

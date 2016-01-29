@@ -145,8 +145,8 @@ void Game::getMapFile(){
 	map_file_name = "map";
 
 	if( directory == NULL ){
-		std::cout << "Could not open the folder " << path << "maps/" << std::endl;
-		std::cout << "Assuming " << path << "map to be the map's file" << std::endl;
+		std::cout << "Could not open the folder maps/" << std::endl;
+		std::cout << "Assuming map to be the map's file" << std::endl;
 	}
 	else{
 		int choice;
@@ -507,23 +507,18 @@ void Game::printExplosion(Coord coord){
 void Game::pauseGame(bool player_request){
 	sf::Event event;
 	std::cout << "Game paused" << std::endl;
-    if(player_request){
-        std::cout << "Press Escape to resume" << std::endl;
+	if(player_request){
+		std::cout << "Press Escape to resume" << std::endl;
 		do{
-			sf::sleep(sf::milliseconds(100));
-			game_window.pollEvent(event);
-			if (sf::Event::Closed == event.type) {
+			if (game_window.waitEvent(event) && sf::Event::Closed == event.type) {
 				game_window.close();
 			}
-        }while(game_window.isOpen() && (sf::Event::KeyPressed != event.type || event.key.code != sf::Keyboard::Escape));
+		}while(game_window.isOpen() && (sf::Event::KeyPressed != event.type || event.key.code != sf::Keyboard::Escape));
 	}
 	else{
-	    std::cout << "(lost focus)" << std::endl;
+		std::cout << "(lost focus)" << std::endl;
 		do{
 			sf::sleep(sf::milliseconds(150));
-			game_window.pollEvent(event);
-			if (sf::Event::Closed == event.type)
-				game_window.close();
 		}while(game_window.isOpen() && !(game_window.hasFocus()));
 	}
 }
