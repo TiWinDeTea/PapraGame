@@ -1,11 +1,12 @@
 #include <Game.hpp>
+#include <Menu.hpp>
 #include <string>
 
 int main(int argc, char* argv[]);
 int main(int argc, char* argv[]){
+	Menu menu;
 	if (argc <= 1)  {
-		Game game;
-		game.launch();
+		menu.mainMenu();
 	}
 	else{
 		if (std::string(argv[1]) == "--version") {
@@ -27,8 +28,8 @@ int main(int argc, char* argv[]){
 				"Game currently under development" << std::endl;
 		}
 		else{
-			Game game("res/", std::string(argv[1]) + '/', "ducks/");
-			game.launch();
+			menu.setBiome(std::string(argv[1]));
+			menu.mainMenu();
 		}
 	}
 	return 0;

@@ -76,21 +76,20 @@ class Game{
 
 public:
 
+	Game();
+	Game(std::string path1, std::string path2, std::string path3);
 	~Game();
-	Game(){path = "res/"; biome_path = "none"; ducks_path = "ducks/"; player_number = 0;}
-	Game(std::string path1, std::string path2, std::string path3){path = path1; biome_path = path2; ducks_path = path3; player_number = 0;}
-
-	void launch();
+	void launch(sf::RenderWindow& game_window, std::string map_name);
 
 private:
 
 	void getMapFile();
 	bool loadMap();
-	void start();
+	void start(sf::RenderWindow& game_window);
 	bool someoneWon();
 	std::vector<sf::Keyboard::Key> loadKeys(std::string selected_player);
-	void printExplosion(Coord coord);
-	void pauseGame(bool player_request);
+	void printExplosion(sf::RenderWindow& game_window, Coord coord);
+	void pauseGame(sf::RenderWindow& game_window, bool player_request);
 
 	Map game_map;
 	std::vector<Duck> player;
@@ -101,9 +100,8 @@ private:
 	sf::Texture map_texture[9];
 	sf::Texture egg_texture, explosion_texture;
 	sf::Sprite explosion_sprite;
-	sf::RenderWindow game_window;
 	unsigned int pxl_length, pxl_height;
-	std::string path, biome_path, ducks_path, map_file_name;
+	std::string path, biome_path, ducks_path, map_path;
 	unsigned char player_number;
 	unsigned int game_speed;
 	unsigned short egg_victory;

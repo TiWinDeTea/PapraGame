@@ -52,6 +52,20 @@ static const struct {
   "\0\0\0\0",
 };
 
+Game::Game(){
+	path = "res/";
+	biome_path = "none";
+	ducks_path = "ducks/";
+	player_number = 0;
+}
+
+Game::Game(std::string path1, std::string path2, std::string path3){
+	path = path1;
+	biome_path = path2;
+	ducks_path = path3;
+	player_number = 0;
+}
+
 Game::~Game()
 {
 	for (unsigned char i = player_number ; i-- ;) {
@@ -61,17 +75,17 @@ Game::~Game()
 	}
 }
 
-void Game::launch(){
+void Game::launch(sf::RenderWindow& game_window, std::string map_name){
 
-	this->getMapFile();
+	map_path = map_name;
 	if (biome_path == "none") {
-		std::ifstream map_file(map_file_name, std::ios::in | std::ios::binary);
+		std::ifstream map_file(map_path, std::ios::in | std::ios::binary);
 		if (map_file){
 			map_file >> biome_path;
 			biome_path += '/';
 		}
 		else{
-			std::cout << "Failed to open " << map_file_name << std::endl;
+			std::cout << "Failed to open " << map_path << std::endl;
 			return;
 		}
 		map_file.close();
@@ -124,7 +138,8 @@ void Game::launch(){
 	}
 	else {
 		winner = 0;
-		game_window.create(sf::VideoMode(pxl_length, pxl_height), "PapraGame ~ A game with Ducks !", sf::Style::Titlebar | sf::Style::Close);
+		game_window.setSize(sf::Vector2u(pxl_length, pxl_height));
+		game_window.setView(sf::View(sf::FloatRect(0, 0, static_cast<float>(pxl_length), static_cast<float>(pxl_height))));
 
 		for (unsigned char i = player_number ; i-- ;) {
 			std::string tmp("player ");
@@ -135,66 +150,12 @@ void Game::launch(){
 		explosion_sprite.setTexture(explosion_texture);
         game_window.setIcon( sfml_icon.width,  sfml_icon.height,  sfml_icon.pixel_data );
 
-		this->start();
-	}
-}
-
-void Game::getMapFile(){
-	DIR* directory = opendir(std::string("maps").c_str());
-	struct dirent* redfile = NULL;
-	map_file_name = "map";
-
-	if( directory == NULL ){
-		std::cout << "Could not open the folder maps/" << std::endl;
-		std::cout << "Assuming map to be the map's file" << std::endl;
-	}
-	else{
-		int choice;
-		std::vector<std::string> maps;
-		auto isFile = [](std::string const& local_path) -> bool {
-			#ifdef OS_WINDOWS
-			std::ifstream file (local_path.c_str(), std::ios::in);
-			return !(file.fail());
-			#else
-			struct stat s;
-			if( stat(local_path.c_str() ,&s ) == 0)
-				return !(s.st_mode & S_IFDIR);
-			else
-				return false;
-			#endif
-		};
-		std::cout << "Found maps :" << std::endl;
-		while ((redfile = readdir(directory)) != NULL){
-			std::string tmp( redfile->d_name );
-			if (isFile("maps/" + tmp) && tmp.size() > 4 && tmp.substr(tmp.size() - 4) == ".map") {
-				maps.push_back("maps/" + tmp);
-				tmp.erase(tmp.size() - 4);
-				std::cout << '\t' << maps.size() << ". " << tmp << std::endl;
-			}
-		}
-		if (maps.size() == 0) {
-			std::cout << "No file found !" << std::endl;
-			std::cout << "Assuming" << path << "map to be the map's file" << std::endl;
-		}
-		else{
-			std::cout << std::endl << "Your map choice (enter the number) : ";
-			std::cin >> choice;
-			while(choice <= 0 || choice > static_cast<signed>(maps.size()))
-			{
-				std::cout << "Invalid input. Please retry : ";
-				std::cin >> choice;
-			}
-#ifdef OS_WINDOWS
-			std::fflush(stdin);
-			std::cin.clear();
-#endif
-			map_file_name = maps[choice - 1];
-		}
+		this->start(game_window);
 	}
 }
 
 bool Game::loadMap(){
-	std::ifstream map_file(map_file_name, std::ios::in | std::ios::binary);
+	std::ifstream map_file(map_path, std::ios::in | std::ios::binary);
 	unsigned int x_map_size, y_map_size;
 	std::string value;
 
@@ -287,7 +248,7 @@ bool Game::loadMap(){
 		return false;
 }
 
-void Game::start()
+void Game::start(sf::RenderWindow& game_window)
 {
 	int tmp(1);
 	std::vector<Direction> player_dir;
@@ -301,7 +262,7 @@ void Game::start()
 	std::vector<Coord> explosions_coord;
 	game_window.requestFocus();
 
-	while (game_window.isOpen())
+	while (game_window.isOpen() && winner == 0)
 	{
 		while (game_window.pollEvent(event))
 		{
@@ -319,11 +280,11 @@ void Game::start()
 						player_dir[i] = RIGHT;
 				}
 				if (event.key.code == sf::Keyboard::Escape) {
-					this->pauseGame(true);
+					this->pauseGame(game_window, true);
 				}
 			}
 			else if (!(game_window.hasFocus()))
-					this->pauseGame(false);
+					this->pauseGame(game_window, false);
 		}
 		sf::sleep(sf::milliseconds(game_speed));
 		--tmp;
@@ -377,7 +338,6 @@ void Game::start()
 
 					if (player[i].size() == egg_victory && egg_victory != 0) {
 						winner = static_cast<unsigned char>(i + 1);
-						game_window.close();
 					}
 					game_map.popEgg(game_window);
 				}
@@ -396,22 +356,22 @@ void Game::start()
 			}
 		}
 		for(unsigned int i = static_cast<unsigned int>(explosions_coord.size()); i--;){
-			printExplosion(explosions_coord[i]);
+			printExplosion(game_window, explosions_coord[i]);
 		}
 		game_window.display();
 
 	}
 
-	if (winner != 0){
+	/*if (winner != 0){
 		std::cout << std::endl;
 		std::cout << "Player " << static_cast<short>(winner) << " won !" << std::endl;
 		std::cout << "Congratulations !" << std::endl << std::endl;
 		std::cout << "Press Enter to quit" << std::endl;
-#ifndef OS_WINDOWS
+		#ifndef OS_WINDOWS
+			getchar();
+		#endif
 		getchar();
-#endif
-		getchar();
-	}
+	}*/
 }
 
 std::vector<sf::Keyboard::Key> Game::loadKeys(std::string selected_player){
@@ -499,12 +459,12 @@ std::vector<sf::Keyboard::Key> Game::loadKeys(std::string selected_player){
 	return answer;
 }
 
-void Game::printExplosion(Coord coord){
+void Game::printExplosion(sf::RenderWindow& game_window, Coord coord){
 	explosion_sprite.setPosition(static_cast<float>(coord.x * 32), static_cast<float>(coord.y * 32));
 	game_window.draw(explosion_sprite);
 }
 
-void Game::pauseGame(bool player_request){
+void Game::pauseGame(sf::RenderWindow& game_window, bool player_request){
 	sf::Event event;
 	std::cout << "Game paused" << std::endl;
 	if(player_request){
