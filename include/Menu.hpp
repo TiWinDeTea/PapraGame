@@ -66,7 +66,7 @@
 
 #define TEXTURE_TITLE                 "BgFixed"
 #define TEXTURE_BACKGROUND            "BgScrolling"
-#define FILETYPE                      ".png"
+#define TEXTURE_FILETYPE              ".png"
 #define BACKGROUND_LOOP_WIDTH         3296
 #define REFRESH_SLOWNESS              20
 

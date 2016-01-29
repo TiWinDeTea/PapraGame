@@ -18,8 +18,8 @@ Menu::Menu(){
 	maps_path = MAPS_PATH;
 	menu_path = MENU_PATH;
 
-	title_texture.loadFromFile(res_path + menu_path + TEXTURE_TITLE + FILETYPE);
-	background_texture.loadFromFile(res_path + menu_path + TEXTURE_BACKGROUND + FILETYPE);
+	title_texture.loadFromFile(res_path + menu_path + TEXTURE_TITLE + TEXTURE_FILETYPE);
+	background_texture.loadFromFile(res_path + menu_path + TEXTURE_BACKGROUND + TEXTURE_FILETYPE);
 	title_sprite.setTexture(title_texture);
 	background_sprite.setTexture(background_texture);
 	background_sprite.setOrigin(0, - TITLE_HEIGHT);
@@ -63,7 +63,7 @@ void Menu::mainMenu(){
 		text[i].setCharacterSize(MAIN_FONT_SIZE);
 		text[i].setOrigin(0,-TITLE_HEIGHT);
 		text[i].setColor(TXT_COLOR);
-		text[i].setPosition(static_cast<float>((MENU_X_RESOLUTION) - text[i].getGlobalBounds().width) / static_cast<float>(2), static_cast<float>(i * (MAIN_BUTTON_HEIGHT + MAIN_BUTTON_SPACE) + (MAIN_BUTTON_HEIGHT - MAIN_FONT_SIZE) / 2) + MAIN_BUTTON_SPACE - text[i].getGlobalBounds().height / static_cast<float>(4));
+		text[i].setPosition(static_cast<float>((MENU_X_RESOLUTION) - text[i].getGlobalBounds().width) / 2.0f, static_cast<float>(i * (MAIN_BUTTON_HEIGHT + MAIN_BUTTON_SPACE) + (MAIN_BUTTON_HEIGHT - MAIN_FONT_SIZE) / 2) + MAIN_BUTTON_SPACE - text[i].getGlobalBounds().height / 4.0f);
 	}
 
 	char user_choice = 0;
@@ -216,7 +216,7 @@ std::string Menu::mapMenu(){
 			text[i].setCharacterSize(MAP_FONT_SIZE);
 			text[i].setOrigin(0,-TITLE_HEIGHT);
 			text[i].setColor(TXT_COLOR);
-			text[i].setPosition(static_cast<float>((MENU_X_RESOLUTION) - text[i].getGlobalBounds().width) / static_cast<float>(2), static_cast<float>(i * (MAP_BUTTON_HEIGHT + MAP_BUTTON_SPACE) + (MAP_BUTTON_HEIGHT - MAP_FONT_SIZE) / 2) + MAP_BUTTON_SPACE - text[i].getGlobalBounds().height / static_cast<float>(4));
+			text[i].setPosition(static_cast<float>((MENU_X_RESOLUTION) - text[i].getGlobalBounds().width) / 2.0f, static_cast<float>(i * (MAP_BUTTON_HEIGHT + MAP_BUTTON_SPACE) + (MAP_BUTTON_HEIGHT - MAP_FONT_SIZE) / 2) + MAP_BUTTON_SPACE - text[i].getGlobalBounds().height / 4.0f);
 		}
 	}
 
