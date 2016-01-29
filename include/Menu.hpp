@@ -37,30 +37,38 @@
 #define MENU_X_RESOLUTION             800
 #define MENU_Y_RESOLUTION             600
 
-#define TITLE_HEIGHT                  200
+#define TITLE_HEIGHT                  216
 
 #define LOCAL_TXT                     "Local"
 #define NETWORK_TXT                   "Network"
 #define EXIT_TXT                      "Exit"
 #define MAIN_FONT_SIZE                 44
-#define MAP_FONT_SIZE                  30
+#define MAP_FONT_SIZE                  26
 
 #define MAIN_BUTTON_HEIGHT            50
 #define MAIN_BUTTON_WIDTH             400
 #define MAIN_BUTTON_SPACE             30
-#define MAP_BUTTON_HEIGHT             40
+#define MAP_BUTTON_HEIGHT             35
 #define MAP_BUTTON_WIDTH              600
-#define MAP_BUTTON_SPACE              30
-#define SELECTION_OUTLINE_THICKNESS   7
+#define MAP_BUTTON_SPACE              15
+#define OUTLINE_THICKNESS             5
 
 #define BUTTON_FILL_COLOR             sf::Color(100, 250, 50)
-#define OUTLINE_COLOR                 sf::Color(250, 150, 100)
+#define SELECTED_OUTLINE_COLOR        sf::Color(250, 150, 100)
+#define NORMAL_OUTLINE_COLOR          sf::Color(0, 0, 255)
 #define TXT_COLOR                     sf::Color::Red
 
 #define MAPS_PATH                     "maps/"
 #define RES_PATH                      "res/"
 #define BIOME_PATH                    "none"
 #define DUCKS_PATH                    "ducks/"
+#define MENU_PATH                     "menu/"
+
+#define TEXTURE_TITLE                 "BgFixed"
+#define TEXTURE_BACKGROUND            "BgScrolling"
+#define FILETYPE                      ".png"
+#define BACKGROUND_LOOP_WIDTH         3296
+#define REFRESH_SLOWNESS              20
 
 /**
  * @class Menu Menu.hpp
@@ -82,10 +90,15 @@ class Menu{
 
 	private:
 
+		int bg_pos;
 		sf::RenderWindow window;
 		sf::Font font;
+		sf::Texture title_texture;
+		sf::Texture background_texture;
+		sf::Sprite title_sprite;
+		sf::Sprite background_sprite;
 
-		std::string res_path, biome_path, ducks_path, maps_path, map_path;
+		std::string res_path, biome_path, ducks_path, maps_path, map_path, menu_path;
 };
 
 #endif /* MENU_HPP_INCLUDED */
