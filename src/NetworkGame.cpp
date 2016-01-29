@@ -10,7 +10,7 @@ GameServer::~GameServer(){
 	for (size_t i = clients.size() - 1; i-- ;) {
 		delete clients[i];
 	}
-};
+}
 
 GameServer::GameServer(std::string ressources, std::string biome_path, std::string map_file_name){
 
@@ -306,7 +306,7 @@ void GameClient::launch(sf::RenderWindow& game_window){
 				server.receive(packet);
 				if((packet >> dir))
 					direction = static_cast<Direction>(dir);
-			} while(direction = NOPE);
+			} while(direction == NOPE);
 			
 			this->start(game_window);
 		}
@@ -412,10 +412,9 @@ void GameClient::start(sf::RenderWindow& game_window){
 		server.receive(packet);
 		packet >> ended;
 		if (ended) {
-				
 			packet >> winner;
 		} else {
-			for (unsigned int i = player.size() - 1; i--;){
+			for (unsigned int i = static_cast<int>(player.size()) - 1; i--;){
 				packet >> damaged;
 				if (!damaged){
 					packet >> tmpint >> power_up;
@@ -424,6 +423,7 @@ void GameClient::start(sf::RenderWindow& game_window){
 					if (power_up){
 						packet >> egg_x >> egg_y;
 						game_map.popEgg(Coord(egg_x,egg_y));
+						player[i].powerUp();
 					}
 				} else { 
 					player[i].damaged(player_initial_dir[i]);
@@ -450,8 +450,16 @@ void GameClient::start(sf::RenderWindow& game_window){
 			if (game_window.isOpen()){
 				packet << static_cast<int>(direction);
 				server.send(packet);
+				game_map.print(game_window);
+				for (unsigned int i = static_cast<int>(player.size()) -1; i--;){
+					if (game_map.isWarp(player[i].getCoord())){
+						player[i].warped(game_map.getWarp(player[i].getCoord()));
+					} else {
+						player[i].move(direction, map_width, map_height);
+					}
+					player[i].print(game_window);
+				}
 			}
-			
 		}
 	} while (!ended);
 }
