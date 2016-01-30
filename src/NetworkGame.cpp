@@ -18,7 +18,7 @@ GameServer::GameServer(std::string ressources, std::string biome_path, std::stri
 	unsigned char nbr_player = 0;
 	std::string tmpstr;
 
-	std::ifstream map_file(ressources + map_file_name, std::ios::in | std::ios::binary);
+	std::ifstream map_file(map_file_name, std::ios::in | std::ios::binary);
 	if (biome_path == "nope")
 		map_file >> biome_path;
 	else map_file >> tmpstr;
@@ -73,6 +73,7 @@ GameServer::GameServer(std::string ressources, std::string biome_path, std::stri
 		player.push_back(Duck());
 
 		map_file >> player_spawn[nbr_player].x;
+		--player_spawn[nbr_player].x;
 		map_file >> player_spawn[nbr_player].y;
 		if (tmpstr == "up")
 			player_initial_dir.push_back(UP);
@@ -147,8 +148,7 @@ void GameServer::getClients(std::string biome_path, std::vector< std::vector<Are
 				clients.back()->send(packet);
 			}
 		}
-
-	}while(!(instantGetChar() != '\n') && clients.size() < player.size());
+	}while(/*!(instantGetChar() != '\n') && */clients.size() < player.size());
 }
 
 char GameServer::instantGetChar(){
@@ -249,11 +249,11 @@ void GameServer::start(){
 				}
 			}
 		}
-		
+
 		for (unsigned char i((unsigned char)(clients.size())) ; i-- ;) {
 			clients[i]->send(packet);
 		}
-		
+
 		for (unsigned char i((unsigned char)(clients.size())) ; i-- ;) {
 			packet.clear();
 			clients[i]->receive(packet);
@@ -261,7 +261,7 @@ void GameServer::start(){
 			packet >> dir_as_int;
 			player_dir[i] = static_cast<Direction>(dir_as_int);
 			if (player_dir[i] == NOPE) {
-				
+
 			}
 		}
 
@@ -410,7 +410,7 @@ void GameClient::launch(sf::RenderWindow& game_window){
 				if((packet >> dir))
 					direction = static_cast<Direction>(dir);
 			} while(direction == NOPE);
-			
+
 			this->start(game_window);
 		}
 	}
@@ -528,7 +528,7 @@ void GameClient::start(sf::RenderWindow& game_window){
 						game_map.popEgg(Coord(egg_x,egg_y));
 						player[i].powerUp();
 					}
-				} else { 
+				} else {
 					player[i].damaged(player_initial_dir[i]);
 				}
 			}
