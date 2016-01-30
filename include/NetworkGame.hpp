@@ -77,7 +77,7 @@ public:
 
 private:
 
-	void getClients(std::string biome_path, std::vector< std::vector<Area> > map_as_area);
+	void getClients(std::string res, std::string biome_path, std::vector< std::vector<Area> > map_as_area);
 	void start();
 	char instantGetChar();
 
@@ -97,8 +97,7 @@ class GameClient{
 	public:
 
 		~GameClient(){};
-		GameClient(bool is_local){local = is_local;}
-		GameClient(std::string bp="nope", bool is_local = false){local_biome_path = bp; local = is_local;}
+		GameClient(std::string bp, bool is_local){biome_path = bp; local = is_local;}
 		void launch(sf::RenderWindow& game_window);
 
 	private :
@@ -118,7 +117,7 @@ class GameClient{
 		sf::Texture egg_texture;
 		sf::Texture explosion_texture;
 		sf::Sprite explosion_sprite;
-		std::string local_biome_path;
+		std::string biome_path;
 };
 
 #endif /* NETWORKGAME_HPP_INCLUDED */

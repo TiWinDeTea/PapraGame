@@ -91,13 +91,13 @@ GameServer::GameServer(std::string ressources, std::string biome_path, std::stri
 
 	game_map = Map(map_width, map_height, map_as_area);
 
-	this->getClients(biome_path, map_as_area);
+	this->getClients(ressources, biome_path, map_as_area);
 }
 
-void GameServer::getClients(std::string biome_path, std::vector< std::vector<Area> > map_as_area){
+void GameServer::getClients(std::string res, std::string biome_path, std::vector< std::vector<Area> > map_as_area){
 	sf::Packet packet;
 
-	packet << biome_path << game_speed << map_width << map_height;
+	packet << res << biome_path << game_speed << map_width << map_height;
 	for (unsigned int i = 0 ; i < map_height ; ++i) {
 		for (unsigned int j = 0 ; j < map_width ; ++j) {
 			packet << map_as_area[i][j];
@@ -111,11 +111,12 @@ void GameServer::getClients(std::string biome_path, std::vector< std::vector<Are
 
 	sf::TcpListener listener;
 	sf::UdpSocket potential_client;
+	potential_client.bind(PORT);
 
 	potential_client.setBlocking(false);
 	listener.setBlocking(false);
 
-	char data[25];
+	char data[25] = "Pass";
 	size_t volume_received = 0;
 
 	if (listener.listen(PORT) != sf::Socket::Done) {
@@ -131,7 +132,7 @@ void GameServer::getClients(std::string biome_path, std::vector< std::vector<Are
 		unsigned short client_port;
 		potential_client.receive(data, 25, volume_received, client_ip, client_port);
 
-		sf::sleep(sf::milliseconds(25));
+		sf::sleep(sf::milliseconds(30));
 
 		if (volume_received == 25 && std::string(data) == "PapraGame ~ Game request") {
 			std::cout << "Request from : " << client_ip << std::endl;
@@ -146,9 +147,10 @@ void GameServer::getClients(std::string biome_path, std::vector< std::vector<Are
 				std::cout << "Sending files" << std::endl;
 				clients.push_back(client);
 				clients.back()->send(packet);
+				std::cout << "Players : " << clients.size() + 1 << "/" << player.size() << std::endl << std::endl;
 			}
 		}
-	}while(/*!(instantGetChar() != '\n') && */clients.size() < player.size());
+	}while(/*!(instantGetChar() != '\n') && */clients.size() < player.size() - 1);
 }
 
 char GameServer::instantGetChar(){
@@ -181,6 +183,8 @@ void GameServer::launch(){
 }
 
 void GameServer::start(){
+
+	std::cout << "Game's starting" << std::endl;
 
 	std::vector<Direction> player_dir = player_initial_dir;
 
@@ -308,12 +312,14 @@ void GameClient::launch(sf::RenderWindow& game_window){
 		std::cout << "Connected to " << server_ip << ":" << PORT << std::endl;
 
 		sf::Packet packet;
-		std::string biome_path;
 		std::vector< std::vector<Area> > map_as_area;
 		unsigned char nbr_player;
 		std::vector<Coord> player_spawn;
 
 		server.receive(packet);
+
+		packet >> path;
+
 		if (biome_path == "nope"){
 			packet >> biome_path;
 		} else {
@@ -373,7 +379,6 @@ void GameClient::launch(sf::RenderWindow& game_window){
 		for (unsigned char i = 9 ; i-- ;) {
 			loading_success = loading_success && map_texture[i].loadFromFile(path + map_textures_path[i] + FILETYPE);
 		}
-
 
 		loading_success = loading_success && egg_texture.loadFromFile(path + DUCK_PATH + TEXTURE_EGG + FILETYPE);
 		loading_success = loading_success && explosion_texture.loadFromFile(path + DUCK_PATH + TEXTURE_EXPLOSION + FILETYPE);

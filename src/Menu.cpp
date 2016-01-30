@@ -149,13 +149,14 @@ void Menu::mainMenu(){
 							GameServer server("res/", "nope", this->mapMenu());
 							sf::Thread server_thread(&GameServer::launch, &server);
 							server_thread.launch();
-							GameClient client(false);
+							GameClient client("nope", false);
+							sf::sleep(sf::milliseconds(100));
 							client.launch(window);
 							server_thread.wait();
 						}
 						else
 						{
-							GameClient client(false);
+							GameClient client("nope", false);
 							client.launch(window);
 
 						}
