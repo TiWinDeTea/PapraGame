@@ -23,10 +23,10 @@ We are currently working make this game fully graphical, together with a Network
 You can choose the keys for each player in the res/keys.conf file ; Pause by pressing Escape (the game also pauses if it looses the focus).
 When you hit an obstacle, you will be unvulnerable for 5 turns. Strange violet stuff that may appears in a map are warps. Going into a warp will teleport you to another random warp. Beware the walls !
 
-###Map editing
+###Map Creation
 <br/>
-You can edit the map opening the map file (in the folder `build/res/`) with your favorite text editor
-It should be created according to the following (line by line)
+You can add a map in the folder `./maps/`). Just create a file named ``<map_name>.map`` and edit it with text editor.
+The file should be structured according to the following (line by line)
 + Biome (sand, grass, space, snow, …)
 + The game 'slowness'
 + Number of eggs required to win (0 for infinity)
@@ -42,9 +42,9 @@ It should be created according to the following (line by line)
     + ``7`` for east-north
     + ``9`` for west-north
     + ``x`` for warps
-+ Starting point of player 1 (x y)
-    + On the same line, starting direction of player 1 (up, down, left, right)
-+ Same for other player (if there are any)
++ Starting direction of player 1 (up, down, left, right)
+    + On the same line, starting point of player 1 (x then y) [the origin is on the top left. x increases rightwards, y increases downwards]
++ Same for other player (if any)
 + eof
 (eof stands for End Of File)
 
@@ -61,7 +61,7 @@ You can get the game sources from the Time Winder Dev Team [github repo](https:/
 Binaries and sources of the v0.4 are available on [github](https://github.com/TiWinDeTea/PapraGame/releases/tag/v0.4) aswell
 <br/>
 
-##Requirements
+##Compilation requirements
 <br/>
 + Platform : Linux, Windows, Mac OSX (MAC OSX support is theorical)
 + SFML ≥ 2.2
@@ -74,7 +74,7 @@ License : Mozilla Public License Version 2.0
 
 [Read the license file](LICENSE.md)
 
-Disclaimer of Warranty
+Extract : Disclaimer of Warranty
 
     Covered Software is provided under this License on an "as is"
     basis, without warranty of any kind, either expressed, implied, or
@@ -96,10 +96,8 @@ In order to compile PapraGame executable, go to the project's root with a termin
 
 ``$ make``
 
-An executable named `PapraGame.elf` should be generated in the `res/` folder
-
-You may delete the `obj/` folder if you like to.
+An executable named `PapraGame.elf` should be generated in the `build/` folder
 
 ##Contribute
 
-You may contribute easily by trying the game and have fun ! That would make us very happy !
+You may contribute easily by trying the game and having fun ! That would make us very happy !
