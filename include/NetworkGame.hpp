@@ -7,6 +7,14 @@
 #ifndef NETWORKGAME_HPP_INCLUDED
 #define NETWORKGAME_HPP_INCLUDED
 
+/**
+ * @file NetworkGame.hpp
+ * @author Lucas LAZARE, Julien BARBIER
+ * @version 0.0
+ * @license Mozilla Public License, v. 2.0
+ * @brief Defis both GameServer and GameClient classes
+ */
+
 #if defined(_WIN32) || defined(_WIN64) || defined(WIN32) || defined(WIN64)
 	#include <conio.h>
 	#define OS_WINDOWS
@@ -67,18 +75,50 @@
 
 #define PORT                        7482
 
+
+/**
+ * @class GameServer NetworkGame.hpp
+ * @brief Defines the GameServer class
+ * @details This class is used to host a network game
+ */
 class GameServer{
 
 public:
 
+	/**
+	 * @brief GameServer destructor
+	 */
 	~GameServer();
+
+	/**
+	 * @brief GameServer constructor
+	 * @param ressources_path Path to the ressources (from the executable root)
+	 * @param biome_path      Path to the biome (from the executable root)
+	 * @param map_file_name   Path to the map (from the executable root)
+	 */
 	GameServer(std::string ressources_path, std::string biome_path, std::string map_file_name);
+
+	/**
+	 * @brief Launches a Network Game
+	 */
 	void launch();
 
 private:
 
+	/**
+	 * @brief Listens for clients broadcasting the network
+	 * @param res         Path to the ressources (from the executable root)
+	 * @param biome_path  Path to the biome (from the executable root)
+	 * @param map_as_area Map (from the file) interpreted as a 2d vector of Area
+	 */
 	void getClients(std::string res, std::string biome_path, std::vector< std::vector<Area> > map_as_area);
+
+	/**
+	 * @brief Starts a Network Game
+	 */
 	void start();
+
+	// Will be removed
 	char instantGetChar();
 
 	std::vector<sf::TcpSocket*> clients;

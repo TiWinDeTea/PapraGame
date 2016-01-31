@@ -143,14 +143,14 @@ void GameServer::getClients(std::string res, std::string biome_path, std::vector
 				delete client;
 			}
 			else{
-				std::cout << client_ip << ":" << client_port << " - connected" << std::endl;
+				std::cout << client_ip << " - connected" << std::endl;
 				std::cout << "Sending files" << std::endl;
 				clients.push_back(client);
 				clients.back()->send(packet);
-				std::cout << "Players : " << clients.size() + 1 << "/" << player.size() << std::endl << std::endl;
+				std::cout << "Players : " << clients.size() << "/" << player.size() << std::endl << std::endl;
 			}
 		}
-	}while(/*!(instantGetChar() != '\n') && */clients.size() < player.size() - 1);
+	}while(/*!(instantGetChar() != '\n') && */clients.size() < player.size());
 }
 
 char GameServer::instantGetChar(){
