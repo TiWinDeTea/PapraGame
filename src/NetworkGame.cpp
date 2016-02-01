@@ -283,6 +283,7 @@ void GameServer::start(){
 void GameClient::launch(sf::RenderWindow& game_window){
 
 	sf::UdpSocket broadcast;
+	broadcast.setBlocking(false);
 	char data[26] = "PapraGame ~ Game request";
 
 	if (broadcast.send(data, 25, sf::IpAddress::Broadcast, PORT) != sf::Socket::Done){
@@ -292,20 +293,24 @@ void GameClient::launch(sf::RenderWindow& game_window){
 
 	} else {
 
-		unsigned short tmpus;
+		unsigned short tmpus(PORT);
 		size_t tmps_t;
 		sf::IpAddress server_ip;
 		std::string path;
+		sf::UdpSocket fsocket;
+		
+		fsocket.bind(PORT);
 
-		if (broadcast.receive(data, 26, tmps_t, server_ip, tmpus) != sf::Socket::Done || tmps_t != 26 ||  std::string(data) != "PapraGame ~ Game accepted"){
+		if (fsocket.receive(data, 26, tmps_t, server_ip, tmpus) != sf::Socket::Done || tmps_t != 26 ||  std::string(data) != "PapraGame ~ Game accepted"){
 
+			std::cout << "Received "<< data << " size : "<< tmps_t<< std::endl;
 			std::cout << "There was a problem trying to find the server" << std::endl;
 			return;
 		}
 
 		if (server.connect(server_ip, PORT) != sf::Socket::Done){
 
-			std::cout << "There was a problem trying to find the server" << std::endl;
+			std::cout << "There was a big problem trying to find the server" << std::endl;
 			return;
 		}
 
@@ -317,7 +322,7 @@ void GameClient::launch(sf::RenderWindow& game_window){
 		std::vector<Coord> player_spawn;
 
 		server.receive(packet);
-
+                         
 		packet >> path;
 
 		if (biome_path == "nope"){
