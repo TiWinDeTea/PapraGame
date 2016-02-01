@@ -114,9 +114,9 @@ void GameServer::getClients(std::string res, std::string biome_path, std::vector
 	potential_client.bind(PORT);
 
 	potential_client.setBlocking(false);
-	listener.setBlocking(false);
 
 	char data[25] = "Pass";
+	const char accept[26] = "PapraGame ~ Game accepted";
 	size_t volume_received = 0;
 
 	if (listener.listen(PORT) != sf::Socket::Done) {
@@ -127,7 +127,6 @@ void GameServer::getClients(std::string res, std::string biome_path, std::vector
 	std::cout << "Press enter to start the game" << std::endl << std::endl;
 
 	do{
-		sf::TcpSocket* client = new sf::TcpSocket;
 		sf::IpAddress client_ip;
 		unsigned short client_port;
 		potential_client.receive(data, 25, volume_received, client_ip, client_port);
@@ -135,9 +134,13 @@ void GameServer::getClients(std::string res, std::string biome_path, std::vector
 		sf::sleep(sf::milliseconds(30));
 
 		if (volume_received == 25 && std::string(data) == "PapraGame ~ Game request") {
-			std::cout << "Request from : " << client_ip << std::endl;
-			potential_client.send("PapraGame ~ Game accepted", 26, client_ip, client_port);
-			sf::sleep(sf::milliseconds(10));
+			data[0] = '\0';
+			volume_received = 0;
+			std::cout << "Request from " << client_ip << ":" << client_port << std::endl;
+			sf::sleep(sf::milliseconds(100));
+			std::cout << "Sending " << accept << " to " << client_ip << ":" << PORT << std::endl;
+			potential_client.send(accept, 26, client_ip, PORT);
+			sf::TcpSocket* client = new sf::TcpSocket;
 			if (listener.accept(*client) != sf::Socket::Done){
 				std::cout << "Connection Failed" << std::endl;
 				delete client;
