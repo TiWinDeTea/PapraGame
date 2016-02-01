@@ -349,7 +349,7 @@ std::string Menu::mapMenu(){
 			else if(event.type == sf::Event::MouseMoved){
 				if(!title_sprite.getGlobalBounds().contains(sf::Vector2f(sf::Mouse::getPosition(window)))){
 					for(unsigned char i = nbr_of_choices; i--;){
-						if(rectangle[i].getGlobalBounds().contains(sf::Vector2f(sf::Mouse::getPosition(window))))
+						if(((sf::Mouse::getPosition(window).y - TITLE_HEIGHT) > rectangle[i].getPosition().y) && ((sf::Mouse::getPosition(window).y - TITLE_HEIGHT) < (rectangle[i].getPosition().y + MAP_BUTTON_HEIGHT)))
 							user_choice = i;
 					}
 				}
@@ -386,7 +386,7 @@ std::string Menu::mapMenu(){
 				while(rectangle[user_choice].getPosition().y > (MENU_Y_RESOLUTION - TITLE_HEIGHT - MAP_BUTTON_HEIGHT))
 					--user_choice;
 				for(unsigned char i = nbr_of_choices; i--;){
-					if(rectangle[i].getGlobalBounds().contains(sf::Vector2f(sf::Mouse::getPosition(window))))
+					if(((sf::Mouse::getPosition(window).y - TITLE_HEIGHT) > rectangle[i].getPosition().y) && ((sf::Mouse::getPosition(window).y - TITLE_HEIGHT) < (rectangle[i].getPosition().y + MAP_BUTTON_HEIGHT)))
 						user_choice = i;
 				}
 			}
