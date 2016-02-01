@@ -337,8 +337,10 @@ void GameClient::launch(sf::RenderWindow& game_window){
 		packet >> map_width >> map_height;
 		biome_path += '/';
 
-		for (unsigned int i = 0 ; i < map_height; ++i) {
+		for (unsigned int i = 0 ; i < map_height ; ++i)
 			map_as_area.push_back(std::vector<Area>());
+
+		for (unsigned int i = 0 ; i < map_height; ++i) {
 			int tmpi;
 			for (unsigned int j = 0 ; j < map_width ; ++j) {
 				packet >> tmpi;
