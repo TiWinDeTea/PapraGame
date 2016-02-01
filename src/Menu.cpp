@@ -381,6 +381,10 @@ std::string Menu::mapMenu(){
 						text[i].setPosition(text_coord[i].x, text_coord[i].y - static_cast<float>(scrolling));
 					}
 				}
+				while(rectangle[user_choice].getPosition().y < 0)
+					++user_choice;
+				while(rectangle[user_choice].getPosition().y > (MENU_Y_RESOLUTION - TITLE_HEIGHT - MAP_BUTTON_HEIGHT))
+					--user_choice;
 				for(unsigned char i = nbr_of_choices; i--;){
 					if(rectangle[i].getGlobalBounds().contains(sf::Vector2f(sf::Mouse::getPosition(window))))
 						user_choice = i;
