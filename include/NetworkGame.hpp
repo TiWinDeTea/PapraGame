@@ -118,9 +118,6 @@ private:
 	 */
 	void start();
 
-	// Will be removed
-	char instantGetChar();
-
 	std::vector<sf::TcpSocket*> clients;
 	Map game_map;
 	std::vector<Duck> player;

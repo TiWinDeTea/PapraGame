@@ -96,87 +96,63 @@ GameServer::GameServer(std::string ressources, std::string biome_path, std::stri
 
 void GameServer::getClients(std::string res, std::string biome_path, std::vector< std::vector<Area> > map_as_area){
 	sf::Packet packet;
+	packet.clear();
+	packet << static_cast<unsigned int>(player.size()) << map_height << map_width << game_speed << res << biome_path;
 
-	packet << res << biome_path << game_speed << map_width << map_height;
-	for (unsigned int i = 0 ; i < map_height ; ++i) {
-		for (unsigned int j = 0 ; j < map_width ; ++j) {
-			packet << map_as_area[i][j];
-		}
-	}
-	std::cout << "nbr of player = " << player.size() << std::endl;
-	packet << static_cast<int>(player.size());
-
-	for (unsigned int i = 0 ; i < player.size() ; ++i) {
+	for(unsigned int i = 0 ; i < player.size() ; ++i){
 		packet << player_spawn[i].x << player_spawn[i].y << static_cast<int>(player_initial_dir[i]);
 	}
 
+	for(unsigned int i = 0 ; i < map_height ; ++i){
+		for (unsigned int j = 0 ; j < map_width ; ++j) {
+			packet << static_cast<int>(map_as_area[i][j]);
+		}
+	}
+
+	sf::UdpSocket udp_client;
+	udp_client.bind(PORT);
+
 	sf::TcpListener listener;
-	sf::UdpSocket potential_client;
-	potential_client.bind(PORT);
-
-	potential_client.setBlocking(false);
-
-	char data[25] = "Pass";
-	const char accept[26] = "PapraGame ~ Game accepted";
-	size_t volume_received = 0;
-
-	if (listener.listen(PORT) != sf::Socket::Done) {
-		std::cout << "Failed to create the server" << std::endl;
+	if (listener.listen(PORT) != sf::Socket::Done){
+		std::cout << "Cannot host the game" << std::endl;
 		return;
 	}
 
-	std::cout << "Press enter to start the game" << std::endl << std::endl;
+	char retrieved_data[25];
+	size_t retrieved_data_size;
+	unsigned short client_port;
+	sf::IpAddress client_ip;
+	sf::Socket::Status status;
+
+	std::cout << "Server : starting up" << std::endl << std::endl;
 
 	do{
-		sf::IpAddress client_ip;
-		unsigned short client_port;
-		potential_client.receive(data, 25, volume_received, client_ip, client_port);
+		status = udp_client.receive(retrieved_data, 25, retrieved_data_size, client_ip, client_port);
 
-		sf::sleep(sf::milliseconds(30));
+		if (status == sf::Socket::Done && retrieved_data_size == 25 && std::string(retrieved_data) == "PapraGame ~ Game Request" && client_port == (PORT + 1)) {
 
-		if (volume_received == 25 && std::string(data) == "PapraGame ~ Game request") {
-			data[0] = '\0';
-			volume_received = 0;
-			std::cout << "Request from " << client_ip << ":" << client_port << std::endl;
-			sf::sleep(sf::milliseconds(100));
-			std::cout << "Sending " << accept << " to " << client_ip << ":" << PORT << std::endl;
-			potential_client.send(accept, 26, client_ip, PORT);
+			std::cout << "Request from " << client_ip << ":" << PORT << std::endl;
 			sf::TcpSocket* client = new sf::TcpSocket;
-			if (listener.accept(*client) != sf::Socket::Done){
-				std::cout << "Connection Failed" << std::endl;
-				delete client;
+			status = udp_client.send("PapraGame ~ Client Accepted", 28, client_ip, client_port);
+
+			if (status == sf::Socket::Done && listener.accept(*client) == sf::Socket::Done) {
+
+				std::cout << "+ Connected" << std::endl;
+				clients.push_back(client);
+				std::cout << "+ Sending maps infos" << std::endl;
+				client->send(packet);
+				std::cout << "+ Done" << std::endl << std::endl;
 			}
 			else{
-				std::cout << client_ip << " - connected" << std::endl;
-				std::cout << "Sending files" << std::endl;
-				clients.push_back(client);
-				clients.back()->send(packet);
-				std::cout << "Players : " << clients.size() << "/" << player.size() << std::endl << std::endl;
+				std::cout << "- Not Connected" << std::endl;
+				delete client;
 			}
 		}
-	}while(/*!(instantGetChar() != '\n') && */clients.size() < player.size());
-}
-
-char GameServer::instantGetChar(){
-#ifdef OS_WINDOWS
-		if (_kbhit()) return static_cast<char>(_getch());
-		else return 0;
-#else
-		char key;
-		struct termios original_settings, new_settings;
-		tcgetattr(0, &original_settings);
-		new_settings = original_settings;
-		new_settings.c_lflag &= ~ICANON;
-		new_settings.c_cc[VMIN] = 1;
-		new_settings.c_cc[VTIME] = 0;
-		tcsetattr(0, TCSANOW, &new_settings);
-		key = static_cast<char>(getchar());
-		tcsetattr(0, TCSANOW, &original_settings);
-		return key;
-#endif
+	}while(true);
 }
 
 void GameServer::launch(){
+	return;
 	sf::Packet packet;
 	for (size_t i = clients.size() - 1 ; i--;){
 		packet.clear();
