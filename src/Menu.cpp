@@ -347,17 +347,21 @@ std::string Menu::mapMenu(){
 				}
 			}
 			else if(event.type == sf::Event::MouseMoved){
-				for(unsigned char i = nbr_of_choices; i--;){
-					if(rectangle[i].getGlobalBounds().contains(sf::Vector2f(sf::Mouse::getPosition(window))))
-						user_choice = i;
+				if(!title_sprite.getGlobalBounds().contains(sf::Vector2f(sf::Mouse::getPosition(window)))){
+					for(unsigned char i = nbr_of_choices; i--;){
+						if(rectangle[i].getGlobalBounds().contains(sf::Vector2f(sf::Mouse::getPosition(window))))
+							user_choice = i;
+					}
 				}
 			}
 			else if(event.type == sf::Event::MouseButtonPressed){
-				if(event.mouseButton.button == sf::Mouse::Button::Left){
-					for(unsigned char i = nbr_of_choices; i--;){
-						if(rectangle[i].getGlobalBounds().contains(sf::Vector2f(static_cast<float>(event.mouseButton.x), static_cast<float>(event.mouseButton.y)))){
-							user_choice = i;
-							done = true;
+				if(!title_sprite.getGlobalBounds().contains(sf::Vector2f(sf::Mouse::getPosition(window)))){
+					if(event.mouseButton.button == sf::Mouse::Button::Left){
+						for(unsigned char i = nbr_of_choices; i--;){
+							if(rectangle[i].getGlobalBounds().contains(sf::Vector2f(static_cast<float>(event.mouseButton.x), static_cast<float>(event.mouseButton.y)))){
+								user_choice = i;
+								done = true;
+							}
 						}
 					}
 				}
@@ -376,6 +380,10 @@ std::string Menu::mapMenu(){
 						rectangle[i].setPosition(rect_coord[i].x, rect_coord[i].y - static_cast<float>(scrolling));
 						text[i].setPosition(text_coord[i].x, text_coord[i].y - static_cast<float>(scrolling));
 					}
+				}
+				for(unsigned char i = nbr_of_choices; i--;){
+					if(rectangle[i].getGlobalBounds().contains(sf::Vector2f(sf::Mouse::getPosition(window))))
+						user_choice = i;
 				}
 			}
 		}
