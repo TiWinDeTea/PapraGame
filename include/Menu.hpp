@@ -42,7 +42,7 @@
 #define TITLE_HEIGHT                  216
 
 #define LOCAL_TXT                     "Local"
-#define NETWORK_TXT                   "Magic Network"
+#define NETWORK_TXT                   "Network"
 #define EXIT_TXT                      "Exit"
 #define BACK_TXT                      "back"
 #define NO_MAPS_TXT                   "No maps found"
