@@ -138,7 +138,8 @@ void Menu::mainMenu(){
 
 					case 0:
 						map_path = this->mapMenu();
-						game.launch(window, map_path);
+						if(map_path.size() > 0)
+							game.launch(window, map_path);
 						done = false;
 						break;
 
@@ -232,7 +233,7 @@ std::string Menu::mapMenu(){
 	else{
 		
 		//creation of rectangles
-		for(unsigned char i = 0; i < maps.size(); ++i){
+		for(unsigned char i = 0; i < maps.size() + 1; ++i){ //+1 for the back button
 			rectangle.push_back(sf::RectangleShape(sf::Vector2f(MAP_BUTTON_WIDTH, MAP_BUTTON_HEIGHT)));
 			rectangle[i].setOrigin(0,-TITLE_HEIGHT);
 			rectangle[i].setFillColor(BUTTON_FILL_COLOR);
@@ -246,6 +247,10 @@ std::string Menu::mapMenu(){
 		for(unsigned char i = 0; i < maps.size(); ++i){
 			text.push_back(sf::Text());
 			text[i].setString(maps[i]);
+		}
+		text.push_back(sf::Text());
+		text[maps.size()].setString(BACK_TXT);
+		for(unsigned char i = 0; i < maps.size() + 1; ++i){ //+1 for the back button
 			text[i].setFont(font);
 			text[i].setCharacterSize(MAP_FONT_SIZE);
 			text[i].setOrigin(0,-TITLE_HEIGHT);
@@ -256,7 +261,7 @@ std::string Menu::mapMenu(){
 
 	char user_choice = 0;
 	char old_user_choice = 0;
-	char nbr_of_choices = static_cast<char>(maps.size());
+	char nbr_of_choices = static_cast<char>(maps.size()) + 1;
 
 	background_sprite.setPosition(static_cast<float>(bg_pos), 0);
 	title_sprite.setPosition(0,0);
@@ -340,5 +345,8 @@ std::string Menu::mapMenu(){
 		window.display();
 		old_user_choice = user_choice;
 	}
-	return (maps_path + maps[user_choice] + ".map");
+	if(user_choice == (nbr_of_choices - 1))
+		return std::string("");
+	else
+		return (maps_path + maps[user_choice] + ".map");
 }

@@ -44,6 +44,7 @@
 #define LOCAL_TXT                     "Local"
 #define NETWORK_TXT                   "Network"
 #define EXIT_TXT                      "Exit"
+#define BACK_TXT                      "back"
 #define MAIN_FONT_SIZE                 44
 #define MAP_FONT_SIZE                  26
 
