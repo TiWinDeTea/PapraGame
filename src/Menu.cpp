@@ -200,6 +200,8 @@ std::string Menu::mapMenu(){
 	std::vector<std::string> maps;
 	std::vector<sf::RectangleShape> rectangle;
 	std::vector<sf::Text> text;
+	std::vector<sf::Vector2f> rect_coord;
+	std::vector<sf::Vector2f> text_coord;
 
 	window.clear(sf::Color::White);
 
@@ -228,7 +230,24 @@ std::string Menu::mapMenu(){
 	}
 
 	if (maps.size() == 0) {
-		std::cout << "No file found !" << std::endl;
+		//creation of rectangle
+		rectangle.push_back(sf::RectangleShape(sf::Vector2f(MAP_BUTTON_WIDTH, MAP_BUTTON_HEIGHT)));
+		rectangle[0].setOrigin(0,-TITLE_HEIGHT);
+		rectangle[0].setFillColor(BUTTON_FILL_COLOR);
+		rect_coord.push_back(sf::Vector2f(static_cast<float>((MENU_X_RESOLUTION - MAP_BUTTON_WIDTH) / 2), MAP_BUTTON_SPACE));
+		rectangle[0].setPosition(rect_coord[0]);
+		rectangle[0].setOutlineThickness(OUTLINE_THICKNESS);
+		rectangle[0].setOutlineColor(SELECTED_OUTLINE_COLOR);
+
+		//creation of text
+		text.push_back(sf::Text());
+		text[0].setString(NO_MAPS_TXT);
+		text[0].setFont(font);
+		text[0].setCharacterSize(MAP_FONT_SIZE);
+		text[0].setOrigin(0,-TITLE_HEIGHT);
+		text[0].setColor(TXT_COLOR);
+		text_coord.push_back(sf::Vector2f(static_cast<float>((MENU_X_RESOLUTION) - text[0].getGlobalBounds().width) / 2.0f, static_cast<float>((MAP_BUTTON_HEIGHT - MAP_FONT_SIZE) / 2) + MAP_BUTTON_SPACE - text[0].getGlobalBounds().height / 4.0f));
+		text[0].setPosition(text_coord[0]);
 	}
 	else{
 		
@@ -237,7 +256,8 @@ std::string Menu::mapMenu(){
 			rectangle.push_back(sf::RectangleShape(sf::Vector2f(MAP_BUTTON_WIDTH, MAP_BUTTON_HEIGHT)));
 			rectangle[i].setOrigin(0,-TITLE_HEIGHT);
 			rectangle[i].setFillColor(BUTTON_FILL_COLOR);
-			rectangle[i].setPosition(static_cast<float>((MENU_X_RESOLUTION - MAP_BUTTON_WIDTH) / 2), static_cast<float>(i * (MAP_BUTTON_HEIGHT + MAP_BUTTON_SPACE) + MAP_BUTTON_SPACE));
+			rect_coord.push_back(sf::Vector2f(static_cast<float>((MENU_X_RESOLUTION - MAP_BUTTON_WIDTH) / 2), static_cast<float>(i * (MAP_BUTTON_HEIGHT + MAP_BUTTON_SPACE) + MAP_BUTTON_SPACE)));
+			rectangle[i].setPosition(rect_coord[i]);
 			rectangle[i].setOutlineThickness(OUTLINE_THICKNESS);
 			rectangle[i].setOutlineColor(NORMAL_OUTLINE_COLOR);
 		}
@@ -255,13 +275,15 @@ std::string Menu::mapMenu(){
 			text[i].setCharacterSize(MAP_FONT_SIZE);
 			text[i].setOrigin(0,-TITLE_HEIGHT);
 			text[i].setColor(TXT_COLOR);
-			text[i].setPosition(static_cast<float>((MENU_X_RESOLUTION) - text[i].getGlobalBounds().width) / 2.0f, static_cast<float>(i * (MAP_BUTTON_HEIGHT + MAP_BUTTON_SPACE) + (MAP_BUTTON_HEIGHT - MAP_FONT_SIZE) / 2) + MAP_BUTTON_SPACE - text[i].getGlobalBounds().height / 4.0f);
+			text_coord.push_back(sf::Vector2f(static_cast<float>((MENU_X_RESOLUTION) - text[i].getGlobalBounds().width) / 2.0f, static_cast<float>(i * (MAP_BUTTON_HEIGHT + MAP_BUTTON_SPACE) + (MAP_BUTTON_HEIGHT - MAP_FONT_SIZE) / 2) + MAP_BUTTON_SPACE - text[i].getGlobalBounds().height / 4.0f));
+			text[i].setPosition(text_coord[i]);
 		}
 	}
 
 	char user_choice = 0;
 	char old_user_choice = 0;
-	char nbr_of_choices = static_cast<char>(maps.size()) + 1;
+	char nbr_of_choices = static_cast<char>(maps.size() + 1);
+	int scrolling = 0;
 
 	background_sprite.setPosition(static_cast<float>(bg_pos), 0);
 	title_sprite.setPosition(0,0);
@@ -308,6 +330,21 @@ std::string Menu::mapMenu(){
 					user_choice = static_cast<char>(user_choice - nbr_of_choices);
 				if(user_choice < 0)
 					user_choice = static_cast<char>(user_choice + nbr_of_choices);
+
+				while(rectangle[user_choice].getPosition().y > (MENU_Y_RESOLUTION - TITLE_HEIGHT - MAP_BUTTON_HEIGHT - MAP_BUTTON_SPACE)){
+					scrolling += (MAP_BUTTON_SPACE + MAP_BUTTON_HEIGHT);
+					for(unsigned char i = nbr_of_choices; i--;){
+						rectangle[i].setPosition(rect_coord[i].x, rect_coord[i].y - static_cast<float>(scrolling));
+						text[i].setPosition(text_coord[i].x, text_coord[i].y - static_cast<float>(scrolling));
+					}
+				}
+				while(rectangle[user_choice].getPosition().y < MAP_BUTTON_SPACE){
+					scrolling -= (MAP_BUTTON_SPACE + MAP_BUTTON_HEIGHT);
+					for(unsigned char i = nbr_of_choices; i--;){
+						rectangle[i].setPosition(rect_coord[i].x, rect_coord[i].y - static_cast<float>(scrolling));
+						text[i].setPosition(text_coord[i].x, text_coord[i].y - static_cast<float>(scrolling));
+					}
+				}
 			}
 			else if(event.type == sf::Event::MouseMoved){
 				for(unsigned char i = nbr_of_choices; i--;){
@@ -332,7 +369,6 @@ std::string Menu::mapMenu(){
 		window.clear(sf::Color::White);
 		rectangle[old_user_choice].setOutlineColor(NORMAL_OUTLINE_COLOR);
 		rectangle[user_choice].setOutlineColor(SELECTED_OUTLINE_COLOR);
-		window.draw(title_sprite);
 		--bg_pos;
 		if(bg_pos < -BACKGROUND_LOOP_WIDTH)
 			bg_pos = 0;
@@ -342,6 +378,7 @@ std::string Menu::mapMenu(){
 			window.draw(rectangle[i]);
 			window.draw(text[i]);
 		}
+		window.draw(title_sprite);
 		window.display();
 		old_user_choice = user_choice;
 	}

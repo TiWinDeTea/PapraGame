@@ -42,18 +42,19 @@
 #define TITLE_HEIGHT                  216
 
 #define LOCAL_TXT                     "Local"
-#define NETWORK_TXT                   "Network"
+#define NETWORK_TXT                   "Magic Network"
 #define EXIT_TXT                      "Exit"
 #define BACK_TXT                      "back"
+#define NO_MAPS_TXT                   "No maps found"
 #define MAIN_FONT_SIZE                 44
-#define MAP_FONT_SIZE                  26
+#define MAP_FONT_SIZE                  34
 
 #define MAIN_BUTTON_HEIGHT            50
 #define MAIN_BUTTON_WIDTH             400
 #define MAIN_BUTTON_SPACE             30
-#define MAP_BUTTON_HEIGHT             35
+#define MAP_BUTTON_HEIGHT             50
 #define MAP_BUTTON_WIDTH              600
-#define MAP_BUTTON_SPACE              15
+#define MAP_BUTTON_SPACE              20
 #define OUTLINE_THICKNESS             5
 
 #define BUTTON_FILL_COLOR             sf::Color(100, 250, 50)
