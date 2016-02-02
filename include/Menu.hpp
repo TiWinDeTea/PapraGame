@@ -57,10 +57,10 @@
 #define MAP_BUTTON_SPACE              20
 #define OUTLINE_THICKNESS             5
 
-#define BUTTON_FILL_COLOR             sf::Color(100, 250, 50)
-#define SELECTED_OUTLINE_COLOR        sf::Color(250, 150, 100)
-#define NORMAL_OUTLINE_COLOR          sf::Color(0, 0, 255)
-#define TXT_COLOR                     sf::Color::Red
+#define BUTTON_FILL_COLOR             sf::Color(5, 195, 5, 225)
+#define SELECTED_OUTLINE_COLOR        sf::Color(0, 0, 200, 255)
+#define NORMAL_OUTLINE_COLOR          sf::Color(150, 100, 255, 175)
+#define TXT_COLOR                     sf::Color(20, 72, 169, 255)
 
 #define MAPS_PATH                     "maps/"
 #define RES_PATH                      "res/"

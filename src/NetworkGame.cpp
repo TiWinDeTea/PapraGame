@@ -494,7 +494,7 @@ void GameClient::launch(sf::RenderWindow& game_window){
 				loading_success = loading_success && explosion_texture.loadFromFile(path + DUCK_PATH + TEXTURE_EXPLOSION + FILETYPE);
 
 				char player_id;
-				for (unsigned char i = nbr_player ; i-- ;) {
+				for (unsigned int i = nbr_player ; i-- ;) {
 					player_id = static_cast<char>(i + '0');
 					for (unsigned int j = 4 ; j-- ;) {
 						loading_success = loading_success && duck_texture[i][0][j].loadFromFile(path + duck_textures_path[j] + player_id + FILETYPE);
@@ -508,7 +508,7 @@ void GameClient::launch(sf::RenderWindow& game_window){
 				else {
 					game_window.create(sf::VideoMode(map_width*32, map_height*32), "PapraGame ~ A game with Ducks !", sf::Style::Titlebar | sf::Style::Close);
 
-					for (unsigned char i = nbr_player ; i-- ;) {
+					for (unsigned int i = nbr_player ; i-- ;) {
 						std::string tmp("player ");
 						tmp.push_back(static_cast<char>(i + '1'));
 						player[i] = Duck(duck_texture[i][0], duck_texture[i][1], spawn[i], dir[i], this->loadKeys("player 1"));
@@ -518,12 +518,12 @@ void GameClient::launch(sf::RenderWindow& game_window){
 
 					game_map = Map(map_width, map_height, tmp_map, map_texture, &egg_texture);
 					direction = NOPE;
-					int dir;
+					int dir_int;
 					do {
 						packet.clear();
 						server.receive(packet);
-						if((packet >> dir))
-							direction = static_cast<Direction>(dir);
+						if((packet >> dir_int))
+							direction = static_cast<Direction>(dir_int);
 					} while(direction == NOPE);
 
 					this->start(game_window);
