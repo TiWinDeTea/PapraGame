@@ -150,7 +150,7 @@ void Game::launch(sf::RenderWindow& game_window, std::string map_name){
 
 		explosion_sprite.setTexture(explosion_texture);
 		pause_menu_sprite.setTexture(pause_menu_texture);
-		pause_menu_sprite.setPosition((pxl_length - pause_menu_sprite.getGlobalBounds().width) / 2.0f, (pxl_height - pause_menu_sprite.getGlobalBounds().height) / 2.0f);
+		pause_menu_sprite.setPosition((static_cast<float>(pxl_length) - pause_menu_sprite.getGlobalBounds().width) / 2.0f, (static_cast<float>(pxl_height) - pause_menu_sprite.getGlobalBounds().height) / 2.0f);
 		game_window.setIcon( sfml_icon.width,  sfml_icon.height,  sfml_icon.pixel_data );
 
 		this->start(game_window);
