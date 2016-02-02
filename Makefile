@@ -80,13 +80,13 @@ $(EXEFINAL): $(EXEFINALOBJ)
 	@$(DISPLAY) "\n\033[1m\033[92m+\033[0m Building \033[33m$(EXEFINAL)\033[0m from \033[33m$(OBJDIR)$(EXENAME).o\033[0m..."
 	@$(MKDIR) $(BUILDDIR)
 	$(COMPILER) $(LIBSDIR) $(LINKS) $(EXEFINALOBJ) -o $(EXEFINAL)
-	@if [[ $(SHOWDONES) -eq 1 ]]; then for i in `seq 1 $(shell expr 65 - $(call STRLEN,$(OBJDIR)$(EXENAME).o) - $(call STRLEN,$(EXEFINAL)))`; do $(DISPLAY) " "; done; $(DISPLAY) " -> Done"; fi
+	@if [ $(SHOWDONES) -eq 1 ]; then for i in `seq 1 $(shell expr 65 - $(call STRLEN,$(OBJDIR)$(EXENAME).o) - $(call STRLEN,$(EXEFINAL)))`; do $(DISPLAY) " "; done; $(DISPLAY) " -> Done"; fi
 	@$(DISPLAY) "\n\n"
 
 $(EXEFINALOBJ): $(OBJECTS)
 	@$(DISPLAY) "\n\n\033[1m\033[92m+\033[0m Merging objects files into \033[33m$(EXEFINALOBJ)\033[0m..."
 	$(LD) $(OBJECTS) -o $(EXEFINALOBJ)
-	@if [[ $(SHOWDONES) -eq 1 ]]; then for i in `seq 1 $(shell expr 52 - $(call STRLEN,$(EXEFINALOBJ)))`; do $(DISPLAY) " "; done; $(DISPLAY) " -> Done"; fi
+	@if [ $(SHOWDONES) -eq 1 ]; then for i in `seq 1 $(shell expr 52 - $(call STRLEN,$(EXEFINALOBJ)))`; do $(DISPLAY) " "; done; $(DISPLAY) " -> Done"; fi
 	@$(DISPLAY) "\n"
 
 
@@ -94,7 +94,7 @@ $(OBJDIR)%.o: %$(FILEIDENTIFIER)
 	@$(DISPLAY) "\n\033[1m\033[92m+\033[0m Building \033[33m$@\033[0m from \033[33m$^\033[0m..."
 	@$(MKDIR) $(OBJDIR)
 	$(COMPILER) $(COMPFLAGS) $(INCLUDEDIR) -c $^ -o $@
-	@if [[ $(SHOWDONES) -eq 1 ]]; then for i in `seq 1 $(shell expr 65 - $(call STRLEN,$^) - $(call STRLEN,$@))`; do $(DISPLAY) " "; done; $(DISPLAY) " -> Done"; fi
+	@if [ $(SHOWDONES) -eq 1 ]; then for i in `seq 1 $(shell expr 65 - $(call STRLEN,$^) - $(call STRLEN,$@))`; do $(DISPLAY) " "; done; $(DISPLAY) " -> Done"; fi
 
 .PHONY: debug
 debug: COMPFLAGS = -g $(COMPSTANDARD)
