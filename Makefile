@@ -44,6 +44,8 @@ SOURCENAME     = Coord Ducky Duck Map Game NetworkGame Menu main
 EXENAME        = PapraGame
 LINKS          = -lstdc++ -lsfml-system -lsfml-window -lsfml-graphics -lsfml-network
 
+SHOWDONES      = 1
+
 EXEFINALOBJ    = $(OBJDIR)$(EXENAME).o
 EXEFINAL       = $(BUILDDIR)$(EXENAME).elf
 SOURCES        = $(foreach src,$(SOURCENAME),$(SOURCEDIR)$(src)$(FILEIDENTIFIER))
@@ -60,6 +62,14 @@ STRLEN = $(strip $(eval __temp := $(subst $(sp),x,$1))$(foreach a,$(CHARACTERS),
 silent:
 	@make --silent $(EXEFINAL)
 
+.PHONY: fast
+fast:
+	@make --silent -j8 -B nodones
+
+.PHONY: nodones
+nodones: SHOWDONES = 0
+nodones: $(EXEFINAL)
+
 .PHONY: all
 all: $(EXEFINAL)
 
@@ -70,37 +80,29 @@ $(EXEFINAL): $(EXEFINALOBJ)
 	@$(DISPLAY) "\n\033[1m\033[92m+\033[0m Building \033[33m$(EXEFINAL)\033[0m from \033[33m$(OBJDIR)$(EXENAME).o\033[0m..."
 	@$(MKDIR) $(BUILDDIR)
 	$(COMPILER) $(LIBSDIR) $(LINKS) $(EXEFINALOBJ) -o $(EXEFINAL)
-	@for i in `seq 1 $(shell expr 65 - $(call STRLEN,$(OBJDIR)$(EXENAME).o) - $(call STRLEN,$(EXEFINAL)))`; do $(DISPLAY) " "; done
-	@$(DISPLAY) " -> Done\n"
-	@$(DISPLAY) "\n"
+	@if [[ $(SHOWDONES) -eq 1 ]]; then for i in `seq 1 $(shell expr 65 - $(call STRLEN,$(OBJDIR)$(EXENAME).o) - $(call STRLEN,$(EXEFINAL)))`; do $(DISPLAY) " "; done; $(DISPLAY) " -> Done"; fi
+	@$(DISPLAY) "\n\n"
 
 $(EXEFINALOBJ): $(OBJECTS)
 	@$(DISPLAY) "\n\n\033[1m\033[92m+\033[0m Merging objects files into \033[33m$(EXEFINALOBJ)\033[0m..."
 	$(LD) $(OBJECTS) -o $(EXEFINALOBJ)
-	@for i in `seq 1 $(shell expr 52 - $(call STRLEN,$(EXEFINALOBJ)))`; do $(DISPLAY) " "; done
-	@$(DISPLAY) " -> Done\n"
+	@if [[ $(SHOWDONES) -eq 1 ]]; then for i in `seq 1 $(shell expr 52 - $(call STRLEN,$(EXEFINALOBJ)))`; do $(DISPLAY) " "; done; $(DISPLAY) " -> Done"; fi
+	@$(DISPLAY) "\n"
 
 
 $(OBJDIR)%.o: %$(FILEIDENTIFIER)
 	@$(DISPLAY) "\n\033[1m\033[92m+\033[0m Building \033[33m$@\033[0m from \033[33m$^\033[0m..."
 	@$(MKDIR) $(OBJDIR)
 	$(COMPILER) $(COMPFLAGS) $(INCLUDEDIR) -c $^ -o $@
-	@for i in `seq 1 $(shell expr 65 - $(call STRLEN,$^) - $(call STRLEN,$@))`; do $(DISPLAY) " "; done
-	@$(DISPLAY) " -> Done"
+	@if [[ $(SHOWDONES) -eq 1 ]]; then for i in `seq 1 $(shell expr 65 - $(call STRLEN,$^) - $(call STRLEN,$@))`; do $(DISPLAY) " "; done; $(DISPLAY) " -> Done"; fi
 
 .PHONY: debug
 debug: COMPFLAGS = -g $(COMPSTANDARD)
 debug: $(EXEFINAL)
-	$(DEBUGGER) $(EXEFINAL)
 
 .PHONY: memleak
 memleak: COMPFLAGS = -g $(COMPSTANDARD)
 memleak: $(EXEFINAL)
-	$(LEAKCHECKER) $(EXEFINAL)
-
-.PHONY: run
-run: $(EXEFINAL)
-	@$(EXEFINAL)
 
 .PHONY: clean
 clean:
