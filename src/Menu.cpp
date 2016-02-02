@@ -138,8 +138,35 @@ void Menu::mainMenu(){
 
 					case 0:
 						map_path = this->mapMenu();
-						if(map_path.size() > 0)
+						if(map_path.size() > 0){
+
+							sf::Text countdown;
+							countdown.setFont(font);
+							countdown.setCharacterSize(100);
+							countdown.setColor(TXT_COLOR);
+							char i = '3';
+							countdown.setString(std::string() + i);
+							countdown.setPosition(static_cast<float>((MENU_X_RESOLUTION) - countdown.getGlobalBounds().width) / 2.0f, static_cast<float>(MENU_Y_RESOLUTION - countdown.getGlobalBounds().height) / 2.0f);
+							sf::Clock elapsed_time;
+							while(i > '0'){
+								window.draw(title_sprite);
+								--bg_pos;
+								if(bg_pos < -BACKGROUND_LOOP_WIDTH)
+									bg_pos = 0;
+								background_sprite.setPosition(static_cast<float>(bg_pos), 0);
+								window.draw(background_sprite);
+								window.draw(countdown);
+								window.display();
+								sf::sleep(sf::milliseconds(REFRESH_SLOWNESS));
+								if(elapsed_time.getElapsedTime().asSeconds() > 1.0f){
+									--i;
+									countdown.setString(std::string() + i);
+									countdown.setPosition(static_cast<float>((MENU_X_RESOLUTION) - countdown.getGlobalBounds().width) / 2.0f, static_cast<float>(MENU_Y_RESOLUTION - countdown.getGlobalBounds().height) / 2.0f);
+									elapsed_time.restart();
+								}
+							}
 							game.launch(window, map_path);
+						}
 						done = false;
 						break;
 
