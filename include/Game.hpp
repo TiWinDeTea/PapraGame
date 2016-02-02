@@ -59,6 +59,7 @@
 	#define TEXTURE_WARP                std::string("Warp")
 	#define TEXTURE_EGG                 std::string("Egg")
 	#define TEXTURE_EXPLOSION           std::string("Explosion")
+ 	#define TEXTURE_PAUSE_MENU          std::string("menu/PauseMenu")
 	#define FILETYPE                    std::string(".png")
 	#define IDENTIFIER_WATER_UP_DOWN    '|'
 	#define IDENTIFIER_WATER_UP_RIGHT   '9'
@@ -101,8 +102,8 @@ private:
 	unsigned char winner;
 	std::vector<sf::Texture**> duck_texture;
 	sf::Texture map_texture[9];
-	sf::Texture egg_texture, explosion_texture;
-	sf::Sprite explosion_sprite;
+	sf::Texture egg_texture, explosion_texture, pause_menu_texture;
+	sf::Sprite explosion_sprite, pause_menu_sprite;
 	unsigned int pxl_length, pxl_height;
 	std::string path, biome_path, ducks_path, map_path;
 	unsigned char player_number;

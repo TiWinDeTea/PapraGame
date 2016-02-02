@@ -122,6 +122,7 @@ void Game::launch(sf::RenderWindow& game_window, std::string map_name){
 
 	loading_success = loading_success && egg_texture.loadFromFile(path + ducks_path + TEXTURE_EGG + FILETYPE);
 	loading_success = loading_success && explosion_texture.loadFromFile(path + ducks_path + TEXTURE_EXPLOSION + FILETYPE);
+	loading_success = loading_success && pause_menu_texture.loadFromFile(path + TEXTURE_PAUSE_MENU + FILETYPE);
 	loading_success = loading_success && this->loadMap();
 
 	char player_id;
@@ -148,6 +149,8 @@ void Game::launch(sf::RenderWindow& game_window, std::string map_name){
 		}
 
 		explosion_sprite.setTexture(explosion_texture);
+		pause_menu_sprite.setTexture(pause_menu_texture);
+		pause_menu_sprite.setPosition((pxl_length - pause_menu_sprite.getGlobalBounds().width) / 2.0f, (pxl_height - pause_menu_sprite.getGlobalBounds().height) / 2.0f);
 		game_window.setIcon( sfml_icon.width,  sfml_icon.height,  sfml_icon.pixel_data );
 
 		this->start(game_window);
@@ -469,6 +472,8 @@ bool Game::pauseGame(sf::RenderWindow& game_window, bool player_request){
 	sf::Event event;
 	std::cout << "Game paused" << std::endl;
 	if(player_request){
+		game_window.draw(pause_menu_sprite);
+		game_window.display();
 		do{
 			if (game_window.waitEvent(event) && sf::Event::Closed == event.type) {
 				game_window.close();
