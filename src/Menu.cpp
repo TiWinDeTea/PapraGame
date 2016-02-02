@@ -28,7 +28,7 @@ Menu::Menu(){
 }
 
 void Menu::setBiome(std::string chosen_biome){
-	
+
 	biome_path = chosen_biome.append("/");
 }
 
@@ -148,12 +148,7 @@ void Menu::mainMenu(){
 						std::cin >> tmp;
 						if (tmp == "y") {
 							GameServer server("res/", "nope", this->mapMenu());
-							sf::Thread server_thread(&GameServer::launch, &server);
-							server_thread.launch();
-							GameClient client("nope", false);
-							sf::sleep(sf::milliseconds(100));
-							client.launch(window);
-							server_thread.wait();
+							server.launch(window);
 						}
 						else
 						{
@@ -250,7 +245,7 @@ std::string Menu::mapMenu(){
 		text[0].setPosition(text_coord[0]);
 	}
 	else{
-		
+
 		//creation of rectangles
 		for(unsigned char i = 0; i < maps.size() + 1; ++i){ //+1 for the back button
 			rectangle.push_back(sf::RectangleShape(sf::Vector2f(MAP_BUTTON_WIDTH, MAP_BUTTON_HEIGHT)));

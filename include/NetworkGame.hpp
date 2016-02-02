@@ -93,15 +93,15 @@ public:
 	/**
 	 * @brief GameServer constructor
 	 * @param ressources_path Path to the ressources (from the executable root)
-	 * @param biome_path      Path to the biome (from the executable root)
+	 * @param biome_path_      Path to the biome (from the executable root)
 	 * @param map_file_name   Path to the map (from the executable root)
 	 */
-	GameServer(std::string ressources_path, std::string biome_path, std::string map_file_name);
+	GameServer(std::string ressources_path, std::string biome_path_, std::string map_file_name);
 
 	/**
 	 * @brief Launches a Network Game
 	 */
-	void launch();
+	void launch(sf::RenderWindow& game_window);
 
 private:
 
@@ -111,18 +111,30 @@ private:
 	 * @param biome_path  Path to the biome (from the executable root)
 	 * @param map_as_area Map (from the file) interpreted as a 2d vector of Area
 	 */
-	void getClients(std::string res, std::string biome_path, std::vector< std::vector<Area> > map_as_area);
+	void getClients(std::vector< std::vector<Area> > map_as_area);
 
 	/**
 	 * @brief Starts a Network Game
 	 */
-	void start();
+	void start(sf::RenderWindow& game_window);
+
+	/**
+	 * @brief
+	 * @param selected_player
+	 * @return
+	 */
+	std::vector<sf::Keyboard::Key> loadKeys(std::string selected_player);
 
 	std::vector<sf::TcpSocket*> clients;
 	Map game_map;
 	std::vector<Duck> player;
 	std::vector<Coord> player_spawn;
 	std::vector<Direction> player_initial_dir;
+	std::string ressources, biome_path;
+	std::vector<sf::Texture**> duck_texture;
+	sf::Texture map_texture[9];
+	sf::Texture egg_texture;
+	sf::Texture explosion_texture;
 	unsigned int game_speed;
 	unsigned short egg_victory;
 	unsigned int map_height, map_width;
@@ -141,7 +153,7 @@ class GameClient{
 
 		void start(sf::RenderWindow& game_window);
 		std::vector<sf::Keyboard::Key> loadKeys(std::string selected_player);
-		
+
 		unsigned int map_height, map_width, game_speed;
 		std::vector<Direction> player_initial_dir;
 		Direction direction;
