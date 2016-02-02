@@ -1,7 +1,10 @@
-﻿"Animation" sur deux frames.
+﻿Réseaux (lan, wifi...)
+Écran de victoire
+Enlever les std::cout redondant
+Mettre à jour --version
+Musique-s
 
-Réseaux (lan, wifi...)
+Bouton About
+Bouton Help > Create a Map / Keys / Change Keys
 
-Menu GUI
-
-Nombre de cannetons affichés dans un coin de l'écran
+Fondu / Transparence de l'image titre (PapraGame - TiWinDeTea)
