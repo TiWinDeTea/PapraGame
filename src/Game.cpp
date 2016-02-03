@@ -258,6 +258,21 @@ void Game::start(sf::RenderWindow& game_window)
 	for(unsigned char i = player_number; i--;)
 		player_dir.push_back(player[i].getDirection());
 
+	sf::SoundBuffer new_egg_buffer, damages_buffer, warp_buffer;
+	new_egg_buffer.loadFromFile("res/sounds/new_egg.ogg");
+	damages_buffer.loadFromFile("res/sounds/damaged.ogg");
+	warp_buffer.loadFromFile("res/sounds/warp.ogg");
+
+	sf::Sound egg_sound, damage_sound, warp_sound;
+	egg_sound.setBuffer(new_egg_buffer);
+	damage_sound.setBuffer(damages_buffer);
+	warp_sound.setBuffer(warp_buffer);
+
+	sf::Music game_theme;
+	game_theme.openFromFile("res/sounds/game_theme.ogg");
+	game_theme.setLoop(true);
+	game_theme.play();
+
 	sf::Event event;
 	game_map.popEgg();
 	game_map.popEgg(); // Map thuging
@@ -283,8 +298,10 @@ void Game::start(sf::RenderWindow& game_window)
 						player_dir[i] = RIGHT;
 				}
 				if (event.key.code == sf::Keyboard::Escape) {
+					game_theme.pause();
 					if (!(this->pauseGame(game_window, true)))
 						return;
+					game_theme.play();
 				}
 			}
 			else if (!(game_window.hasFocus()))
@@ -298,8 +315,10 @@ void Game::start(sf::RenderWindow& game_window)
 			tmp = 16;
 			explosions_coord.erase(explosions_coord.begin(), explosions_coord.end());
 			for(unsigned char i = player_number; i--;){
-				if(game_map.isWarp(player[i].getCoord()))
+				if(game_map.isWarp(player[i].getCoord())){
+					warp_sound.play();
 					player[i].warped(game_map.getWarp(player[i].getCoord()));
+				}
 				player[i].move(player_dir[i], game_map.x_size, game_map.y_size);
 
 				bool damaged(false);
@@ -334,7 +353,11 @@ void Game::start(sf::RenderWindow& game_window)
 					explosions_coord.push_back(player[i].getCoord() - player[i].getDirection());
 					player[i].damaged(player_initial_dir[i]);
 					player_dir[i] = player_initial_dir[i];
+					damaged = true;
 				}
+
+				if (damaged)
+					damage_sound.play();
 			}
 			for(unsigned char i = player_number; i--;){
 				if(player[i].getCoord() == game_map.getEggCoord()){
@@ -344,6 +367,7 @@ void Game::start(sf::RenderWindow& game_window)
 						winner = static_cast<unsigned char>(i + 1);
 					}
 					game_map.popEgg();
+					egg_sound.play();
 				}
 				player[i].print(game_window);
 			}
@@ -470,7 +494,6 @@ void Game::printExplosion(sf::RenderWindow& game_window, Coord coord){
 
 bool Game::pauseGame(sf::RenderWindow& game_window, bool player_request){
 	sf::Event event;
-	std::cout << "Game paused" << std::endl;
 	if(player_request){
 		game_window.draw(pause_menu_sprite);
 		game_window.display();

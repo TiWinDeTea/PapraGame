@@ -22,6 +22,7 @@
 #include <SFML/System.hpp>
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 #include <enum.hpp>
 #include <Game.hpp>
 #include <NetworkGame.hpp>
@@ -99,6 +100,7 @@ class Menu{
 	private:
 
 		int bg_pos;
+		sf::Music title_theme;
 		sf::RenderWindow window;
 		sf::Font font;
 		sf::Texture title_texture;
