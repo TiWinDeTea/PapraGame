@@ -4,15 +4,17 @@
 
 int main(int argc, char* argv[]);
 int main(int argc, char* argv[]){
-	Menu menu;
 	if (argc <= 1)  {
+		Menu menu;
 		menu.mainMenu();
 	}
 	else{
 		if (std::string(argv[1]) == "--version") {
-			std::cout << "PapraGame v0.4 -- Crepitum Anatum" << std::endl <<
-				"Copyright c 2016 TiWinDeTea (https://github.com/TiWinDeTea)" << std::endl <<
+			std::cout << "PapraGame v1.0 -- Temerarium Anatum " << std::endl <<
+				"Copyright c 2016 TiWinDeTea (https://github.com/TiWinDeTea). Game under the " << 
+				"Mozilla Public License v2.0" << std::endl <<
 				std::endl <<
+				"License extract : " << std::endl <<
 				"Covered Software is provided under this License on an \"as is\"" << std::endl <<
 				"basis, without warranty of any kind, either expressed, implied, or" << std::endl <<
 				"statutory, including, without limitation, warranties that the" << std::endl <<
@@ -24,10 +26,10 @@ int main(int argc, char* argv[]){
 				"repair, or correction. This disclaimer of warranty constitutes an" << std::endl <<
 				"essential part of this License. No use of any Covered Software is" << std::endl <<
 				"authorized under this License except under this disclaimer." << std::endl <<
-				std::endl <<
-				"Game currently under development" << std::endl;
+				std::endl;
 		}
 		else{
+			Menu menu;
 			menu.setBiome(std::string(argv[1]));
 			menu.mainMenu();
 		}
