@@ -337,7 +337,7 @@ void Game::start(sf::RenderWindow& game_window)
 			}
 		}
 		for(unsigned int i = static_cast<unsigned int>(explosions_coord.size()); i--;){
-			printExplosion(game_window, explosions_coord[i]);
+			this->printExplosion(game_window, explosions_coord[i]);
 		}
 		game_window.display();
 

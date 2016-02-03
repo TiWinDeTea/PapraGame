@@ -6,6 +6,8 @@
 
 #include <NetworkGame.hpp>
 
+static void printExplosion(sf::RenderWindow& game_window, Coord coord, sf::Sprite* explosion_sprite);
+
 GameServer::~GameServer(){
 	for (size_t i = clients.size() - 1; i-- ;) {
 		delete clients[i];
@@ -239,9 +241,27 @@ void GameServer::launch(sf::RenderWindow& game_window){
 
 void GameServer::start(sf::RenderWindow& game_window){
 
-	std::cout << "Game's starting" << std::endl;
+	sf::SoundBuffer damage_buffer, egg_buffer, warp_buffer;
+	damage_buffer.loadFromFile("res/sounds/damaged.ogg");
+	egg_buffer.loadFromFile("res/sounds/new_egg.ogg");
+	warp_buffer.loadFromFile("res/sounds/warp.ogg");
 
+	sf::Sound damage_sound, egg_sound, warp_sound;
+	damage_sound.setBuffer(damage_buffer);
+	egg_sound.setBuffer(egg_buffer);
+	warp_sound.setBuffer(warp_buffer);
+
+	sf::Music game_theme;
+	game_theme.openFromFile("res/sounds/game_theme.ogg");
+	game_theme.setLoop(true);
+	game_theme.play();
+
+	sf::Sprite explosion_sprite;
+	explosion_sprite.setTexture(explosion_texture);
+
+	std::cout << "Game's starting" << std::endl;
 	std::vector<Direction> player_dir;
+	std::vector<Coord> explosions_coord;
 
 	for (size_t i = 0 ; i < player_initial_dir.size() ; ++i) {
 		player_dir.push_back(player_initial_dir[i]);
@@ -261,13 +281,20 @@ void GameServer::start(sf::RenderWindow& game_window){
 	}
 	packet.clear();
 
+	if (game_speed > 3)
+		game_speed -= 3;
+	else
+		game_speed = 0;
+
 	do{
 		packet << false;
 
 		for(unsigned char i((unsigned char)(player.size())); i--;){
 
-			if(game_map.isWarp(player[i].getCoord()))
+			if(game_map.isWarp(player[i].getCoord())){
 				player[i].warped(game_map.getWarp(player[i].getCoord()));
+				warp_sound.play();
+			}
 
 			player[i].move(player_dir[i], game_map.x_size, game_map.y_size);
 
@@ -279,6 +306,8 @@ void GameServer::start(sf::RenderWindow& game_window){
 				--j;
 				if(i != j){
 					if(player[i].getCoord() == player[j].getCoord()){
+						explosions_coord.push_back(player[i].getCoord() - player[i].getDirection());
+						explosions_coord.push_back(player[j].getCoord() - player[j].getDirection());
 						player[i].damaged(player_initial_dir[i]);
 						player[j].damaged(player_initial_dir[j]);
 						player_dir[i] = player_initial_dir[i];
@@ -291,6 +320,7 @@ void GameServer::start(sf::RenderWindow& game_window){
 				while(k > 0 && !damaged){
 					--k;
 					if(player[i].getCoord() == player[j].duckies[k].getCoord()){
+						explosions_coord.push_back(player[i].getCoord() - player[i].getDirection());
 						player[i].damaged(player_initial_dir[i]);
 						player_dir[i] = player_initial_dir[i];
 						damaged = true;
@@ -298,30 +328,33 @@ void GameServer::start(sf::RenderWindow& game_window){
 				}
 			}
 			if(game_map.map[player[i].getCoord().x][player[i].getCoord().y] == OBSTACLE){
+				explosions_coord.push_back(player[i].getCoord() - player[i].getDirection());
 				player[i].damaged(player_initial_dir[i]);
 				player_dir[i] = player_initial_dir[i];
 				damaged = true;
 			}
 
 			packet << damaged;
-			std::cout << damaged << std::endl;
 
 			if (!damaged){
 
 				packet << player_dir[i];
 
 				if(player[i].getCoord() == game_map.getEggCoord()){
+					egg_sound.play();
 					player[i].powerUp();
 
-					if (true || (player[i].size() == egg_victory && egg_victory != 0)) {
+					if (player[i].size() == egg_victory && egg_victory != 0) {
 						winner = static_cast<unsigned char>(i + 1);
 					}
 					game_map.popEgg();
 
 					packet << true << game_map.getEggCoord().x << game_map.getEggCoord().y;
 				}
-				else
+				else{
 					packet << false;
+					damage_sound.play();
+				}
 			}
 		}
 
@@ -334,20 +367,68 @@ void GameServer::start(sf::RenderWindow& game_window){
 			clients[i]->receive(packet);
 			int dir_as_int;
 			packet >> dir_as_int;
-			if (dir_as_int != NOPE) {
+			if (dir_as_int != NOPE && ((player_dir[i] + dir_as_int != 7 && player_dir[i] + dir_as_int != 3) || player[i].size() == 0)) {
 				player_dir[i] = static_cast<Direction>(dir_as_int);
 			}
 		}
 
-		sf::sleep(sf::milliseconds(game_speed * 10));
-
 		packet.clear();
+
+		for (unsigned char w = 16 ; --w ;) {
+
+			sf::Event event;
+			game_window.clear();
+
+			while (game_window.pollEvent(event)){
+				if(event.type == sf::Event::Closed){
+					game_window.close();
+					return;
+				}
+				else if(event.type == sf::Event::KeyPressed){
+					if(event.key.code == player[player.size()-1].keys[0] && (player_dir[player.size()-1] != DOWN || player[player.size()-1].size() == 0))
+						player_dir[player.size()-1] = UP;
+
+					else if(event.key.code == player[player.size()-1].keys[1] && (player_dir[player.size()-1] != UP || player[player.size()-1].size() == 0))
+						player_dir[player.size()-1] = DOWN;
+
+					else if(event.key.code == player[player.size()-1].keys[2] && (player_dir[player.size()-1] != RIGHT || player[player.size()-1].size() == 0))
+						player_dir[player.size()-1] = LEFT;
+
+					else if(event.key.code == player[player.size()-1].keys[3] && (player_dir[player.size()-1] != LEFT || player[player.size()-1].size() == 0))
+						player_dir[player.size()-1] = RIGHT;
+				}
+			}
+
+			game_map.print(game_window);
+
+			for (unsigned int i = static_cast<unsigned int>(player.size()) ; i-- ;) {
+				if(player[i].isInvulnerable()){
+					if(w < 8)
+						player[i].print(game_window, -static_cast<float>(w) * 2);
+				}
+				else{
+					player[i].print(game_window, -static_cast<float>(w) * 2);
+				}
+			}
+
+			for(unsigned int i = static_cast<unsigned int>(explosions_coord.size()); i--;)
+				printExplosion(game_window, explosions_coord[i], &explosion_sprite);
+
+			game_window.display();
+			sf::sleep(sf::milliseconds(game_speed));
+		}
 	}while(winner == 0);
 
-	packet << true << winner;
+	sf::Packet packet_for_the_winner;
+
+	packet << true << false;
+	packet_for_the_winner << true << true;
+
 	for (size_t i(clients.size()) ; i-- ;) {
-		clients[i]->send(packet);
-		std::cout << std::endl << "Sending to " << clients[i]->getRemoteAddress();
+		if ( i+1 != winner)
+			clients[i]->send(packet);
+		else
+			clients[i]->send(packet_for_the_winner);
 	}
 
 	for (size_t i = duck_texture.size() ; i-- ;) {
@@ -443,7 +524,7 @@ std::vector<sf::Keyboard::Key> GameServer::loadKeys(std::string selected_player)
 }
 
 GameClient::~GameClient(){
-	
+
 	for (size_t i = player.size() ; i-- ;) {
 		free(duck_texture[i][0]);
 		free(duck_texture[i][1]);
@@ -465,7 +546,7 @@ void GameClient::launch(sf::RenderWindow& game_window){
 		return;
 	} else {
 		broadcast.setBlocking(true);
-		std::cout << "- Can find a server, try to receive data from the server." << std::endl;
+		std::cout << "- Server found. Retrieving game's datas..." << std::endl;
 		if (broadcast.receive(data, 26, received, sender, port) != sf::Socket::Done && std::string(data) != "PapraGame ~ Game Accepted"){
 			std::cout << "- No data received from the server." << std::endl;
 			return;
@@ -486,7 +567,7 @@ void GameClient::launch(sf::RenderWindow& game_window){
 				std::string path;
 				std::vector<Coord> spawn;
 
-				std::vector<std::vector<Area>> tmp_map;
+				std::vector<std::vector<Area> > tmp_map;
 				packet >> path >> biome_path;
 				biome_path.append("/");
 
@@ -568,7 +649,7 @@ void GameClient::launch(sf::RenderWindow& game_window){
 					explosion_sprite.setTexture(explosion_texture);
 					game_map = Map(map_width, map_height, tmp_map, map_texture, &egg_texture);
 					std::cout << "Game started " << std::endl;
-					
+
 					packet.clear();
 					server.receive(packet);
 					bool starting;
@@ -667,6 +748,8 @@ std::vector<sf::Keyboard::Key> GameClient::loadKeys(std::string selected_player)
 			}
 		}
 	}
+
+	/* TODO : victory // defeat screen */
 	return answer;
 }
 
@@ -676,19 +759,40 @@ void GameClient::start(sf::RenderWindow& game_window){
 	bool ended, damaged, power_up;
 	unsigned char winner;
 	int tmpint, egg_x, egg_y;
+
 	game_window.setSize(sf::Vector2u(map_width*32, map_height*32));
 	game_window.setView(sf::View(sf::FloatRect(0, 0, static_cast<float>(map_width*32), static_cast<float>(map_height*32))));
 	game_window.requestFocus();
+
 	packet.clear();
 	server.receive(packet);
 	packet >> egg_x >> egg_y;
 	game_map.popEgg(Coord(egg_x, egg_y));
+
+	std::vector<Coord> explosions_coord;
+	game_window.clear();
+
+	sf::SoundBuffer damage_buffer, egg_buffer, warp_buffer;
+	damage_buffer.loadFromFile("res/sounds/damaged.ogg");
+	egg_buffer.loadFromFile("res/sounds/new_egg.ogg");
+	warp_buffer.loadFromFile("res/sounds/warp.ogg");
+
+	sf::Sound damage_sound, egg_sound, warp_sound;
+	damage_sound.setBuffer(damage_buffer);
+	egg_sound.setBuffer(egg_buffer);
+	warp_sound.setBuffer(warp_buffer);
+
+	sf::Music game_theme;
+	game_theme.openFromFile("res/sounds/game_theme.ogg");
+	game_theme.setLoop(true);
+	game_theme.play();
+
 	do {
-		game_window.clear();
+		explosions_coord.erase(explosions_coord.begin(), explosions_coord.end());
+
 		packet.clear();
 		server.receive(packet);
 		packet >> ended;
-		std::cout << ended << std::endl;
 		if (ended) {
 			packet >> winner;
 		} else {
@@ -701,44 +805,80 @@ void GameClient::start(sf::RenderWindow& game_window){
 					player[i].move(tmp_dir,map_width, map_height);
 					if (game_map.isWarp(player[i].getCoord())){
 						player[i].warped(game_map.getWarp(player[i].getCoord()));
+						warp_sound.play();
 					}
 					if (power_up){
 						packet >> egg_x >> egg_y;
 						game_map.popEgg(Coord(egg_x,egg_y));
 						player[i].powerUp();
+						egg_sound.play();
 					}
 				} else {
+					explosions_coord.push_back(player[i].getCoord() - player[i].getDirection());
 					player[i].damaged(player_initial_dir[i]);
+					damage_sound.play();
 				}
 			}
 			packet.clear();
-			while (game_window.pollEvent(event)){
-				if(event.type == sf::Event::Closed){
-					game_window.close();
-					packet << static_cast<int>(NOPE);
-					server.send(packet);
+
+			for (unsigned char w = 17 ; --w ;) {
+
+				game_window.clear();
+
+				while (game_window.pollEvent(event)){
+					if(event.type == sf::Event::Closed){
+						game_window.close();
+						packet << static_cast<int>(NOPE);
+						server.send(packet);
+						return;
+					}
+					else if(event.type == sf::Event::KeyPressed){
+						if(event.key.code == player[0].keys[0])
+							direction = UP;
+						else if(event.key.code == player[0].keys[1])
+							direction = DOWN;
+						else if(event.key.code == player[0].keys[2])
+							direction = LEFT;
+						else if(event.key.code == player[0].keys[3])
+							direction = RIGHT;
+					}
 				}
-				else if(event.type == sf::Event::KeyPressed){
-					if(event.key.code == player[0].keys[0])
-						direction = UP;
-					else if(event.key.code == player[0].keys[1])
-						direction = DOWN;
-					else if(event.key.code == player[0].keys[2])
-						direction = LEFT;
-					else if(event.key.code == player[0].keys[3])
-						direction = RIGHT;
-				}
-			}
-			if (game_window.isOpen()){
-				packet << static_cast<int>(direction);
-				server.send(packet);
+
 				game_map.print(game_window);
-				for (unsigned int i = static_cast<int>(player.size()); i--;){
-					player[i].print(game_window);
+
+				for (unsigned int i = static_cast<unsigned int>(player.size()) ; i-- ;) {
+					if(player[i].isInvulnerable()){
+						if(w < 8)
+							player[i].print(game_window, -static_cast<float>(w) * 2);
+					}
+					else{
+						player[i].print(game_window, -static_cast<float>(w) * 2);
+					}
 				}
+
+				for(unsigned int i = static_cast<unsigned int>(explosions_coord.size()); i--;)
+					printExplosion(game_window, explosions_coord[i], &explosion_sprite);
+
 				game_window.display();
+				sf::sleep(sf::milliseconds(game_speed));
 			}
+
+			for(unsigned int i = static_cast<unsigned int>(explosions_coord.size()); i--;)
+				printExplosion(game_window, explosions_coord[i], &explosion_sprite);
+
+			packet << static_cast<int>(direction);
+			server.send(packet);
+			game_map.print(game_window);
+			for (unsigned int i = static_cast<int>(player.size()); i--;){
+				player[i].print(game_window, 0);
+			}
+			game_window.display();
 		}
 	} while (!ended && game_window.isOpen());
 	return;
+}
+
+static void printExplosion(sf::RenderWindow& game_window, Coord coord, sf::Sprite* explosion_sprite){
+	explosion_sprite->setPosition(static_cast<float>(coord.x * 32), static_cast<float>(coord.y * 32));
+	game_window.draw(*explosion_sprite);
 }
