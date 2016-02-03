@@ -11,7 +11,7 @@ int main(int argc, char* argv[]){
 	else{
 		if (std::string(argv[1]) == "--version") {
 			std::cout << "PapraGame v1.0 -- Temerarium Anatum " << std::endl <<
-				"Copyright c 2016 TiWinDeTea (https://github.com/TiWinDeTea). Game under the " << 
+				"Copyright c 2016 TiWinDeTea (https://github.com/TiWinDeTea). Game under the " <<
 				"Mozilla Public License v2.0" << std::endl <<
 				std::endl <<
 				"License extract : " << std::endl <<

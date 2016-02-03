@@ -224,13 +224,16 @@ void GameServer::launch(sf::RenderWindow& game_window){
 		}
 	}
 	else {
-		game_window.create(sf::VideoMode(map_width*32, map_height*32), "PapraGame ~ A game with Ducks !", sf::Style::Titlebar | sf::Style::Close);
+		game_window.setSize(sf::Vector2u(map_width * 32, map_height * 32));
+		game_window.setView(sf::View(sf::FloatRect(0, 0, static_cast<float>(map_width * 32), static_cast<float>(map_height * 32))));
 
 		for (unsigned int i = static_cast<int>(player.size()) ; i-- ;) {
 			std::string tmp("player ");
 			tmp.push_back(static_cast<char>(i + '1'));
 			player[i] = Duck(duck_texture[i][0], duck_texture[i][1], player_spawn[i], player_initial_dir[i], this->loadKeys("player 1"));
 		}
+		game_map = Map(map_width, map_height, game_map.map, map_texture, &egg_texture);
+
 		packet << true;
 		for (size_t i = clients.size() ; i--;){
 			clients[i]->send(packet);
@@ -413,7 +416,7 @@ void GameServer::start(sf::RenderWindow& game_window){
 
 			for(unsigned int i = static_cast<unsigned int>(explosions_coord.size()); i--;)
 				printExplosion(game_window, explosions_coord[i], &explosion_sprite);
-
+game_map.print(game_window);
 			game_window.display();
 			sf::sleep(sf::milliseconds(game_speed));
 		}
@@ -539,7 +542,7 @@ void GameClient::launch(sf::RenderWindow& game_window){
 	size_t received;
 	sf::IpAddress sender;
 	unsigned short port;
-	char data[26];
+	char data[28] = "-------------------------";
 
 	if (broadcast.send("PapraGame ~ Game Request", 25, sf::IpAddress::Broadcast, PORT)!=sf::Socket::Done){
 		std::cout << "- Cannot find the server" << std::endl;
@@ -547,7 +550,8 @@ void GameClient::launch(sf::RenderWindow& game_window){
 	} else {
 		broadcast.setBlocking(true);
 		std::cout << "- Server found. Retrieving game's datas..." << std::endl;
-		if (broadcast.receive(data, 26, received, sender, port) != sf::Socket::Done && std::string(data) != "PapraGame ~ Game Accepted"){
+		if (broadcast.receive(data, 28, received, sender, port) != sf::Socket::Done && std::string(data) != "PapraGame ~ Game Accepted"){
+				std::cout << "Data received : " << data << std::endl;
 			std::cout << "- No data received from the server." << std::endl;
 			return;
 		} else  {
