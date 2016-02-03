@@ -284,11 +284,6 @@ void GameServer::start(sf::RenderWindow& game_window){
 	}
 	packet.clear();
 
-	if (game_speed > 3)
-		game_speed -= 3;
-	else
-		game_speed = 0;
-
 	do{
 		packet << false;
 
@@ -303,7 +298,7 @@ void GameServer::start(sf::RenderWindow& game_window){
 
 			bool damaged(false);
 			unsigned int j = static_cast<unsigned int>(player.size() - 1);
-
+			explosions_coord.erase(explosions_coord.begin(), explosions_coord.end());
 			while(j > 0 && !damaged){
 
 				--j;
@@ -365,18 +360,6 @@ void GameServer::start(sf::RenderWindow& game_window){
 			clients[i]->send(packet);
 		}
 
-		for (unsigned char i((unsigned char)(clients.size())) ; i-- ;) {
-			packet.clear();
-			clients[i]->receive(packet);
-			int dir_as_int;
-			packet >> dir_as_int;
-			if (dir_as_int != NOPE && ((player_dir[i] + dir_as_int != 7 && player_dir[i] + dir_as_int != 3) || player[i].size() == 0)) {
-				player_dir[i] = static_cast<Direction>(dir_as_int);
-			}
-		}
-
-		packet.clear();
-
 		for (unsigned char w = 16 ; --w ;) {
 
 			sf::Event event;
@@ -416,10 +399,21 @@ void GameServer::start(sf::RenderWindow& game_window){
 
 			for(unsigned int i = static_cast<unsigned int>(explosions_coord.size()); i--;)
 				printExplosion(game_window, explosions_coord[i], &explosion_sprite);
-game_map.print(game_window);
 			game_window.display();
 			sf::sleep(sf::milliseconds(game_speed));
 		}
+
+		for (unsigned char i((unsigned char)(clients.size())) ; i-- ;) {
+			packet.clear();
+			clients[i]->receive(packet);
+			int dir_as_int;
+			packet >> dir_as_int;
+			if (dir_as_int != NOPE && ((player_dir[i] + dir_as_int != 1 && player_dir[i] + dir_as_int != 5) || player[i].size() == 0)) {
+				player_dir[i] = static_cast<Direction>(dir_as_int);
+			}
+		}
+
+		packet.clear();
 	}while(winner == 0);
 
 	sf::Packet packet_for_the_winner;
@@ -542,7 +536,7 @@ void GameClient::launch(sf::RenderWindow& game_window){
 	size_t received;
 	sf::IpAddress sender;
 	unsigned short port;
-	char data[28] = "-------------------------";
+	char data[28];
 
 	if (broadcast.send("PapraGame ~ Game Request", 25, sf::IpAddress::Broadcast, PORT)!=sf::Socket::Done){
 		std::cout << "- Cannot find the server" << std::endl;
@@ -661,7 +655,7 @@ void GameClient::launch(sf::RenderWindow& game_window){
 					if (starting) {
 						this->start(game_window);
 					} else {
-						std::cout << "The server stop the connection." << std::endl;
+						std::cout << "Connection closed by server." << std::endl;
 						return;
 					}
 				}

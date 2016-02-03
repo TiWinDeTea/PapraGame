@@ -47,8 +47,8 @@
 #define EXIT_TXT                      "Exit"
 #define BACK_TXT                      "back"
 #define NO_MAPS_TXT                   "No maps found"
-#define SERVER_TXT                    "Server"
-#define CLIENT_TXT                    "Client"
+#define SERVER_TXT                    "Host a Game"
+#define CLIENT_TXT                    "Join a Game"
 #define MAIN_FONT_SIZE                 44
 #define MAP_FONT_SIZE                  34
 
