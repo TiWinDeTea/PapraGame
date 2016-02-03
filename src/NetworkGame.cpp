@@ -442,6 +442,15 @@ std::vector<sf::Keyboard::Key> GameServer::loadKeys(std::string selected_player)
 	return answer;
 }
 
+GameClient::~GameClient(){
+	
+	for (size_t i = player.size() ; i-- ;) {
+		free(duck_texture[i][0]);
+		free(duck_texture[i][1]);
+		free(duck_texture[i]);
+	}
+}
+
 void GameClient::launch(sf::RenderWindow& game_window){
 
 	sf::UdpSocket broadcast;
@@ -462,7 +471,7 @@ void GameClient::launch(sf::RenderWindow& game_window){
 			return;
 		} else  {
 			std::cout << "- Receive data from the server with ip addrress "<< sender << " and with the port " << PORT <<", trying to connect." << std::endl;
-			if (server.connect("192.168.43.111", PORT) != sf::Socket::Done){
+			if (server.connect(sender, PORT) != sf::Socket::Done){
 				std::cout << "- Cannot be connected with the server";
 				return;
 			} else {
@@ -474,18 +483,21 @@ void GameClient::launch(sf::RenderWindow& game_window){
 				server.receive(packet);
 				packet >> nbr_player >> map_width >> map_height >> game_speed;
 
-				std::cout << nbr_player <<" - " << map_width << " - " << map_height << std::endl;
-
 				std::string path;
 				std::vector<Coord> spawn;
-				std::vector<Direction> dir;
-				std::vector< std::vector<Area> > tmp_map;
+
+				std::vector<std::vector<Area>> tmp_map;
 				packet >> path >> biome_path;
+				biome_path.append("/");
 
 				for (unsigned int i = nbr_player; i--;) {
 					player.push_back(Duck());
 					spawn.push_back(Coord());
-					dir.push_back(Direction());
+					player_initial_dir.push_back(Direction());
+					sf::Texture** texture_array = (sf::Texture**) calloc (2, sizeof(sf::Texture*));
+					texture_array[0] = (sf::Texture*) calloc (4, sizeof(sf::Texture));
+					texture_array[1] = (sf::Texture*) calloc (4, sizeof(sf::Texture));
+					duck_texture.push_back(texture_array);
 				}
 				for (unsigned int i = map_height; i--;){
 					tmp_map.push_back(std::vector<Area>());
@@ -494,7 +506,7 @@ void GameClient::launch(sf::RenderWindow& game_window){
 					packet >> spawn[i].x >> spawn[i].y;
 					int tmp;
 					packet >> tmp;
-					dir[i] = static_cast<Direction>(tmp);
+					player_initial_dir[i] = static_cast<Direction>(tmp);
 				}
 				for (unsigned int i = 0; i < map_height; ++i){
 					int tmp_tile;
@@ -526,6 +538,7 @@ void GameClient::launch(sf::RenderWindow& game_window){
 					biome_path + TEXTURE_WATER_LEFT_RIGHT,
 					biome_path + TEXTURE_WARP
 				};
+				std::cout << std::endl;
 				bool loading_success = true;
 				for (unsigned char i = 9 ; i-- ;) {
 					loading_success = loading_success && map_texture[i].loadFromFile(path + map_textures_path[i] + FILETYPE);
@@ -547,27 +560,25 @@ void GameClient::launch(sf::RenderWindow& game_window){
 					std::cout << "Failed to load game ressources" << std::endl;
 				}
 				else {
-					game_window.create(sf::VideoMode(map_width*32, map_height*32), "PapraGame ~ A game with Ducks !", sf::Style::Titlebar | sf::Style::Close);
-
+					game_window.setSize(sf::Vector2u(map_width*32, map_height*32));
+					game_window.setView(sf::View(sf::FloatRect(0,0,static_cast<float>(map_width*32), static_cast<float>(map_height*32))));
 					for (unsigned int i = nbr_player ; i-- ;) {
-						std::string tmp("player ");
-						tmp.push_back(static_cast<char>(i + '1'));
-						player[i] = Duck(duck_texture[i][0], duck_texture[i][1], spawn[i], dir[i], this->loadKeys("player 1"));
+						player[i] = Duck(duck_texture[i][0], duck_texture[i][1], spawn[i], player_initial_dir[i], this->loadKeys("player 1"));
 					}
-
 					explosion_sprite.setTexture(explosion_texture);
-
 					game_map = Map(map_width, map_height, tmp_map, map_texture, &egg_texture);
-					direction = NOPE;
-					int dir_int;
-					do {
-						packet.clear();
-						server.receive(packet);
-						if((packet >> dir_int))
-							direction = static_cast<Direction>(dir_int);
-					} while(direction == NOPE);
-
-					this->start(game_window);
+					std::cout << "Game started " << std::endl;
+					
+					packet.clear();
+					server.receive(packet);
+					bool starting;
+					packet >> starting;
+					if (starting) {
+						this->start(game_window);
+					} else {
+						std::cout << "The server stop the connection." << std::endl;
+						return;
+					}
 				}
 			}
 		}
@@ -668,19 +679,29 @@ void GameClient::start(sf::RenderWindow& game_window){
 	game_window.setSize(sf::Vector2u(map_width*32, map_height*32));
 	game_window.setView(sf::View(sf::FloatRect(0, 0, static_cast<float>(map_width*32), static_cast<float>(map_height*32))));
 	game_window.requestFocus();
+	packet.clear();
+	server.receive(packet);
+	packet >> egg_x >> egg_y;
+	game_map.popEgg(Coord(egg_x, egg_y));
 	do {
+		game_window.clear();
 		packet.clear();
 		server.receive(packet);
 		packet >> ended;
+		std::cout << ended << std::endl;
 		if (ended) {
 			packet >> winner;
 		} else {
-			for (unsigned int i = static_cast<int>(player.size()) - 1; i--;){
+			for (unsigned int i = static_cast<int>(player.size()); i--;){
 				packet >> damaged;
 				if (!damaged){
+					Direction tmp_dir;
 					packet >> tmpint >> power_up;
-					direction = static_cast<Direction>(tmpint);
-					player[i].move(direction,map_width, map_height);
+					tmp_dir = static_cast<Direction>(tmpint);
+					player[i].move(tmp_dir,map_width, map_height);
+					if (game_map.isWarp(player[i].getCoord())){
+						player[i].warped(game_map.getWarp(player[i].getCoord()));
+					}
 					if (power_up){
 						packet >> egg_x >> egg_y;
 						game_map.popEgg(Coord(egg_x,egg_y));
@@ -698,13 +719,13 @@ void GameClient::start(sf::RenderWindow& game_window){
 					server.send(packet);
 				}
 				else if(event.type == sf::Event::KeyPressed){
-					if(event.key.code == player[0].keys[0] && (player[0].getDirection() != DOWN || player[0].size() == 0))
+					if(event.key.code == player[0].keys[0])
 						direction = UP;
-					else if(event.key.code == player[0].keys[1] && (player[0].getDirection() != UP || player[0].size() == 0))
+					else if(event.key.code == player[0].keys[1])
 						direction = DOWN;
-					else if(event.key.code == player[0].keys[2] && (player[0].getDirection() != RIGHT || player[0].size() == 0))
+					else if(event.key.code == player[0].keys[2])
 						direction = LEFT;
-					else if(event.key.code == player[0].keys[3] && (player[0].getDirection() != LEFT || player[0].size() == 0))
+					else if(event.key.code == player[0].keys[3])
 						direction = RIGHT;
 				}
 			}
@@ -712,15 +733,12 @@ void GameClient::start(sf::RenderWindow& game_window){
 				packet << static_cast<int>(direction);
 				server.send(packet);
 				game_map.print(game_window);
-				for (unsigned int i = static_cast<int>(player.size()) -1; i--;){
-					if (game_map.isWarp(player[i].getCoord())){
-						player[i].warped(game_map.getWarp(player[i].getCoord()));
-					} else {
-						player[i].move(direction, map_width, map_height);
-					}
+				for (unsigned int i = static_cast<int>(player.size()); i--;){
 					player[i].print(game_window);
 				}
+				game_window.display();
 			}
 		}
-	} while (!ended);
+	} while (!ended && game_window.isOpen());
+	return;
 }

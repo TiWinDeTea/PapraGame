@@ -145,7 +145,7 @@ class GameClient{
 
 	public:
 
-		~GameClient(){};
+		~GameClient();
 		GameClient(std::string bp, bool is_local){biome_path = bp; local = is_local;}
 		void launch(sf::RenderWindow& game_window);
 
