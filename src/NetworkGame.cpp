@@ -21,7 +21,7 @@ GameServer::GameServer(std::string ressources_path, std::string biome_path_, std
 	std::string tmpstr;
 
 	std::ifstream map_file(map_file_name, std::ios::in | std::ios::binary);
-	if (biome_path == "nope")
+	if (biome_path == "none")
 		map_file >> biome_path;
 	else map_file >> tmpstr;
 	map_file >> game_speed >> egg_victory >> map_width >> map_height;
@@ -105,8 +105,8 @@ void GameServer::getClients(std::vector< std::vector<Area> > map_as_area){
 		packet << player_spawn[i].x << player_spawn[i].y << static_cast<int>(player_initial_dir[i]);
 	}
 
-	for(unsigned int i = 0 ; i < map_height ; ++i){
-		for (unsigned int j = 0 ; j < map_width ; ++j) {
+	for(unsigned int i = 0 ; i < map_width ; ++i){
+		for (unsigned int j = 0 ; j < map_height ; ++j) {
 			packet << static_cast<int>(map_as_area[i][j]);
 		}
 	}
@@ -126,14 +126,18 @@ void GameServer::getClients(std::vector< std::vector<Area> > map_as_area){
 	sf::IpAddress client_ip;
 	sf::Socket::Status status;
 
-	std::cout << "Server : starting up" << std::endl << std::endl;
+	std::cout << "Server : starting up" << std::endl;
 
-	do{
+	size_t tmp_st(player.size() - 1);
+	if (tmp_st > 0)
+		std::cout << "Waiting for " << tmp_st << " player" << ((tmp_st > 1) ? "s" : "") << std::endl << std::endl;
+
+	while(tmp_st > 0){
 		status = udp_client.receive(retrieved_data, 25, retrieved_data_size, client_ip, client_port);
 
 		if (status == sf::Socket::Done && retrieved_data_size == 25 && std::string(retrieved_data) == "PapraGame ~ Game Request" && client_port == (PORT + 1)) {
 
-			std::cout << "Request from " << client_ip << ":" << PORT << std::endl;
+			std::cout << "Request from " << client_ip << ":" << client_port << std::endl;
 			sf::TcpSocket* client = new sf::TcpSocket;
 			status = udp_client.send("PapraGame ~ Client Accepted", 28, client_ip, client_port);
 
@@ -144,13 +148,19 @@ void GameServer::getClients(std::vector< std::vector<Area> > map_as_area){
 				std::cout << "+ Sending maps infos" << std::endl;
 				client->send(packet);
 				std::cout << "+ Done" << std::endl << std::endl;
+
+				--tmp_st;
+
+				if (tmp_st > 0) {
+					std::cout << "Waiting for " << tmp_st << " extra player" << ((tmp_st > 1) ? "s" : "") << std::endl;
+				}
 			}
 			else{
 				std::cout << "- Not Connected" << std::endl;
 				delete client;
 			}
 		}
-	}while(true);
+	}
 }
 
 void GameServer::launch(sf::RenderWindow& game_window){
@@ -166,6 +176,7 @@ void GameServer::launch(sf::RenderWindow& game_window){
 		DUCK_PATH + TEXTURE_DUCKY_LEFT,
 		DUCK_PATH + TEXTURE_DUCKY_RIGHT
 	};
+	biome_path.append("/");
 	std::string map_textures_path[9] = {
 		biome_path + TEXTURE_OBSTACLE,
 		biome_path + TEXTURE_EMPTY_TILE,
@@ -186,6 +197,14 @@ void GameServer::launch(sf::RenderWindow& game_window){
 	loading_success = loading_success && explosion_texture.loadFromFile(ressources + DUCK_PATH + TEXTURE_EXPLOSION + FILETYPE);
 
 	char player_id;
+
+	for (unsigned int i = static_cast<int>(player.size()); i--;){
+		sf::Texture** texture_array = (sf::Texture**) calloc(2, sizeof(sf::Texture*));
+		texture_array[0] = (sf::Texture*) calloc(4, sizeof(sf::Texture));
+		texture_array[1] = (sf::Texture*) calloc(4, sizeof(sf::Texture));
+		duck_texture.push_back(texture_array);
+	}
+
 	for (unsigned int i = static_cast<int>(player.size()) ; i-- ;) {
 		player_id = static_cast<char>(i + '0');
 		for (unsigned int j = 4 ; j-- ;) {
@@ -222,13 +241,25 @@ void GameServer::start(sf::RenderWindow& game_window){
 
 	std::cout << "Game's starting" << std::endl;
 
-	std::vector<Direction> player_dir = player_initial_dir;
+	std::vector<Direction> player_dir;
+
+	for (size_t i = 0 ; i < player_initial_dir.size() ; ++i) {
+		player_dir.push_back(player_initial_dir[i]);
+	}
 
 	unsigned char winner(0);
 	sf::Packet packet;
 
+	game_map.init();
+
 	game_map.popEgg();
 	game_map.popEgg(); // Map thuging #2
+
+	packet << game_map.getEggCoord().x << game_map.getEggCoord().y;
+	for (size_t i = clients.size() ; i-- ;) {
+		clients[i]->send(packet);
+	}
+	packet.clear();
 
 	do{
 		packet << false;
@@ -269,9 +300,11 @@ void GameServer::start(sf::RenderWindow& game_window){
 			if(game_map.map[player[i].getCoord().x][player[i].getCoord().y] == OBSTACLE){
 				player[i].damaged(player_initial_dir[i]);
 				player_dir[i] = player_initial_dir[i];
+				damaged = true;
 			}
 
 			packet << damaged;
+			std::cout << damaged << std::endl;
 
 			if (!damaged){
 
@@ -280,13 +313,15 @@ void GameServer::start(sf::RenderWindow& game_window){
 				if(player[i].getCoord() == game_map.getEggCoord()){
 					player[i].powerUp();
 
-					if (player[i].size() == egg_victory && egg_victory != 0) {
+					if (true || (player[i].size() == egg_victory && egg_victory != 0)) {
 						winner = static_cast<unsigned char>(i + 1);
 					}
 					game_map.popEgg();
 
 					packet << true << game_map.getEggCoord().x << game_map.getEggCoord().y;
 				}
+				else
+					packet << false;
 			}
 		}
 
@@ -299,20 +334,26 @@ void GameServer::start(sf::RenderWindow& game_window){
 			clients[i]->receive(packet);
 			int dir_as_int;
 			packet >> dir_as_int;
-			player_dir[i] = static_cast<Direction>(dir_as_int);
-			if (player_dir[i] == NOPE) {
-
+			if (dir_as_int != NOPE) {
+				player_dir[i] = static_cast<Direction>(dir_as_int);
 			}
 		}
 
-		sf::sleep(sf::milliseconds(game_speed));
+		sf::sleep(sf::milliseconds(game_speed * 10));
 
 		packet.clear();
 	}while(winner == 0);
 
 	packet << true << winner;
-	for (size_t i(clients.size() - 1) ; i-- ;) {
+	for (size_t i(clients.size()) ; i-- ;) {
 		clients[i]->send(packet);
+		std::cout << std::endl << "Sending to " << clients[i]->getRemoteAddress();
+	}
+
+	for (size_t i = duck_texture.size() ; i-- ;) {
+		free(duck_texture[i][0]);
+		free(duck_texture[i][1]);
+		free(duck_texture[i]);
 	}
 }
 
@@ -438,7 +479,7 @@ void GameClient::launch(sf::RenderWindow& game_window){
 				std::string path;
 				std::vector<Coord> spawn;
 				std::vector<Direction> dir;
-				std::vector<std::vector<Area>> tmp_map;
+				std::vector< std::vector<Area> > tmp_map;
 				packet >> path >> biome_path;
 
 				for (unsigned int i = nbr_player; i--;) {

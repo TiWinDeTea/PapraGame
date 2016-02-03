@@ -1,5 +1,6 @@
 ﻿Réseaux (lan, wifi...)
 Écran de victoire
+Écran 'En attente des joueurs' (réseau)
 Enlever les std::cout redondant
 Mettre à jour --version
 Musique-s

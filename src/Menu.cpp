@@ -241,6 +241,7 @@ void Menu::mainMenu(){
 									title_theme.stop();
 									client.launch(window);
 									title_theme.play();
+									network_done = true;
 									break;
 								}
 								default:{
