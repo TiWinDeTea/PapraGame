@@ -94,11 +94,9 @@ GameServer::GameServer(std::string ressources_path, std::string biome_path_, std
 	}while(tmpstr != "eof");
 
 	game_map = Map(map_width, map_height, map_as_area);
-
-	this->getClients(map_as_area);
 }
 
-void GameServer::getClients(std::vector< std::vector<Area> > map_as_area){
+bool GameServer::getClients(sf::RenderWindow& window){
 	sf::Packet packet;
 	packet.clear();
 	packet << static_cast<unsigned int>(player.size()) << map_height << map_width << game_speed << ressources << biome_path;
@@ -109,7 +107,7 @@ void GameServer::getClients(std::vector< std::vector<Area> > map_as_area){
 
 	for(unsigned int i = 0 ; i < map_width ; ++i){
 		for (unsigned int j = 0 ; j < map_height ; ++j) {
-			packet << static_cast<int>(map_as_area[i][j]);
+			packet << static_cast<int>(game_map.map[i][j]);
 		}
 	}
 
@@ -119,7 +117,7 @@ void GameServer::getClients(std::vector< std::vector<Area> > map_as_area){
 	sf::TcpListener listener;
 	if (listener.listen(PORT) != sf::Socket::Done){
 		std::cout << "Cannot host the game" << std::endl;
-		return;
+		return false;
 	}
 
 	char retrieved_data[25];
@@ -134,14 +132,20 @@ void GameServer::getClients(std::vector< std::vector<Area> > map_as_area){
 	if (tmp_st > 0)
 		std::cout << "Waiting for " << tmp_st << " player" << ((tmp_st > 1) ? "s" : "") << std::endl << std::endl;
 
-	while(tmp_st > 0){
+	udp_client.setBlocking(false);
+
+	sf::Event event;
+
+	while(tmp_st > 0 && window.isOpen()){
 		status = udp_client.receive(retrieved_data, 25, retrieved_data_size, client_ip, client_port);
 
 		if (status == sf::Socket::Done && retrieved_data_size == 25 && std::string(retrieved_data) == "PapraGame ~ Game Request" && client_port == (PORT + 1)) {
 
 			std::cout << "Request from " << client_ip << ":" << client_port << std::endl;
 			sf::TcpSocket* client = new sf::TcpSocket;
+			udp_client.setBlocking(true);
 			status = udp_client.send("PapraGame ~ Client Accepted", 28, client_ip, client_port);
+			udp_client.setBlocking(false);
 
 			if (status == sf::Socket::Done && listener.accept(*client) == sf::Socket::Done) {
 
@@ -162,7 +166,16 @@ void GameServer::getClients(std::vector< std::vector<Area> > map_as_area){
 				delete client;
 			}
 		}
+
+		sf::sleep(sf::milliseconds(30));
+		while(window.pollEvent(event)){
+			if(event.type == sf::Event::Closed){
+				window.close();
+				return false;
+			}
+		}
 	}
+	return true;
 }
 
 void GameServer::launch(sf::RenderWindow& game_window){
@@ -545,23 +558,20 @@ void GameClient::launch(sf::RenderWindow& game_window){
 	char data[28];
 
 	if (broadcast.send("PapraGame ~ Game Request", 25, sf::IpAddress::Broadcast, PORT)!=sf::Socket::Done){
-		std::cout << "- Cannot find the server" << std::endl;
+		std::cout << "- No server found" << std::endl;
 		return;
 	} else {
 		broadcast.setBlocking(true);
-		std::cout << "- Server found. Retrieving game's datas..." << std::endl;
 		if (broadcast.receive(data, 28, received, sender, port) != sf::Socket::Done && std::string(data) != "PapraGame ~ Game Accepted"){
-				std::cout << "Data received : " << data << std::endl;
-			std::cout << "- No data received from the server." << std::endl;
+			std::cout << "- Bad server" << std::endl;
 			return;
 		} else  {
-			std::cout << "- Receive data from the server with ip addrress "<< sender << " and with the port " << PORT <<", trying to connect." << std::endl;
 			if (server.connect(sender, PORT) != sf::Socket::Done){
-				std::cout << "- Cannot be connected with the server";
+				std::cout << "- Connection Failed";
 				return;
 			} else {
 
-				std::cout << "- Connected" << std::endl;
+				std::cout << "+ Connected" << std::endl;
 				unsigned int nbr_player;
 				sf::Packet packet;
 

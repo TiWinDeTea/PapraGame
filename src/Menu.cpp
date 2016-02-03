@@ -229,9 +229,11 @@ void Menu::mainMenu(){
 									map_path = this->mapMenu();
 									if(map_path.size() > 0){
 										GameServer server("res/", biome_path, map_path);
-										title_theme.stop();
-										server.launch(window);
-										title_theme.play();
+										if (server.getClients(window)){
+												title_theme.stop();
+												server.launch(window);
+												title_theme.play();
+										}
 										network_done = true;
 									}
 									break;

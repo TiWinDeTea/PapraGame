@@ -103,15 +103,14 @@ public:
 	 */
 	void launch(sf::RenderWindow& game_window);
 
-private:
-
 	/**
 	 * @brief Listens for clients broadcasting the network
-	 * @param res         Path to the ressources (from the executable root)
-	 * @param biome_path  Path to the biome (from the executable root)
-	 * @param map_as_area Map (from the file) interpreted as a 2d vector of Area
+	 * @param window An sf::RenderWindow
+	 * @return true if all clients joined, false otherwise
 	 */
-	void getClients(std::vector< std::vector<Area> > map_as_area);
+	bool getClients(sf::RenderWindow& window);
+
+private:
 
 	/**
 	 * @brief Starts a Network Game
