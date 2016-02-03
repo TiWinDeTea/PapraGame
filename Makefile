@@ -42,7 +42,7 @@ INCLUDEDIR     = -I/usr/include -Iinclude/
 LIBSDIR        = -L/usr/lib
 SOURCENAME     = Coord Ducky Duck Map Game NetworkGame Menu main
 EXENAME        = PapraGame
-LINKS          = -lstdc++ -lsfml-system -lsfml-window -lsfml-graphics -lsfml-network
+LINKS          = -lstdc++ -lsfml-system -lsfml-window -lsfml-graphics -lsfml-network -lsfml-audio
 
 SHOWDONES      = 1
 
