@@ -284,6 +284,8 @@ void GameServer::start(sf::RenderWindow& game_window){
 	}
 	packet.clear();
 
+	Direction self_current_dir;
+
 	do{
 		packet << false;
 
@@ -297,7 +299,7 @@ void GameServer::start(sf::RenderWindow& game_window){
 			player[i].move(player_dir[i], game_map.x_size, game_map.y_size);
 
 			bool damaged(false);
-			unsigned int j = static_cast<unsigned int>(player.size() - 1);
+			unsigned int j = static_cast<unsigned int>(player.size());
 			explosions_coord.erase(explosions_coord.begin(), explosions_coord.end());
 			while(j > 0 && !damaged){
 
@@ -351,14 +353,18 @@ void GameServer::start(sf::RenderWindow& game_window){
 				}
 				else{
 					packet << false;
-					damage_sound.play();
 				}
+			}
+			else{
+					damage_sound.play();
 			}
 		}
 
 		for (unsigned char i((unsigned char)(clients.size())) ; i-- ;) {
 			clients[i]->send(packet);
 		}
+
+		self_current_dir = player_dir[player.size()-1];
 
 		for (unsigned char w = 16 ; --w ;) {
 
@@ -371,16 +377,16 @@ void GameServer::start(sf::RenderWindow& game_window){
 					return;
 				}
 				else if(event.type == sf::Event::KeyPressed){
-					if(event.key.code == player[player.size()-1].keys[0] && (player_dir[player.size()-1] != DOWN || player[player.size()-1].size() == 0))
+					if(event.key.code == player[player.size()-1].keys[0] && (self_current_dir != DOWN || player[player.size()-1].size() == 0))
 						player_dir[player.size()-1] = UP;
 
-					else if(event.key.code == player[player.size()-1].keys[1] && (player_dir[player.size()-1] != UP || player[player.size()-1].size() == 0))
+					else if(event.key.code == player[player.size()-1].keys[1] && (self_current_dir != UP || player[player.size()-1].size() == 0))
 						player_dir[player.size()-1] = DOWN;
 
-					else if(event.key.code == player[player.size()-1].keys[2] && (player_dir[player.size()-1] != RIGHT || player[player.size()-1].size() == 0))
+					else if(event.key.code == player[player.size()-1].keys[2] && (self_current_dir != RIGHT || player[player.size()-1].size() == 0))
 						player_dir[player.size()-1] = LEFT;
 
-					else if(event.key.code == player[player.size()-1].keys[3] && (player_dir[player.size()-1] != LEFT || player[player.size()-1].size() == 0))
+					else if(event.key.code == player[player.size()-1].keys[3] && (self_current_dir != LEFT || player[player.size()-1].size() == 0))
 						player_dir[player.size()-1] = RIGHT;
 				}
 			}

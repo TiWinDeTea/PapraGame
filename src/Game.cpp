@@ -342,17 +342,6 @@ void Game::start(sf::RenderWindow& game_window)
 		game_window.display();
 
 	}
-
-	/*if (winner != 0){
-		std::cout << std::endl;
-		std::cout << "Player " << static_cast<short>(winner) << " won !" << std::endl;
-		std::cout << "Congratulations !" << std::endl << std::endl;
-		std::cout << "Press Enter to quit" << std::endl;
-		#ifndef OS_WINDOWS
-			getchar();
-		#endif
-		getchar();
-	}*/
 }
 
 std::vector<sf::Keyboard::Key> Game::loadKeys(std::string selected_player){
