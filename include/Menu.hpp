@@ -37,6 +37,8 @@
 	#include <sys/types.h>
 #endif
 
+#define MINIMAL_Y_MOUSE               205
+
 #define MENU_X_RESOLUTION             800
 #define MENU_Y_RESOLUTION             600
 

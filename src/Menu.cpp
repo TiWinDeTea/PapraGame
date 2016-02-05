@@ -83,8 +83,6 @@ void Menu::setBiome(std::string chosen_biome){
 
 void Menu::mainMenu(){
 
-	window.clear(sf::Color::White);
-
 	std::vector<sf::RectangleShape> rectangle;
 	std::vector<sf::Text> text;
 
@@ -119,10 +117,10 @@ void Menu::mainMenu(){
 	char old_user_choice = 0;
 	char nbr_of_choices = static_cast<char>(rectangle.size());
 
-	background_sprite.setPosition(static_cast<float>(bg_pos), 0);
+	background_sprite.setPosition(static_cast<float>(bg_pos), -64);
+	window.draw(background_sprite);
 	title_sprite.setPosition(0,0);
 	window.draw(title_sprite);
-	window.draw(background_sprite);
 
 	for(unsigned char i = nbr_of_choices; i--;){
 		window.draw(rectangle[i]);
@@ -198,12 +196,12 @@ void Menu::mainMenu(){
 							countdown.setPosition(static_cast<float>((MENU_X_RESOLUTION) - countdown.getGlobalBounds().width) / 2.0f, static_cast<float>(MENU_Y_RESOLUTION - countdown.getGlobalBounds().height) / 2.0f);
 							sf::Clock elapsed_time;
 							while(i > '0'){
-								window.draw(title_sprite);
 								--bg_pos;
 								if(bg_pos < -BACKGROUND_LOOP_WIDTH)
 									bg_pos = 0;
-								background_sprite.setPosition(static_cast<float>(bg_pos), 0);
+								background_sprite.setPosition(static_cast<float>(bg_pos), -64);
 								window.draw(background_sprite);
+								window.draw(title_sprite);
 								window.draw(countdown);
 								window.display();
 								sf::sleep(sf::milliseconds(REFRESH_SLOWNESS));
@@ -269,12 +267,12 @@ void Menu::mainMenu(){
 		window.clear();
 		rectangle[old_user_choice].setOutlineColor(NORMAL_OUTLINE_COLOR);
 		rectangle[user_choice].setOutlineColor(SELECTED_OUTLINE_COLOR);
-		window.draw(title_sprite);
 		--bg_pos;
 		if(bg_pos < -BACKGROUND_LOOP_WIDTH)
 			bg_pos = 0;
-		background_sprite.setPosition(static_cast<float>(bg_pos), 0);
+		background_sprite.setPosition(static_cast<float>(bg_pos), -64);
 		window.draw(background_sprite);
+		window.draw(title_sprite);
 		for(unsigned char i = nbr_of_choices; i--;){
 			window.draw(rectangle[i]);
 			window.draw(text[i]);
@@ -376,10 +374,10 @@ std::string Menu::mapMenu(){
 	char nbr_of_choices = static_cast<char>(maps.size() + 1);
 	int scrolling = 0;
 
-	background_sprite.setPosition(static_cast<float>(bg_pos), 0);
+	background_sprite.setPosition(static_cast<float>(bg_pos), -64);
+	window.draw(background_sprite);
 	title_sprite.setPosition(0,0);
 	window.draw(title_sprite);
-	window.draw(background_sprite);
 
 	for(unsigned char i = nbr_of_choices; i--;){
 		window.draw(rectangle[i]);
@@ -438,7 +436,7 @@ std::string Menu::mapMenu(){
 				}
 			}
 			else if(event.type == sf::Event::MouseMoved){
-				if(!title_sprite.getGlobalBounds().contains(sf::Vector2f(sf::Mouse::getPosition(window)))){
+				if(sf::Mouse::getPosition(window).y > MINIMAL_Y_MOUSE){
 					for(unsigned char i = nbr_of_choices; i--;){
 						if(((sf::Mouse::getPosition(window).y - TITLE_HEIGHT) > rectangle[i].getPosition().y) && ((sf::Mouse::getPosition(window).y - TITLE_HEIGHT) < (rectangle[i].getPosition().y + MAP_BUTTON_HEIGHT)))
 							user_choice = i;
@@ -446,7 +444,7 @@ std::string Menu::mapMenu(){
 				}
 			}
 			else if(event.type == sf::Event::MouseButtonPressed){
-				if(!title_sprite.getGlobalBounds().contains(sf::Vector2f(sf::Mouse::getPosition(window)))){
+				if(sf::Mouse::getPosition(window).y > MINIMAL_Y_MOUSE){
 					if(event.mouseButton.button == sf::Mouse::Button::Left){
 						for(unsigned char i = nbr_of_choices; i--;){
 							if(rectangle[i].getGlobalBounds().contains(sf::Vector2f(static_cast<float>(event.mouseButton.x), static_cast<float>(event.mouseButton.y)))){
@@ -489,7 +487,7 @@ std::string Menu::mapMenu(){
 		--bg_pos;
 		if(bg_pos < -BACKGROUND_LOOP_WIDTH)
 			bg_pos = 0;
-		background_sprite.setPosition(static_cast<float>(bg_pos), 0);
+		background_sprite.setPosition(static_cast<float>(bg_pos), -64);
 		window.draw(background_sprite);
 		for(unsigned char i = nbr_of_choices; i--;){
 			window.draw(rectangle[i]);
@@ -506,8 +504,6 @@ std::string Menu::mapMenu(){
 }
 
 char Menu::networkMenu(){
-
-	window.clear(sf::Color::White);
 
 	std::vector<sf::RectangleShape> rectangle;
 	std::vector<sf::Text> text;
@@ -543,8 +539,8 @@ char Menu::networkMenu(){
 	char old_user_choice = 0;
 	char nbr_of_choices = static_cast<char>(rectangle.size());
 
-	window.draw(title_sprite);
 	window.draw(background_sprite);
+	window.draw(title_sprite);
 
 	for(unsigned char i = nbr_of_choices; i--;){
 		window.draw(rectangle[i]);
@@ -606,12 +602,12 @@ char Menu::networkMenu(){
 		window.clear();
 		rectangle[old_user_choice].setOutlineColor(NORMAL_OUTLINE_COLOR);
 		rectangle[user_choice].setOutlineColor(SELECTED_OUTLINE_COLOR);
-		window.draw(title_sprite);
 		--bg_pos;
 		if(bg_pos < -BACKGROUND_LOOP_WIDTH)
 			bg_pos = 0;
-		background_sprite.setPosition(static_cast<float>(bg_pos), 0);
+		background_sprite.setPosition(static_cast<float>(bg_pos), -64);
 		window.draw(background_sprite);
+		window.draw(title_sprite);
 		for(unsigned char i = nbr_of_choices; i--;){
 			window.draw(rectangle[i]);
 			window.draw(text[i]);
