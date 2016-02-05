@@ -137,6 +137,8 @@ private:
 	unsigned int game_speed;
 	unsigned short egg_victory;
 	unsigned int map_height, map_width;
+	unsigned short los;
+	bool is_blind, loop;
 };
 
 
@@ -166,6 +168,8 @@ class GameClient{
 		sf::Texture explosion_texture;
 		sf::Sprite explosion_sprite;
 		std::string biome_path;
+		unsigned short los;
+		bool is_blind, loop;
 };
 
 #endif /* NETWORKGAME_HPP_INCLUDED */

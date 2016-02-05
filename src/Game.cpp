@@ -11,6 +11,7 @@ Game::Game(){
 	biome_path = "none";
 	ducks_path = "ducks/";
 	player_number = 0;
+	is_blind = false;
 }
 
 Game::Game(std::string path1, std::string path2, std::string path3){
@@ -18,6 +19,7 @@ Game::Game(std::string path1, std::string path2, std::string path3){
 	biome_path = path2;
 	ducks_path = path3;
 	player_number = 0;
+	is_blind = false;
 }
 
 Game::~Game()
@@ -117,6 +119,16 @@ bool Game::loadMap(){
 
 	if (map_file) {
 		map_file >> value; // ignoring first line : already interpreted
+		map_file >> value;
+		if (value ==  "blind" || value == "true" || value == "1"){
+			is_blind = true;
+			map_file >> los;
+			map_file >> value;
+			if (value == "loop" || value == "true" || value == "1")
+				loop = true;
+			else
+				loop = false;
+		}
 		map_file >> game_speed;
 		map_file >> egg_victory;
 		map_file >> x_map_size;
@@ -179,6 +191,7 @@ bool Game::loadMap(){
 			map_file >> player_spawn[player_number].x;
 			--player_spawn[player_number].x;
 			map_file >> player_spawn[player_number].y;
+			--player_spawn[player_number].y;
 			if (value == "up")
 				player_initial_dir.push_back(UP);
 			else if (value == "down")
@@ -263,7 +276,18 @@ void Game::start(sf::RenderWindow& game_window)
 		sf::sleep(sf::milliseconds(game_speed));
 		--tmp;
 
-		game_map.print(game_window);
+		if (is_blind){
+			game_window.clear();
+			for (unsigned char i = player_number ; i--;){
+				game_map.print(game_window, player[i].getCoord(), los, loop);
+				for (unsigned char j = player[i].size() ; j-- ;){
+					game_map.print(game_window, player[i].duckies[j].getCoord(), static_cast<unsigned short>(los/2), loop);
+				}
+			}
+			game_map.printEgg(game_window);
+		}
+		else game_map.print(game_window);
+
 		if(tmp == 0){
 			tmp = 16;
 			explosions_coord.erase(explosions_coord.begin(), explosions_coord.end());

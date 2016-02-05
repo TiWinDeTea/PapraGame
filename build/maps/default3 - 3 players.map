@@ -1,4 +1,5 @@
 snow
+visible
 15
 7
 40 21
@@ -23,7 +24,7 @@ o...............x..|o...........x...oo.o
 o..................|o..................o
 o..................|ooo...........oo..oo
 oooooooooooooooooooooooooooooooooooooooo
-right 3 3
-right 3 17
-left 35 6
+right 3 4
+right 3 18
+left 35 7
 eof

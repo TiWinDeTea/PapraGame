@@ -15,7 +15,7 @@
 #include <ctime>
 #include <iostream>
 
-#define NB_TEXTURE 9
+#define NB_TEXTURE         9
 #define RESOLUTION_X_IMAGE 32
 #define RESOLUTION_Y_IMAGE 32
 
@@ -93,6 +93,17 @@ class Map {
 		 * @param window the window for sfml and to print the map
 		 */
 		void print(sf::RenderWindow& window);
+
+		/**
+		 * @brief printing function for blinds maps
+		 * @param window Game window
+		 * @param tile   Coordinates of the center's tile
+		 * @param los    Ducks Line of Sight
+		 * @param loop   Is the LOS looping ?
+		 */
+		void print (sf::RenderWindow& window, Coord tile, unsigned short los, bool loop);
+
+		void printEgg(sf::RenderWindow& window);
 
 		/**
 		 * @brief Gets the egg's coordinates

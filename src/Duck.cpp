@@ -36,6 +36,7 @@ void Duck::damaged(Direction initial_dir){
 
 		for(unsigned char i = 0; i < static_cast<unsigned char>(duckies.size()); ++i){
 			duckies[i].resetCoord();
+			duckies[i].direction = initial_dir;
 		}
 	}
 	coordinates = st_coordinates;

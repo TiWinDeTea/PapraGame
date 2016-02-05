@@ -48,6 +48,60 @@ void Map::print (sf::RenderWindow& window){
 	window.draw(egg_sprite);
 }
 
+void Map::print (sf::RenderWindow& window, Coord tile, unsigned short los, bool loop)
+{
+	unsigned int x_beg, x_los, y_los;
+	if (loop){
+		tile.y = (tile.y  < los) ? y_size + tile.y - los : tile.y - los;
+		x_beg = (tile.x < los) ? x_size + tile.x - los : tile.x - los;
+		x_los = 2 * los + 1;
+		y_los = 2 * los + 1;
+	}
+	else{
+		unsigned int y_beg;
+
+		if (tile.y > los){
+			y_los = 2 * los + 1;
+			y_beg = tile.y - los;
+		}
+		else{
+			y_los = los + 1 + tile.y;
+			y_beg = 0;
+		}
+
+		if(tile.x > los){
+			x_los = 2 * los + 1;
+			x_beg = tile.x - los;
+		}
+		else{
+			x_los = los + 1 + tile.x;
+			x_beg = 0;
+		}
+
+		if(tile.y + los + 1 > y_size)
+			y_los -= (tile.y + los - y_size + 1);
+		if(tile.x + los + 1 > x_size)
+			x_los -= (tile.x + los - x_size + 1);
+
+		tile.y = y_beg;
+	}
+	for (unsigned int i = y_los ; i-- ;){
+			tile.x = x_beg;
+			for (unsigned int j = x_los ; j--;){
+				tile.x%=x_size;
+				sprites[map[tile.x][tile.y]].setPosition(static_cast<float>(tile.x*RESOLUTION_X_IMAGE), static_cast<float>(tile.y*RESOLUTION_Y_IMAGE));
+				window.draw(sprites[map[tile.x][tile.y]]);
+				++(tile.x);
+			}
+			++(tile.y);
+			tile.y%=y_size;
+	}
+}
+
+void Map::printEgg(sf::RenderWindow& window){
+	egg_sprite.setPosition(static_cast<float>(coordinate_egg.x * RESOLUTION_X_IMAGE),static_cast<float>( coordinate_egg.y * RESOLUTION_Y_IMAGE));
+	window.draw(egg_sprite);
+}
 /*print : print a tile of the map.
  * tile : coordinate of the tile we want to print.
  */

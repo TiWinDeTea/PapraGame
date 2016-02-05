@@ -26,6 +26,20 @@ GameServer::GameServer(std::string ressources_path, std::string biome_path_, std
 	if (biome_path == "none")
 		map_file >> biome_path;
 	else map_file >> tmpstr;
+	map_file >> tmpstr;
+	if (tmpstr ==  "blind" || tmpstr == "true" || tmpstr == "1"){
+		is_blind = true;
+		map_file >> los;
+		map_file >> tmpstr;
+		if (tmpstr == "loop" || tmpstr == "true" || tmpstr == "1")
+			loop = true;
+		else
+			loop = false;
+	}
+	else{
+		los = 0;
+		loop = false;
+	}
 	map_file >> game_speed >> egg_victory >> map_width >> map_height;
 
 	for (unsigned int i = map_width ; i-- ;) {
@@ -79,6 +93,7 @@ GameServer::GameServer(std::string ressources_path, std::string biome_path_, std
 		map_file >> player_spawn[nbr_player].x;
 		--player_spawn[nbr_player].x;
 		map_file >> player_spawn[nbr_player].y;
+		--player_spawn[nbr_player].y;
 		if (tmpstr == "up")
 			player_initial_dir.push_back(UP);
 		else if (tmpstr == "down")
@@ -99,7 +114,7 @@ GameServer::GameServer(std::string ressources_path, std::string biome_path_, std
 bool GameServer::getClients(sf::RenderWindow& window){
 	sf::Packet packet;
 	packet.clear();
-	packet << static_cast<unsigned int>(player.size()) << map_height << map_width << game_speed << ressources << biome_path;
+	packet << static_cast<unsigned int>(player.size()) << is_blind << los << loop << map_height << map_width << game_speed << ressources << biome_path;
 
 	for(unsigned int i = 0 ; i < player.size() ; ++i){
 		packet << player_spawn[i].x << player_spawn[i].y << static_cast<int>(player_initial_dir[i]);
@@ -404,7 +419,18 @@ void GameServer::start(sf::RenderWindow& game_window){
 				}
 			}
 
-			game_map.print(game_window);
+
+			if (is_blind){
+				game_window.clear();
+				for (unsigned char i = player.size() ; i--;){
+					game_map.print(game_window, player[i].getCoord(), los, loop);
+					for (unsigned char j = player[i].size() ; j-- ;){
+						game_map.print(game_window, player[i].duckies[j].getCoord(), static_cast<unsigned short>(los/2), loop);
+					}
+				}
+				game_map.printEgg(game_window);
+			}
+			else game_map.print(game_window);
 
 			for (unsigned int i = static_cast<unsigned int>(player.size()) ; i-- ;) {
 				if(player[i].isInvulnerable()){
@@ -576,7 +602,7 @@ void GameClient::launch(sf::RenderWindow& game_window){
 				sf::Packet packet;
 
 				server.receive(packet);
-				packet >> nbr_player >> map_width >> map_height >> game_speed;
+				packet >> nbr_player >> is_blind >> los >> loop >> map_width >> map_height >> game_speed;
 
 				std::string path;
 				std::vector<Coord> spawn;
@@ -662,18 +688,31 @@ void GameClient::launch(sf::RenderWindow& game_window){
 					}
 					explosion_sprite.setTexture(explosion_texture);
 					game_map = Map(map_width, map_height, tmp_map, map_texture, &egg_texture);
-					std::cout << "Game started " << std::endl;
 
 					packet.clear();
-					server.receive(packet);
-					bool starting;
-					packet >> starting;
-					if (starting) {
-						this->start(game_window);
-					} else {
-						std::cout << "Connection closed by server." << std::endl;
-						return;
-					}
+					bool starting, done(false);
+					sf::Event event;
+					server.setBlocking(false);
+
+					do{
+						while(game_window.pollEvent(event)){
+							if (event.type == sf::Event::Closed){
+									game_window.close();
+									done = true;
+							}
+						}
+						server.receive(packet);
+						if((packet >> starting)){
+							if (starting) {
+								server.setBlocking(true);
+								this->start(game_window);
+								done = true;
+							} else {
+								std::cout << "Connection closed by server." << std::endl;
+								done = true;
+							}
+						}
+					}while(!done);
 				}
 			}
 		}
@@ -858,7 +897,18 @@ void GameClient::start(sf::RenderWindow& game_window){
 					}
 				}
 
-				game_map.print(game_window);
+
+				if (is_blind){
+					game_window.clear();
+					for (unsigned char i = player.size(); i--;){
+						game_map.print(game_window, player[i].getCoord(), los, loop);
+						for (unsigned char j = player[i].size() ; j-- ;){
+							game_map.print(game_window, player[i].duckies[j].getCoord(), static_cast<unsigned short>(los/2), loop);
+						}
+					}
+					game_map.printEgg(game_window);
+				}
+				else game_map.print(game_window);
 
 				for (unsigned int i = static_cast<unsigned int>(player.size()) ; i-- ;) {
 					if(player[i].isInvulnerable()){
@@ -882,7 +932,18 @@ void GameClient::start(sf::RenderWindow& game_window){
 
 			packet << static_cast<int>(direction);
 			server.send(packet);
-			game_map.print(game_window);
+
+			if (is_blind){
+				game_window.clear();
+				for (unsigned char i = player.size() ; i--;){
+					game_map.print(game_window, player[i].getCoord(), los, loop);
+					for (unsigned char j = player[i].size() ; j-- ;){
+						game_map.print(game_window, player[i].duckies[j].getCoord(), static_cast<unsigned short>(los/2), loop);
+					}
+				}
+				game_map.printEgg(game_window);
+			}
+			else game_map.print(game_window);
 			for (unsigned int i = static_cast<int>(player.size()); i--;){
 				player[i].print(game_window, 0);
 			}

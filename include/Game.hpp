@@ -110,6 +110,8 @@ private:
 	unsigned char player_number;
 	unsigned int game_speed;
 	unsigned short egg_victory;
+	unsigned short los;
+	bool is_blind, loop;
 };
 
 #endif /* GAME_HPP_INCLUDED */
