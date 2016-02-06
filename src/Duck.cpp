@@ -21,7 +21,7 @@ Duck::Duck(sf::Texture duck_textures[4], sf::Texture duckies_textures[4], Coord 
 	}
 	direction = initial_direction;
 
-	for(unsigned char i = DUCKIES_INITIAL_NUMBER; i--;){
+	for(unsigned int i = DUCKIES_INITIAL_NUMBER; i--;){
 		duckies.push_back(Ducky(starting_coordinates, starting_coordinates, direction));
 	}
 	invulnerability = MOVES_INVULNERABLE;
@@ -34,7 +34,7 @@ void Duck::damaged(Direction initial_dir){
 		if(!invulnerability)
 			duckies.pop_back();
 
-		for(unsigned char i = 0; i < static_cast<unsigned char>(duckies.size()); ++i){
+		for(unsigned int i = 0; i < static_cast<unsigned int>(duckies.size()); ++i){
 			duckies[i].resetCoord();
 			duckies[i].direction = initial_dir;
 		}
@@ -56,7 +56,7 @@ void Duck::powerUp(){
 void Duck::move(Direction new_direction, unsigned int x_map_size, unsigned int y_map_size){
 
 	if(duckies.size() > 0){
-		for(unsigned char i = static_cast<unsigned char>(duckies.size() - 1); i > 0 ; i--){
+		for(unsigned int i = static_cast<unsigned int>(duckies.size() - 1); i > 0 ; i--){
 			if(duckies[i].coordinates != duckies[i - 1].coordinates)
 				duckies[i].move(duckies[i - 1].direction, duckies[i - 1].coordinates);
 		}
@@ -112,7 +112,7 @@ unsigned char Duck::size(){
 
 void Duck::print(sf::RenderWindow& window, float shift){
 
-	for(unsigned char i = static_cast<unsigned char>(duckies.size()); i--;){
+	for(unsigned int i = static_cast<unsigned int>(duckies.size()); i--;){
 		switch (duckies[i].direction){
 			case UP:
 				ducky_sprite[duckies[i].direction].setPosition(static_cast<float>(duckies[i].coordinates.x * 32), static_cast<float>(duckies[i].coordinates.y * 32) - shift);

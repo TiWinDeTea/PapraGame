@@ -312,6 +312,7 @@ void Game::start(sf::RenderWindow& game_window)
 							player_dir[i] = player_initial_dir[i];
 							player_dir[j] = player_initial_dir[j];
 							damaged = true;
+							damage_sound.play();
 						}
 					}
 
@@ -320,9 +321,16 @@ void Game::start(sf::RenderWindow& game_window)
 						--k;
 						if(player[i].getCoord() == player[j].duckies[k].getCoord()){
 							explosions_coord.push_back(player[i].getCoord() - player[i].getDirection());
+
+							if (player[i].size() > 0 && !(player[i].isInvulnerable())){
+								player[j].powerUp();
+								if (player[i].size() == egg_victory && egg_victory != 0)
+									winner = static_cast<unsigned char>(j + 1);
+							}
 							player[i].damaged(player_initial_dir[i]);
 							player_dir[i] = player_initial_dir[i];
 							damaged = true;
+							damage_sound.play();
 						}
 					}
 				}
@@ -330,11 +338,8 @@ void Game::start(sf::RenderWindow& game_window)
 					explosions_coord.push_back(player[i].getCoord() - player[i].getDirection());
 					player[i].damaged(player_initial_dir[i]);
 					player_dir[i] = player_initial_dir[i];
-					damaged = true;
-				}
-
-				if (damaged)
 					damage_sound.play();
+				}
 			}
 			for(unsigned char i = player_number; i--;){
 				if(player[i].getCoord() == game_map.getEggCoord()){

@@ -262,8 +262,9 @@ void GameServer::launch(sf::RenderWindow& game_window){
 		}
 		game_map = Map(map_width, map_height, game_map.map, map_texture, &egg_texture);
 
-		packet << true;
 		for (size_t i = clients.size() ; i--;){
+			packet.clear();
+			packet << true << static_cast<int>(player_initial_dir[i]);
 			clients[i]->send(packet);
 		}
 		this->start(game_window);
@@ -341,6 +342,7 @@ void GameServer::start(sf::RenderWindow& game_window){
 						player_dir[i] = player_initial_dir[i];
 						player_dir[j] = player_initial_dir[j];
 						damaged = true;
+						packet << true << static_cast<int>(65000);
 					}
 				}
 
@@ -348,7 +350,16 @@ void GameServer::start(sf::RenderWindow& game_window){
 				while(k > 0 && !damaged){
 					--k;
 					if(player[i].getCoord() == player[j].duckies[k].getCoord()){
+						packet << true;
 						explosions_coord.push_back(player[i].getCoord() - player[i].getDirection());
+						if (player[i].size() > 0 && !(player[i].isInvulnerable())){
+							player[j].powerUp();
+							packet << j;
+							if (player[j].size() == egg_victory && egg_victory != 0)
+									winner = static_cast<unsigned char>(j + 1);
+						}
+						else
+							packet << 65000;
 						player[i].damaged(player_initial_dir[i]);
 						player_dir[i] = player_initial_dir[i];
 						damaged = true;
@@ -360,13 +371,12 @@ void GameServer::start(sf::RenderWindow& game_window){
 				player[i].damaged(player_initial_dir[i]);
 				player_dir[i] = player_initial_dir[i];
 				damaged = true;
+				packet << true << static_cast<int>(65000);
 			}
-
-			packet << damaged;
 
 			if (!damaged){
 
-				packet << player_dir[i];
+				packet << false << player_dir[i];
 
 				if(player[i].getCoord() == game_map.getEggCoord()){
 					egg_sound.play();
@@ -704,6 +714,9 @@ void GameClient::launch(sf::RenderWindow& game_window){
 						server.receive(packet);
 						if((packet >> starting)){
 							if (starting) {
+								int tmp;
+								packet >> tmp;
+								direction = static_cast<Direction>(tmp);
 								server.setBlocking(true);
 								this->start(game_window);
 								done = true;
@@ -849,6 +862,7 @@ void GameClient::start(sf::RenderWindow& game_window){
 		if (ended) {
 			packet >> winner;
 		} else {
+			int ducky_stolen;
 			for (unsigned int i = static_cast<int>(player.size()); i--;){
 				packet >> damaged;
 				if (!damaged){
@@ -867,6 +881,9 @@ void GameClient::start(sf::RenderWindow& game_window){
 						egg_sound.play();
 					}
 				} else {
+					packet >> ducky_stolen;
+					if (ducky_stolen != 65000)
+						player[ducky_stolen].powerUp();
 					explosions_coord.push_back(player[i].getCoord() - player[i].getDirection());
 					player[i].damaged(player_initial_dir[i]);
 					damage_sound.play();
