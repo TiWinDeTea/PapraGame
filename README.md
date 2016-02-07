@@ -3,7 +3,7 @@ PapraGame Project
 
 ##About
 <br/>
-PapraGame is a game featuring ducks !
+PapraGame is a game featuring ducks ! It is both free as in beer and open souce.
 
 It's a multiplayer versus snake-like (but it may be played in solo aswell). To win, you have to be the first to reach a certain number of duckies, depending on the map (you start with 2).
 You can get duckies either by catching an egg, or by stealing one to your opponent(s) (you can steal him/her a ducky by forcing him/her to punch you in the duckies).
@@ -28,6 +28,9 @@ When you hit an obstacle, you will be unvulnerable for 5 turns. Strange violet s
 You can add a map in the folder `./maps/`). Just create a file named ``<map_name>.map`` and edit it with text editor.
 The file should be structured according to the following (line by line)
 + Biome (sand, grass, space, snow, magma, psychogwak)
++ ``visible`` if all the map is revealed, ``blind`` otherwise
+    + if it's a ``blind`` map, add the Line of Sight of ducks (duckies LOS is halved)
+    + Then add ``loop`` if you want the LOS to 'loop' or ``no-loop`` otherwise. (ie : do you want a duck at the very top of the map to see what's at the very bottom of the map ?)
 + The game 'slowness'
 + Number of eggs required to win (0 for infinity)
 + Length of the map
@@ -70,7 +73,7 @@ Binaries and sources of the v0.4 are available on [github](https://github.com/Ti
 
 ##Copyright
 <br/>
-License : Mozilla Public License Version 2.0 
+License : Mozilla Public License Version 2.0
 
 [Read the license file](LICENSE.md)
 
@@ -88,13 +91,29 @@ Extract : Disclaimer of Warranty
     essential part of this License. No use of any Covered Software is
     authorized under this License except under this disclaimer.
 
+Extract 2 : Limitation of Liability
+
+    Under no circumstances and under no legal theory, whether tort (including
+    negligence), contract, or otherwise, shall any Contributor, or anyone who
+    distributes Covered Software as permitted above, be liable to You for any
+    direct, indirect, special, incidental, or consequential damages of any
+    character including, without limitation, damages for lost profits, loss of
+    goodwill, work stoppage, computer failure or malfunction, or any and all
+    other commercial damages or losses, even if such party shall have been
+    informed of the possibility of such damages. This limitation of liability
+    shall not apply to liability for death or personal injury resulting from
+    such party's negligence to the extent applicable law prohibits such
+    limitation. Some jurisdictions do not allow the exclusion or limitation of
+    incidental or consequential damages, so this exclusion and limitation may
+    not apply to You.
+
 <br/>
 
 ##Compile
 
 In order to compile PapraGame executable, go to the project's root with a terminal, and use the command
 
-``$ make``
+``$ make`` (1 thread) or ``$ make fast`` (8 threads)
 
 Note that you might need to configure the Makefile if you don't you g++, for instance
 
