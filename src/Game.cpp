@@ -221,7 +221,7 @@ void Game::start(sf::RenderWindow& game_window)
 {
 	int tmp(1);
 	std::vector<Direction> player_dir;
-	for(unsigned char i = player_number; i--;)
+	for(unsigned char i = 0; i < player_number; ++i)
 		player_dir.push_back(player[i].getDirection());
 
 	sf::SoundBuffer new_egg_buffer, damages_buffer, warp_buffer;

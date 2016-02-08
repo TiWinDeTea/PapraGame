@@ -51,8 +51,8 @@
 #define NO_MAPS_TXT                   "No maps found"
 #define SERVER_TXT                    "Host a Game"
 #define CLIENT_TXT                    "Join a Game"
-#define MAIN_FONT_SIZE                 44
-#define MAP_FONT_SIZE                  34
+#define MAIN_FONT_SIZE                44
+#define MAP_FONT_SIZE                 34
 
 #define MAIN_BUTTON_HEIGHT            50
 #define MAIN_BUTTON_WIDTH             400

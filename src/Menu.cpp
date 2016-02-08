@@ -285,7 +285,7 @@ void Menu::mainMenu(){
 std::string Menu::mapMenu(){
 
 	DIR* directory = opendir(std::string(maps_path).c_str());
-	struct dirent* redfile = NULL;
+	struct dirent* redfile = nullptr;
 	std::vector<std::string> maps;
 	std::vector<sf::RectangleShape> rectangle;
 	std::vector<sf::Text> text;
@@ -294,7 +294,7 @@ std::string Menu::mapMenu(){
 
 	window.clear(sf::Color::White);
 
-	if( directory != NULL ){
+	if( directory != nullptr ){
 
 		auto isFile = [](std::string const& local_path) -> bool {
 			#ifdef OS_WINDOWS
@@ -309,7 +309,7 @@ std::string Menu::mapMenu(){
 			#endif
 		};
 
-		while ((redfile = readdir(directory)) != NULL){
+		while ((redfile = readdir(directory)) != nullptr){
 			std::string tmp( redfile->d_name );
 			if (isFile(maps_path + "/" + tmp) && tmp.size() > 4 && tmp.substr(tmp.size() - 4) == ".map") {
 				tmp.erase(tmp.size() - 4);

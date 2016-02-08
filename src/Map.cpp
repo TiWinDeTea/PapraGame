@@ -8,7 +8,7 @@
 
 Map::Map(unsigned int x, unsigned int y, std::vector< std::vector<Area> > smap) : x_size(x), y_size(y)
 {
-	srand(static_cast<unsigned int>(time(NULL)));
+	srand(static_cast<unsigned int>(time(nullptr)));
 	for (unsigned int i = 0; i < x; i++){
 		map.push_back(std::vector<Area>());
 		for (unsigned int j = 0; j < y; j++){
@@ -19,7 +19,7 @@ Map::Map(unsigned int x, unsigned int y, std::vector< std::vector<Area> > smap) 
 
 Map::Map(const unsigned int x, const unsigned int y, std::vector< std::vector<Area> > smap, sf::Texture texture[NB_TEXTURE], sf::Texture* egg_texture) : x_size(x), y_size(y)
 {
-	srand(static_cast<unsigned int>(time(NULL)));
+	srand(static_cast<unsigned int>(time(nullptr)));
 	for (unsigned int i = 0; i < x; i++){
 		map.push_back(std::vector<Area>());
 		for (unsigned int j = 0; j < y; j++){
