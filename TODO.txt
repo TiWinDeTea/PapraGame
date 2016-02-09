@@ -1,11 +1,8 @@
-﻿Réseaux (lan, wifi...)
-Écran de victoire
+﻿Écran de victoire
 Écran 'En attente des joueurs' (réseau)
-Enlever les std::cout redondant
 Mettre à jour --version
-Musique-s
 
 Bouton About
 Bouton Help > Create a Map / Keys / Change Keys
 
-Fondu / Transparence de l'image titre (PapraGame - TiWinDeTea)
+Dépot Ubuntu / Debian - Multimédia // Arch >> downgrade to SFML 2-1
