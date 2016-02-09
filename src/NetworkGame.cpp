@@ -297,8 +297,15 @@ void GameServer::start(sf::RenderWindow& game_window){
 	std::vector<Direction> player_dir;
 	std::vector<Coord> explosions_coord;
 
+	// packet vars
+	std::vector<bool> p_damaged, p_got_egg;
+	std::vector<int> p_ducky_stolen;
+
 	for (size_t i = 0 ; i < player_initial_dir.size() ; ++i) {
 		player_dir.push_back(player_initial_dir[i]);
+		p_damaged.push_back(false);
+		p_ducky_stolen.push_back(65000);
+		p_got_egg.push_back(false);
 	}
 
 	unsigned char winner(0);
@@ -319,66 +326,59 @@ void GameServer::start(sf::RenderWindow& game_window){
 
 	do{
 		packet << false;
-
 		for(unsigned char i((unsigned char)(player.size())); i--;){
+			p_damaged[i] = false;
+			p_ducky_stolen[i] = 65000;
+			p_got_egg[i] = false;
 
 			if(game_map.isWarp(player[i].getCoord())){
 				player[i].warped(game_map.getWarp(player[i].getCoord()));
 				warp_sound.play();
 			}
-
 			player[i].move(player_dir[i], game_map.x_size, game_map.y_size);
+		}
+		explosions_coord.erase(explosions_coord.begin(), explosions_coord.end());
 
-			bool damaged(false);
-			unsigned int j = static_cast<unsigned int>(player.size());
-			explosions_coord.erase(explosions_coord.begin(), explosions_coord.end());
-			while(j > 0 && !damaged){
-
-				--j;
-				if(i != j){
-					if(player[i].getCoord() == player[j].getCoord()){
+		for(unsigned char i((unsigned char)(player.size())); i--;){
+			for(unsigned int j(static_cast<unsigned int>(player.size())) ; --j ;){
+				if (i != j){
+					if(player[i].getCoord() == player[j].getCoord() ||
+							((player[i].getCoord() - player[i].getDirection() == player[j].getCoord()) && player[i].getDirection() != player[j].getDirection())){
 						explosions_coord.push_back(player[i].getCoord() - player[i].getDirection());
 						explosions_coord.push_back(player[j].getCoord() - player[j].getDirection());
 						player[i].damaged(player_initial_dir[i]);
 						player[j].damaged(player_initial_dir[j]);
 						player_dir[i] = player_initial_dir[i];
 						player_dir[j] = player_initial_dir[j];
-						damaged = true;
-						packet << true << static_cast<int>(65000);
+						p_damaged[i] = true;
+						p_damaged[j] = true;
 					}
 				}
 
-				unsigned char k = player[j].size();
-				while(k > 0 && !damaged){
-					--k;
+				for (unsigned char k(player[j].size()) ; k-- && !p_damaged[i] ; ){
 					if(player[i].getCoord() == player[j].duckies[k].getCoord()){
-						packet << true;
 						explosions_coord.push_back(player[i].getCoord() - player[i].getDirection());
 						if (player[i].size() > 0 && !(player[i].isInvulnerable())){
 							player[j].powerUp();
-							packet << j;
+							p_ducky_stolen[i] = j;
 							if (player[j].size() == egg_victory && egg_victory != 0)
 									winner = static_cast<unsigned char>(j + 1);
 						}
-						else
-							packet << 65000;
 						player[i].damaged(player_initial_dir[i]);
 						player_dir[i] = player_initial_dir[i];
-						damaged = true;
+						p_damaged[i] = true;
 					}
 				}
 			}
+
 			if(game_map.map[player[i].getCoord().x][player[i].getCoord().y] == OBSTACLE){
 				explosions_coord.push_back(player[i].getCoord() - player[i].getDirection());
 				player[i].damaged(player_initial_dir[i]);
 				player_dir[i] = player_initial_dir[i];
-				damaged = true;
-				packet << true << static_cast<int>(65000);
+				 p_damaged[i] = true;
 			}
 
-			if (!damaged){
-
-				packet << false << player_dir[i];
+			if (!p_damaged[i]){
 
 				if(player[i].getCoord() == game_map.getEggCoord()){
 					egg_sound.play();
@@ -389,15 +389,24 @@ void GameServer::start(sf::RenderWindow& game_window){
 					}
 					game_map.popEgg();
 
-					packet << true << game_map.getEggCoord().x << game_map.getEggCoord().y;
-				}
-				else{
-					packet << false;
+					p_got_egg[i] = true;
 				}
 			}
 			else{
 					damage_sound.play();
 			}
+		}
+
+		for (unsigned char i((unsigned char)(player.size())) ; i-- ;){
+				packet << p_damaged[i];
+				if (!p_damaged[i]){
+					packet << (int)player_dir[i] << p_got_egg[i];
+					if (p_got_egg[i])
+						packet << game_map.getEggCoord().x << game_map.getEggCoord().y;
+				}
+				else{
+					packet << p_ducky_stolen[i];
+				}
 		}
 
 		for (unsigned char i((unsigned char)(clients.size())) ; i-- ;) {
