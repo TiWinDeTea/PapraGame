@@ -7,6 +7,7 @@
 #include <NetworkGame.hpp>
 
 static void printExplosion(sf::RenderWindow& game_window, Coord coord, sf::Sprite* explosion_sprite);
+static sf::Socket::Status receiveWithTimeout(sf::UdpSocket& socket, char* data, size_t max_received_size, size_t& received_size, sf::IpAddress& remote, unsigned short port, sf::Time timeout);
 
 GameServer::~GameServer(){
 	for (size_t i = clients.size() - 1; i-- ;) {
@@ -37,8 +38,9 @@ GameServer::GameServer(std::string ressources_path, std::string biome_path_, std
 			loop = false;
 	}
 	else{
-		los = 0;
-		loop = false;
+		los = 100;
+		loop = true;
+		is_blind = false;
 	}
 	map_file >> game_speed >> egg_victory >> map_width >> map_height;
 
@@ -131,7 +133,7 @@ bool GameServer::getClients(sf::RenderWindow& window){
 
 	sf::TcpListener listener;
 	if (listener.listen(PORT) != sf::Socket::Done){
-		std::cout << "Cannot host the game" << std::endl;
+		std::cout << "Failed to host the game" << std::endl;
 		return false;
 	}
 
@@ -158,11 +160,9 @@ bool GameServer::getClients(sf::RenderWindow& window){
 
 			std::cout << "Request from " << client_ip << ":" << client_port << std::endl;
 			sf::TcpSocket* client = new sf::TcpSocket;
-			udp_client.setBlocking(true);
 			status = udp_client.send("PapraGame ~ Client Accepted", 28, client_ip, client_port);
-			udp_client.setBlocking(false);
 
-			if (status == sf::Socket::Done && listener.accept(*client) == sf::Socket::Done) {
+			if (listener.accept(*client) == sf::Socket::Done) {
 
 				std::cout << "+ Connected" << std::endl;
 				clients.push_back(client);
@@ -177,7 +177,7 @@ bool GameServer::getClients(sf::RenderWindow& window){
 				}
 			}
 			else{
-				std::cout << "- Not Connected" << std::endl;
+				std::cout << "- Connection failed" << std::endl;
 				delete client;
 			}
 		}
@@ -188,6 +188,8 @@ bool GameServer::getClients(sf::RenderWindow& window){
 				window.close();
 				return false;
 			}
+			else if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape)
+				return false;
 		}
 	}
 	return true;
@@ -590,143 +592,170 @@ void GameClient::launch(sf::RenderWindow& game_window){
 	broadcast.bind(PORT + 1);
 	size_t received;
 	sf::IpAddress sender;
-	unsigned short port;
+	unsigned short port(0);
 	char data[28];
 
-	if (broadcast.send("PapraGame ~ Game Request", 25, sf::IpAddress::Broadcast, PORT)!=sf::Socket::Done){
-		std::cout << "- No server found" << std::endl;
+	if (broadcast.send("PapraGame ~ Game Request", 25, sf::IpAddress::Broadcast, PORT) != sf::Socket::Done){
+		std::cout << "- Broadcast failure" << std::endl;
 		return;
 	} else {
-		broadcast.setBlocking(true);
-		if (broadcast.receive(data, 28, received, sender, port) != sf::Socket::Done && std::string(data) != "PapraGame ~ Game Accepted"){
-			std::cout << "- Bad server" << std::endl;
+		bool server_found(false);
+		unsigned char client_loopout(0);
+		do{
+			sf::Event event;
+			while(game_window.pollEvent(event)){
+				if (event.type == sf::Event::Closed){
+						game_window.close();
+						return;
+				}
+				else if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape)
+					return;
+			}
+			if(receiveWithTimeout(broadcast, data, 28, received, sender, port, CLIENT_CONNECTION_REFRESH_RATE) == sf::Socket::Done){
+				if (received != 28 || std::string(data) != "PapraGame ~ Client Accepted"){
+					++client_loopout;
+					std::cout << "- Bad server : " << sender << std::endl;
+				}
+				else
+					server_found = true;
+			}
+			else{
+				++client_loopout;
+				if (client_loopout > CLIENT_CONNECTION_ATTEMPT_NBR){
+					std::cout << "- No server found" << std::endl;
+					return;
+				}
+				else
+					 broadcast.send("PapraGame ~ Game Request", 25, sf::IpAddress::Broadcast, PORT);
+			}
+		}while(!server_found);
+
+		std::cout << "- Server found : " << sender << std::endl;
+
+		if (server.connect(sender, PORT, CLIENT_CONNECTION_TIMEOUT) != sf::Socket::Done){
+			std::cout << "- Connection Failed" << std::endl;
 			return;
-		} else  {
-			if (server.connect(sender, PORT) != sf::Socket::Done){
-				std::cout << "- Connection Failed";
-				return;
-			} else {
+		} else {
 
-				std::cout << "+ Connected" << std::endl;
-				unsigned int nbr_player;
-				sf::Packet packet;
+			std::cout << "+ Connected" << std::endl;
+			unsigned int nbr_player;
+			sf::Packet packet;
 
-				server.receive(packet);
-				packet >> nbr_player >> is_blind >> los >> loop >> map_width >> map_height >> game_speed;
+			server.receive(packet);
+			packet >> nbr_player >> is_blind >> los >> loop >> map_width >> map_height >> game_speed;
 
-				std::string path;
-				std::vector<Coord> spawn;
+			std::string path;
+			std::vector<Coord> spawn;
 
-				std::vector<std::vector<Area> > tmp_map;
-				packet >> path >> biome_path;
-				biome_path.append("/");
+			std::vector<std::vector<Area> > tmp_map;
+			packet >> path >> biome_path;
+			biome_path.append("/");
 
-				for (unsigned int i = nbr_player; i--;) {
-					player.push_back(Duck());
-					spawn.push_back(Coord());
-					player_initial_dir.push_back(Direction());
-					sf::Texture** texture_array = (sf::Texture**) calloc (2, sizeof(sf::Texture*));
-					texture_array[0] = (sf::Texture*) calloc (4, sizeof(sf::Texture));
-					texture_array[1] = (sf::Texture*) calloc (4, sizeof(sf::Texture));
-					duck_texture.push_back(texture_array);
+			for (unsigned int i = nbr_player; i--;) {
+				player.push_back(Duck());
+				spawn.push_back(Coord());
+				player_initial_dir.push_back(Direction());
+				sf::Texture** texture_array = (sf::Texture**) calloc (2, sizeof(sf::Texture*));
+				texture_array[0] = (sf::Texture*) calloc (4, sizeof(sf::Texture));
+				texture_array[1] = (sf::Texture*) calloc (4, sizeof(sf::Texture));
+				duck_texture.push_back(texture_array);
+			}
+			for (unsigned int i = map_height; i--;){
+				tmp_map.push_back(std::vector<Area>());
+			}
+			for (unsigned int i = 0; i < nbr_player; ++i){
+				packet >> spawn[i].x >> spawn[i].y;
+				int tmp;
+				packet >> tmp;
+				player_initial_dir[i] = static_cast<Direction>(tmp);
+			}
+			for (unsigned int i = 0; i < map_height; ++i){
+				int tmp_tile;
+				for( unsigned int j = 0; j < map_width; ++j){
+					packet >> tmp_tile;
+					tmp_map[i].push_back(static_cast<Area>(tmp_tile));
 				}
-				for (unsigned int i = map_height; i--;){
-					tmp_map.push_back(std::vector<Area>());
-				}
-				for (unsigned int i = 0; i < nbr_player; ++i){
-					packet >> spawn[i].x >> spawn[i].y;
-					int tmp;
-					packet >> tmp;
-					player_initial_dir[i] = static_cast<Direction>(tmp);
-				}
-				for (unsigned int i = 0; i < map_height; ++i){
-					int tmp_tile;
-					for( unsigned int j = 0; j < map_width; ++j){
-						packet >> tmp_tile;
-						tmp_map[i].push_back(static_cast<Area>(tmp_tile));
-					}
-				}
-				std::string duck_textures_path[4] = {
-					DUCK_PATH + TEXTURE_DUCK_UP,
-					DUCK_PATH + TEXTURE_DUCK_DOWN,
-					DUCK_PATH + TEXTURE_DUCK_LEFT,
-					DUCK_PATH + TEXTURE_DUCK_RIGHT
-				};
-				std::string ducky_textures_path[4] = {
-					DUCK_PATH + TEXTURE_DUCKY_UP,
-					DUCK_PATH + TEXTURE_DUCKY_DOWN,
-					DUCK_PATH + TEXTURE_DUCKY_LEFT,
-					DUCK_PATH + TEXTURE_DUCKY_RIGHT
-				};
-				std::string map_textures_path[9] = {
-					biome_path + TEXTURE_OBSTACLE,
-					biome_path + TEXTURE_EMPTY_TILE,
-					biome_path + TEXTURE_WATER_UP_RIGHT,
-					biome_path + TEXTURE_WATER_RIGHT_DOWN,
-					biome_path + TEXTURE_WATER_LEFT_DOWN,
-					biome_path + TEXTURE_WATER_UP_LEFT,
-					biome_path + TEXTURE_WATER_UP_DOWN,
-					biome_path + TEXTURE_WATER_LEFT_RIGHT,
-					biome_path + TEXTURE_WARP
-				};
-				std::cout << std::endl;
-				bool loading_success = true;
-				for (unsigned char i = 9 ; i-- ;) {
-					loading_success = loading_success && map_texture[i].loadFromFile(path + map_textures_path[i] + FILETYPE);
-				}
+			}
+			std::string duck_textures_path[4] = {
+				DUCK_PATH + TEXTURE_DUCK_UP,
+				DUCK_PATH + TEXTURE_DUCK_DOWN,
+				DUCK_PATH + TEXTURE_DUCK_LEFT,
+				DUCK_PATH + TEXTURE_DUCK_RIGHT
+			};
+			std::string ducky_textures_path[4] = {
+				DUCK_PATH + TEXTURE_DUCKY_UP,
+				DUCK_PATH + TEXTURE_DUCKY_DOWN,
+				DUCK_PATH + TEXTURE_DUCKY_LEFT,
+				DUCK_PATH + TEXTURE_DUCKY_RIGHT
+			};
+			std::string map_textures_path[9] = {
+				biome_path + TEXTURE_OBSTACLE,
+				biome_path + TEXTURE_EMPTY_TILE,
+				biome_path + TEXTURE_WATER_UP_RIGHT,
+				biome_path + TEXTURE_WATER_RIGHT_DOWN,
+				biome_path + TEXTURE_WATER_LEFT_DOWN,
+				biome_path + TEXTURE_WATER_UP_LEFT,
+				biome_path + TEXTURE_WATER_UP_DOWN,
+				biome_path + TEXTURE_WATER_LEFT_RIGHT,
+				biome_path + TEXTURE_WARP
+			};
+			std::cout << std::endl;
+			bool loading_success = true;
+			for (unsigned char i = 9 ; i-- ;) {
+				loading_success = loading_success && map_texture[i].loadFromFile(path + map_textures_path[i] + FILETYPE);
+			}
 
-				loading_success = loading_success && egg_texture.loadFromFile(path + DUCK_PATH + TEXTURE_EGG + FILETYPE);
-				loading_success = loading_success && explosion_texture.loadFromFile(path + DUCK_PATH + TEXTURE_EXPLOSION + FILETYPE);
+			loading_success = loading_success && egg_texture.loadFromFile(path + DUCK_PATH + TEXTURE_EGG + FILETYPE);
+			loading_success = loading_success && explosion_texture.loadFromFile(path + DUCK_PATH + TEXTURE_EXPLOSION + FILETYPE);
 
-				char player_id;
+			char player_id;
+			for (unsigned int i = nbr_player ; i-- ;) {
+				player_id = static_cast<char>(i + '0');
+				for (unsigned int j = 4 ; j-- ;) {
+					loading_success = loading_success && duck_texture[i][0][j].loadFromFile(path + duck_textures_path[j] + player_id + FILETYPE);
+					loading_success = loading_success && duck_texture[i][1][j].loadFromFile(path + ducky_textures_path[j] + player_id + FILETYPE);
+				}
+			}
+
+			if (!loading_success) {
+				std::cout << "Failed to load game ressources" << std::endl;
+			}
+			else {
+				game_window.setSize(sf::Vector2u(map_width*32, map_height*32));
+				game_window.setView(sf::View(sf::FloatRect(0,0,static_cast<float>(map_width*32), static_cast<float>(map_height*32))));
 				for (unsigned int i = nbr_player ; i-- ;) {
-					player_id = static_cast<char>(i + '0');
-					for (unsigned int j = 4 ; j-- ;) {
-						loading_success = loading_success && duck_texture[i][0][j].loadFromFile(path + duck_textures_path[j] + player_id + FILETYPE);
-						loading_success = loading_success && duck_texture[i][1][j].loadFromFile(path + ducky_textures_path[j] + player_id + FILETYPE);
-					}
+					player[i] = Duck(duck_texture[i][0], duck_texture[i][1], spawn[i], player_initial_dir[i], this->loadKeys("player 1"));
 				}
+				explosion_sprite.setTexture(explosion_texture);
+				game_map = Map(map_width, map_height, tmp_map, map_texture, &egg_texture);
 
-				if (!loading_success) {
-					std::cout << "Failed to load game ressources" << std::endl;
-				}
-				else {
-					game_window.setSize(sf::Vector2u(map_width*32, map_height*32));
-					game_window.setView(sf::View(sf::FloatRect(0,0,static_cast<float>(map_width*32), static_cast<float>(map_height*32))));
-					for (unsigned int i = nbr_player ; i-- ;) {
-						player[i] = Duck(duck_texture[i][0], duck_texture[i][1], spawn[i], player_initial_dir[i], this->loadKeys("player 1"));
-					}
-					explosion_sprite.setTexture(explosion_texture);
-					game_map = Map(map_width, map_height, tmp_map, map_texture, &egg_texture);
+				packet.clear();
+				bool starting, done(false);
+				sf::Event event;
+				server.setBlocking(false);
 
-					packet.clear();
-					bool starting, done(false);
-					sf::Event event;
-					server.setBlocking(false);
-
-					do{
-						while(game_window.pollEvent(event)){
-							if (event.type == sf::Event::Closed){
-									game_window.close();
-									done = true;
-							}
-						}
-						server.receive(packet);
-						if((packet >> starting)){
-							if (starting) {
-								int tmp;
-								packet >> tmp;
-								direction = static_cast<Direction>(tmp);
-								server.setBlocking(true);
-								this->start(game_window);
+				do{
+					while(game_window.pollEvent(event)){
+						if (event.type == sf::Event::Closed){
+								game_window.close();
 								done = true;
-							} else {
-								std::cout << "Connection closed by server." << std::endl;
-								done = true;
-							}
 						}
-					}while(!done);
-				}
+					}
+					server.receive(packet);
+					if((packet >> starting)){
+						if (starting) {
+							int tmp;
+							packet >> tmp;
+							direction = static_cast<Direction>(tmp);
+							server.setBlocking(true);
+							this->start(game_window);
+							done = true;
+						} else {
+							std::cout << "Connection closed by server." << std::endl;
+							done = true;
+						}
+					}
+				}while(!done);
 			}
 		}
 	}
@@ -973,4 +1002,13 @@ void GameClient::start(sf::RenderWindow& game_window){
 static void printExplosion(sf::RenderWindow& game_window, Coord coord, sf::Sprite* explosion_sprite){
 	explosion_sprite->setPosition(static_cast<float>(coord.x * 32), static_cast<float>(coord.y * 32));
 	game_window.draw(*explosion_sprite);
+}
+
+static sf::Socket::Status receiveWithTimeout(sf::UdpSocket& socket, char* data, size_t max_received_size, size_t& received_size, sf::IpAddress& remote, unsigned short port, sf::Time timeout){
+    sf::SocketSelector selector;
+    selector.add(socket);
+    if (selector.wait(timeout))
+        return socket.receive(data, max_received_size, received_size, remote, port);
+    else
+        return sf::Socket::NotReady;
 }
