@@ -125,4 +125,4 @@ You may contribute easily by trying the game and having fun ! That would make us
 
 ##Thanks
 
-We would like to thanks the [SFML](http://www.sfml-dev.org/) dev team for their work, they're awesome
+We would like to thanks the [SFML](http://www.sfml-dev.org/) dev team for their work, they're awesome, [Gimp](https://www.gimp.org/) for graphics, and [Guitar Pro](http://www.guitar-pro.com/en/index.php) (not free) for the music.
