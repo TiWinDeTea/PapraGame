@@ -516,13 +516,13 @@ void Game::printVictory(sf::RenderWindow& game_window){
 	while (game_window.isOpen() && !end)
 	{
 		++pos;
-		if(pos > END_Y_RESOLTION)
+		if(pos > END_X_RESOLTION)
 			pos = 0;
 		game_window.draw(victory_sprite);
 		winner_sprite.setPosition(pos,243);
 		game_window.draw(winner_sprite);
 		if(pos > 704){
-			winner_sprite.setPosition(pos - END_Y_RESOLTION,243);
+			winner_sprite.setPosition(pos - END_X_RESOLTION,243);
 			game_window.draw(winner_sprite);
 		}
 		game_window.display();
