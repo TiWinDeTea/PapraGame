@@ -507,7 +507,6 @@ void Game::printVictory(sf::RenderWindow& game_window){
 	float pos(0);
 	sf::Sprite winner_sprite;
 	winner_sprite.setTexture(duck_texture[winner - 1][0][3]);
-	//winner_sprite.setOrigin(16.5,16.5);
 	winner_sprite.setScale(3,3);
 	winner_sprite.setPosition(pos,243);
 
@@ -517,15 +516,13 @@ void Game::printVictory(sf::RenderWindow& game_window){
 	while (game_window.isOpen() && !end)
 	{
 		++pos;
-		if(pos > 800)
+		if(pos > END_Y_RESOLTION)
 			pos = 0;
 		game_window.draw(victory_sprite);
 		winner_sprite.setPosition(pos,243);
-		//winner_sprite.setRotation(3*pos);
 		game_window.draw(winner_sprite);
 		if(pos > 704){
-			winner_sprite.setPosition(pos - 800,243);
-			//winner_sprite.setRotation(3*(pos - 800));
+			winner_sprite.setPosition(pos - END_Y_RESOLTION,243);
 			game_window.draw(winner_sprite);
 		}
 		game_window.display();
