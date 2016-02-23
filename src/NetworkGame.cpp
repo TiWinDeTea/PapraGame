@@ -375,7 +375,7 @@ void GameServer::start(sf::RenderWindow& game_window){
 				explosions_coord.push_back(player[i].getCoord() - player[i].getDirection());
 				player[i].damaged(player_initial_dir[i]);
 				player_dir[i] = player_initial_dir[i];
-				 p_damaged[i] = true;
+				p_damaged[i] = true;
 			}
 
 			if (!p_damaged[i]){
@@ -443,7 +443,7 @@ void GameServer::start(sf::RenderWindow& game_window){
 
 			if (is_blind){
 				game_window.clear();
-				for (unsigned char i = player.size() ; i--;){
+				for (unsigned char i = (unsigned char)player.size() ; i--;){
 					game_map.print(game_window, player[i].getCoord(), los, loop);
 					for (unsigned char j = player[i].size() ; j-- ;){
 						game_map.print(game_window, player[i].duckies[j].getCoord(), static_cast<unsigned short>(los/2), loop);
@@ -651,7 +651,7 @@ void GameClient::launch(sf::RenderWindow& game_window){
 			sf::Packet packet;
 
 			server.receive(packet);
-			packet >> nbr_player >> is_blind >> los >> loop >> map_width >> map_height >> game_speed;
+			packet >> nbr_player >> is_blind >> los >> loop >> map_height >> map_width >> game_speed;
 
 			std::string path;
 			std::vector<Coord> spawn;
@@ -955,7 +955,7 @@ void GameClient::start(sf::RenderWindow& game_window){
 
 				if (is_blind){
 					game_window.clear();
-					for (unsigned char i = player.size(); i--;){
+					for (unsigned char i = (unsigned char)player.size(); i--;){
 						game_map.print(game_window, player[i].getCoord(), los, loop);
 						for (unsigned char j = player[i].size() ; j-- ;){
 							game_map.print(game_window, player[i].duckies[j].getCoord(), static_cast<unsigned short>(los/2), loop);
@@ -990,7 +990,7 @@ void GameClient::start(sf::RenderWindow& game_window){
 
 			if (is_blind){
 				game_window.clear();
-				for (unsigned char i = player.size() ; i--;){
+				for (unsigned char i = (unsigned char)player.size() ; i--;){
 					game_map.print(game_window, player[i].getCoord(), los, loop);
 					for (unsigned char j = player[i].size() ; j-- ;){
 						game_map.print(game_window, player[i].duckies[j].getCoord(), static_cast<unsigned short>(los/2), loop);
