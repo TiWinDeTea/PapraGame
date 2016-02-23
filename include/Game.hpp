@@ -61,6 +61,7 @@
 	#define TEXTURE_EGG                 std::string("Egg")
 	#define TEXTURE_EXPLOSION           std::string("Explosion")
  	#define TEXTURE_PAUSE_MENU          std::string("menu/PauseMenu")
+ 	#define TEXTURE_VICTORY             std::string("menu/VictoryMenu")
 	#define FILETYPE                    std::string(".png")
 	#define IDENTIFIER_WATER_UP_DOWN    '|'
 	#define IDENTIFIER_WATER_UP_RIGHT   '9'
@@ -71,6 +72,9 @@
 	#define IDENTIFIER_EMPTY_TILE       '.'
 	#define IDENTIFIER_WARP             'x'
 	#define IDENTIFIER_OBSTACLE         'o'
+
+ 	#define END_X_RESOLTION             800
+ 	#define END_Y_RESOLTION             600
 #endif /* PAPRAGAME_PATHS_DEFINED */
 
 /**
@@ -95,6 +99,7 @@ private:
 	std::vector<sf::Keyboard::Key> loadKeys(std::string selected_player);
 	void printExplosion(sf::RenderWindow& game_window, Coord coord);
 	bool pauseGame(sf::RenderWindow& game_window, bool player_request);
+	void printVictory(sf::RenderWindow& game_window);
 
 	Map game_map;
 	std::vector<Duck> player;
@@ -103,8 +108,8 @@ private:
 	unsigned char winner;
 	std::vector<sf::Texture**> duck_texture;
 	sf::Texture map_texture[9];
-	sf::Texture egg_texture, explosion_texture, pause_menu_texture;
-	sf::Sprite explosion_sprite, pause_menu_sprite;
+	sf::Texture egg_texture, explosion_texture, pause_menu_texture, victory_texture;
+	sf::Sprite explosion_sprite, pause_menu_sprite, victory_sprite;
 	unsigned int pxl_length, pxl_height;
 	std::string path, biome_path, ducks_path, map_path;
 	unsigned char player_number;

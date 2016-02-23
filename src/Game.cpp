@@ -79,6 +79,7 @@ void Game::launch(sf::RenderWindow& game_window, std::string map_name){
 	loading_success = loading_success && egg_texture.loadFromFile(path + ducks_path + TEXTURE_EGG + FILETYPE);
 	loading_success = loading_success && explosion_texture.loadFromFile(path + ducks_path + TEXTURE_EXPLOSION + FILETYPE);
 	loading_success = loading_success && pause_menu_texture.loadFromFile(path + TEXTURE_PAUSE_MENU + FILETYPE);
+	loading_success = loading_success && victory_texture.loadFromFile(path + TEXTURE_VICTORY + FILETYPE);
 	loading_success = loading_success && this->loadMap();
 
 	char player_id;
@@ -369,8 +370,9 @@ void Game::start(sf::RenderWindow& game_window)
 			this->printExplosion(game_window, explosions_coord[i]);
 		}
 		game_window.display();
-
 	}
+	game_theme.stop();
+	this->printVictory(game_window);
 }
 
 std::vector<sf::Keyboard::Key> Game::loadKeys(std::string selected_player){
@@ -486,4 +488,56 @@ bool Game::pauseGame(sf::RenderWindow& game_window, bool player_request){
 		}while(!(game_window.hasFocus()));
 	}
 	return true;
+}
+
+void Game::printVictory(sf::RenderWindow& game_window){
+
+	game_window.setSize(sf::Vector2u(END_X_RESOLTION, END_Y_RESOLTION));
+	game_window.setView(sf::View(sf::FloatRect(0, 0, END_X_RESOLTION, END_Y_RESOLTION)));
+	victory_sprite.setTexture(victory_texture);
+	victory_sprite.setPosition(0,0);
+	game_window.draw(victory_sprite);
+	game_window.display();
+
+	sf::Music victory_theme;
+	victory_theme.openFromFile("res/sounds/victory_theme.ogg");
+	victory_theme.setLoop(false);
+	victory_theme.play();
+
+	float pos(0);
+	sf::Sprite winner_sprite;
+	winner_sprite.setTexture(duck_texture[winner - 1][0][3]);
+	//winner_sprite.setOrigin(16.5,16.5);
+	winner_sprite.setScale(3,3);
+	winner_sprite.setPosition(pos,243);
+
+	bool end(false);
+	sf::Event event;
+	sf::Clock elapsed_time;
+	while (game_window.isOpen() && !end)
+	{
+		++pos;
+		if(pos > 800)
+			pos = 0;
+		game_window.draw(victory_sprite);
+		winner_sprite.setPosition(pos,243);
+		//winner_sprite.setRotation(3*pos);
+		game_window.draw(winner_sprite);
+		if(pos > 704){
+			winner_sprite.setPosition(pos - 800,243);
+			//winner_sprite.setRotation(3*(pos - 800));
+			game_window.draw(winner_sprite);
+		}
+		game_window.display();
+
+		while (game_window.pollEvent(event))
+		{
+			if(event.type == sf::Event::Closed)
+				game_window.close();
+			else if((event.type == sf::Event::KeyPressed || event.type == sf::Event::MouseButtonPressed) && (elapsed_time.getElapsedTime().asSeconds() > 0.5f)){
+				end = true;
+			}
+		}
+		sf::sleep(sf::milliseconds(5));
+	}
 }
