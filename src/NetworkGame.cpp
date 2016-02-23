@@ -336,6 +336,7 @@ void GameServer::start(sf::RenderWindow& game_window){
 				warp_sound.play();
 			}
 			player[i].move(player_dir[i], game_map.x_size, game_map.y_size);
+			packet << player[i].getCoord().x << player[i].getCoord().y;
 		}
 		explosions_coord.erase(explosions_coord.begin(), explosions_coord.end());
 
@@ -669,7 +670,7 @@ void GameClient::launch(sf::RenderWindow& game_window){
 				texture_array[1] = (sf::Texture*) calloc (4, sizeof(sf::Texture));
 				duck_texture.push_back(texture_array);
 			}
-			for (unsigned int i = map_height; i--;){
+			for (unsigned int i = map_width; i--;){
 				tmp_map.push_back(std::vector<Area>());
 			}
 			for (unsigned int i = 0; i < nbr_player; ++i){
@@ -678,9 +679,9 @@ void GameClient::launch(sf::RenderWindow& game_window){
 				packet >> tmp;
 				player_initial_dir[i] = static_cast<Direction>(tmp);
 			}
-			for (unsigned int i = 0; i < map_height; ++i){
+			for (unsigned int i = 0; i < map_width; ++i){
 				int tmp_tile;
-				for( unsigned int j = 0; j < map_width; ++j){
+				for( unsigned int j = 0; j < map_height; ++j){
 					packet >> tmp_tile;
 					tmp_map[i].push_back(static_cast<Area>(tmp_tile));
 				}
@@ -901,6 +902,8 @@ void GameClient::start(sf::RenderWindow& game_window){
 			packet >> winner;
 		} else {
 			int ducky_stolen;
+			int x_coo, y_coo;
+			packet >> x_coo >> y_coo;
 			for (unsigned int i = static_cast<int>(player.size()); i--;){
 				packet >> damaged;
 				if (!damaged){
@@ -908,10 +911,11 @@ void GameClient::start(sf::RenderWindow& game_window){
 					packet >> tmpint >> power_up;
 					tmp_dir = static_cast<Direction>(tmpint);
 					player[i].move(tmp_dir,map_width, map_height);
-					if (game_map.isWarp(player[i].getCoord())){
-						player[i].warped(game_map.getWarp(player[i].getCoord()));
-						warp_sound.play();
+
+					if (player[i].getCoord() != Coord(x_coo, y_coo)){
+						player[i].warped(Coord(x_coo, y_coo));
 					}
+
 					if (power_up){
 						packet >> egg_x >> egg_y;
 						game_map.popEgg(Coord(egg_x,egg_y));
