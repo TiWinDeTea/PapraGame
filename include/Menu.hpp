@@ -42,7 +42,7 @@
 #define MENU_X_RESOLUTION             800
 #define MENU_Y_RESOLUTION             600
 #define ABOUT_X_RESOLUTION            500
-#define ABOUT_Y_RESOLUTION            300
+#define ABOUT_Y_RESOLUTION            350
 
 #define TITLE_HEIGHT                  216
 
