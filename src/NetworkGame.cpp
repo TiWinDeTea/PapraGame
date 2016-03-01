@@ -861,7 +861,7 @@ std::vector<sf::Keyboard::Key> GameClient::loadKeys(std::string selected_player)
 void GameClient::start(sf::RenderWindow& game_window){
 	sf::Packet packet;
 	sf::Event event;
-	bool ended, damaged, power_up;
+	bool ended, damaged, power_up, is_online;
 	unsigned char winner;
 	int tmpint, egg_x, egg_y;
 
@@ -897,14 +897,14 @@ void GameClient::start(sf::RenderWindow& game_window){
 
 		packet.clear();
 		server.receive(packet);
-		packet >> ended;
-		if (ended) {
+		packet >> is_online >> ended;
+		if (ended && is_online) {
 			packet >> winner;
-		} else {
+		} else if (is_online) {
 			int ducky_stolen;
 			int x_coo, y_coo;
-			packet >> x_coo >> y_coo;
 			for (unsigned int i = static_cast<int>(player.size()); i--;){
+				packet >> x_coo >> y_coo;
 				packet >> damaged;
 				if (!damaged){
 					Direction tmp_dir;
@@ -1008,7 +1008,7 @@ void GameClient::start(sf::RenderWindow& game_window){
 			}
 			game_window.display();
 		}
-	} while (!ended && game_window.isOpen());
+	} while (!ended && game_window.isOpen() && is_online);
 	return;
 }
 
