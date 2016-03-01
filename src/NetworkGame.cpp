@@ -8,11 +8,11 @@
 
 static void printExplosion(sf::RenderWindow& game_window, Coord coord, sf::Sprite* explosion_sprite);
 static sf::Socket::Status receiveWithTimeout(sf::UdpSocket& socket, char* data, size_t max_received_size, size_t& received_size, sf::IpAddress& remote, unsigned short port, sf::Time timeout);
+static void victoryScreen(bool won, sf::Texture& winner_texture, sf::RenderWindow& game_window);
 
 GameServer::~GameServer(){
-	for (size_t i = clients.size() - 1; i-- ;) {
+	for (size_t i = clients.size() - 1; i-- ;)
 		delete clients[i];
-	}
 }
 
 GameServer::GameServer(std::string ressources_path, std::string biome_path_, std::string map_file_name){
@@ -491,11 +491,20 @@ void GameServer::start(sf::RenderWindow& game_window){
 		packet.clear();
 	}while(winner == 0);
 
-	packet << true << true << (winner - 1);
+	packet << true << true << false << (winner-1);
+    sf::Packet winner_p;
+    winner_p << true << true << true << (winner-1);
+
+    game_theme.stop();
 
 	for (size_t i(clients.size()) ; i-- ;) {
-		clients[i]->send(packet);
+        if ((unsigned)(winner-1) == i)
+            clients[i]->send(winner_p);
+        else
+            clients[i]->send(packet);
 	}
+
+    victoryScreen((unsigned)(winner-1) == clients.size(), duck_texture[winner-1][0][3], game_window);
 
 	for (size_t i = duck_texture.size() ; i-- ;) {
 		free(duck_texture[i][0]);
@@ -856,14 +865,13 @@ std::vector<sf::Keyboard::Key> GameClient::loadKeys(std::string selected_player)
 		}
 	}
 
-	/* TODO : victory // defeat screen */
 	return answer;
 }
 
 void GameClient::start(sf::RenderWindow& game_window){
 	sf::Packet packet;
 	sf::Event event;
-	bool ended, damaged, power_up, is_online;
+	bool ended, damaged, power_up, is_online, won;
 	unsigned char winner;
 	int tmpint, egg_x, egg_y;
 
@@ -901,7 +909,7 @@ void GameClient::start(sf::RenderWindow& game_window){
 		server.receive(packet);
 		packet >> is_online >> ended;
 		if (ended && is_online) {
-			packet >> winner;
+			packet >> won >> winner;
 		} else if (is_online) {
 			int ducky_stolen;
 			int x_coo, y_coo;
@@ -1011,6 +1019,11 @@ void GameClient::start(sf::RenderWindow& game_window){
 			game_window.display();
 		}
 	} while (!ended && game_window.isOpen() && is_online);
+
+    game_theme.stop();
+
+    victoryScreen(won, duck_texture[winner][0][3], game_window);
+
 	return;
 }
 
@@ -1026,4 +1039,66 @@ static sf::Socket::Status receiveWithTimeout(sf::UdpSocket& socket, char* data, 
         return socket.receive(data, max_received_size, received_size, remote, port);
     else
         return sf::Socket::NotReady;
+}
+
+static void victoryScreen(bool won, sf::Texture& winner_texture, sf::RenderWindow& game_window){
+    std::string bg_path, music_path;
+    if (won){
+        bg_path="res/menu/VictoryMenu.png";
+        music_path="res/sounds/victory_theme.ogg";
+    }
+    else{
+        bg_path="res/menu/GameOver.png";
+        music_path="res/sounds/game_over_theme.ogg";
+    }
+    sf::Texture bg_texture;
+    sf::Sprite victory_sprite;
+    bg_texture.loadFromFile(bg_path);
+    victory_sprite.setTexture(bg_texture);
+    victory_sprite.setPosition(0,0);
+
+    game_window.setSize(sf::Vector2u(800, 600));
+	game_window.setView(sf::View(sf::FloatRect(0, 0, 800, 600)));
+
+	game_window.draw(victory_sprite);
+	game_window.display();
+
+	sf::Music theme;
+	theme.openFromFile(music_path);
+	theme.setLoop(false);
+	theme.play();
+
+	float pos(0);
+	sf::Sprite winner_sprite;
+	winner_sprite.setTexture(winner_texture);
+	winner_sprite.setScale(3,3);
+	winner_sprite.setPosition(pos,243);
+
+	bool end(false);
+	sf::Event event;
+	sf::Clock elapsed_time;
+	while (game_window.isOpen() && !end)
+	{
+		++pos;
+		if(pos > END_X_RESOLTION)
+			pos = 0;
+		game_window.draw(victory_sprite);
+		winner_sprite.setPosition(pos,243);
+		game_window.draw(winner_sprite);
+		if(pos > 704){
+			winner_sprite.setPosition(pos - END_X_RESOLTION,243);
+			game_window.draw(winner_sprite);
+		}
+		game_window.display();
+
+		while (game_window.pollEvent(event))
+		{
+			if(event.type == sf::Event::Closed)
+				game_window.close();
+			else if((event.type == sf::Event::KeyPressed || event.type == sf::Event::MouseButtonPressed) && (elapsed_time.getElapsedTime().asSeconds() > 0.5f)){
+				end = true;
+			}
+		}
+		sf::sleep(sf::milliseconds(5));
+	}
 }
