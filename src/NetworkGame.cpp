@@ -325,7 +325,7 @@ void GameServer::start(sf::RenderWindow& game_window){
 	Direction self_current_dir;
 
 	do{
-		packet << false;
+		packet << true << false;
 		for(unsigned char i((unsigned char)(player.size())); i--;){
 			p_damaged[i] = false;
 			p_ducky_stolen[i] = 65000;
@@ -336,12 +336,11 @@ void GameServer::start(sf::RenderWindow& game_window){
 				warp_sound.play();
 			}
 			player[i].move(player_dir[i], game_map.x_size, game_map.y_size);
-			packet << player[i].getCoord().x << player[i].getCoord().y;
 		}
 		explosions_coord.erase(explosions_coord.begin(), explosions_coord.end());
 
 		for(unsigned char i((unsigned char)(player.size())); i--;){
-			for(unsigned int j(static_cast<unsigned int>(player.size())) ; --j ;){
+			for(unsigned int j(static_cast<unsigned int>(player.size())) ; j-- ;){
 				if (i != j){
 					if(player[i].getCoord() == player[j].getCoord() ||
 							((player[i].getCoord() - player[i].getDirection() == player[j].getCoord()) && player[i].getDirection() != player[j].getDirection())){
@@ -399,15 +398,15 @@ void GameServer::start(sf::RenderWindow& game_window){
 		}
 
 		for (unsigned char i((unsigned char)(player.size())) ; i-- ;){
-				packet << p_damaged[i];
-				if (!p_damaged[i]){
-					packet << (int)player_dir[i] << p_got_egg[i];
-					if (p_got_egg[i])
-						packet << game_map.getEggCoord().x << game_map.getEggCoord().y;
-				}
-				else{
-					packet << p_ducky_stolen[i];
-				}
+            packet << player[i].getCoord().x << player[i].getCoord().y << p_damaged[i];
+			if (!p_damaged[i]){
+				packet << (int)player_dir[i] << p_got_egg[i];
+				if (p_got_egg[i])
+					packet << game_map.getEggCoord().x << game_map.getEggCoord().y;
+			}
+			else{
+				packet << p_ducky_stolen[i];
+			}
 		}
 
 		for (unsigned char i((unsigned char)(clients.size())) ; i-- ;) {
@@ -424,6 +423,15 @@ void GameServer::start(sf::RenderWindow& game_window){
 			while (game_window.pollEvent(event)){
 				if(event.type == sf::Event::Closed){
 					game_window.close();
+                    std::cout << "Closing connections..." << std::endl;
+                    for (unsigned char i((unsigned char)(clients.size())) ; i-- ;)
+                        clients[i]->receive(packet);
+                    packet.clear();
+                    packet << false;
+                    for (unsigned char i((unsigned char)(clients.size())) ; i-- ;){
+                        clients[i]->send(packet);
+                        clients[i]->disconnect();
+                    }
 					return;
 				}
 				else if(event.type == sf::Event::KeyPressed){
@@ -483,16 +491,10 @@ void GameServer::start(sf::RenderWindow& game_window){
 		packet.clear();
 	}while(winner == 0);
 
-	sf::Packet packet_for_the_winner;
-
-	packet << true << false;
-	packet_for_the_winner << true << true;
+	packet << true << true << (winner - 1);
 
 	for (size_t i(clients.size()) ; i-- ;) {
-		if ( i+1 != winner)
-			clients[i]->send(packet);
-		else
-			clients[i]->send(packet_for_the_winner);
+		clients[i]->send(packet);
 	}
 
 	for (size_t i = duck_texture.size() ; i-- ;) {
@@ -636,7 +638,7 @@ void GameClient::launch(sf::RenderWindow& game_window){
 					return;
 				}
 				else
-					 broadcast.send("PapraGame ~ Game Request", 25, sf::IpAddress::Broadcast, PORT);
+                    broadcast.send("PapraGame ~ Game Request", 25, sf::IpAddress::Broadcast, PORT);
 			}
 		}while(!server_found);
 
