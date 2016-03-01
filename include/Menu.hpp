@@ -41,11 +41,14 @@
 
 #define MENU_X_RESOLUTION             800
 #define MENU_Y_RESOLUTION             600
+#define ABOUT_X_RESOLUTION            500
+#define ABOUT_Y_RESOLUTION            300
 
 #define TITLE_HEIGHT                  216
 
 #define LOCAL_TXT                     "Local"
 #define NETWORK_TXT                   "Network"
+#define ABOUT_TXT                     "About"
 #define EXIT_TXT                      "Exit"
 #define BACK_TXT                      "back"
 #define NO_MAPS_TXT                   "No maps found"
@@ -75,6 +78,7 @@
 
 #define TEXTURE_TITLE                 "BgFixed"
 #define TEXTURE_BACKGROUND            "BgScrolling"
+#define TEXTURE_ABOUT                 "About"
 #define TEXTURE_FILETYPE              ".png"
 #define BACKGROUND_LOOP_WIDTH         3296
 #define REFRESH_SLOWNESS              20
@@ -97,18 +101,23 @@ class Menu{
 
 		std::string mapMenu();
 
+		void aboutMenu();
+
 		char networkMenu();
 
 	private:
 
+		bool about_window_open;
 		int bg_pos;
 		sf::Music title_theme;
-		sf::RenderWindow window;
+		sf::RenderWindow window, about_window;
 		sf::Font font;
 		sf::Texture title_texture;
 		sf::Texture background_texture;
+		sf::Texture about_texture;
 		sf::Sprite title_sprite;
 		sf::Sprite background_sprite;
+		sf::Sprite about_sprite;
 
 		std::string res_path, biome_path, ducks_path, maps_path, map_path, menu_path;
 };

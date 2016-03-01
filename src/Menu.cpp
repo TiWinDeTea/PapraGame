@@ -69,8 +69,10 @@ Menu::Menu(){
 
 	title_texture.loadFromFile(res_path + menu_path + TEXTURE_TITLE + TEXTURE_FILETYPE);
 	background_texture.loadFromFile(res_path + menu_path + TEXTURE_BACKGROUND + TEXTURE_FILETYPE);
+	about_texture.loadFromFile(res_path + menu_path + TEXTURE_ABOUT + TEXTURE_FILETYPE);
 	title_sprite.setTexture(title_texture);
 	background_sprite.setTexture(background_texture);
+	about_sprite.setTexture(about_texture);
 	background_sprite.setOrigin(0, - TITLE_HEIGHT);
 
 	bg_pos = -32;
@@ -87,7 +89,7 @@ void Menu::mainMenu(){
 	std::vector<sf::Text> text;
 
 	//creation of rectangles
-	for(unsigned char i = 0; i < 3; ++i){
+	for(unsigned char i = 0; i < 4; ++i){
 		rectangle.push_back(sf::RectangleShape(sf::Vector2f(MAIN_BUTTON_WIDTH, MAIN_BUTTON_HEIGHT)));
 		rectangle[i].setOrigin(0,-TITLE_HEIGHT);
 		rectangle[i].setFillColor(BUTTON_FILL_COLOR);
@@ -98,20 +100,26 @@ void Menu::mainMenu(){
 	rectangle[0].setOutlineColor(SELECTED_OUTLINE_COLOR);
 
 	//creation of texts
-	for(unsigned char i = 0; i < 3; ++i)
+	for(unsigned char i = 0; i < 4; ++i)
 		text.push_back(sf::Text());
 
 	text[0].setString(LOCAL_TXT);
 	text[1].setString(NETWORK_TXT);
-	text[2].setString(EXIT_TXT);
+	text[2].setString(ABOUT_TXT);
+	text[3].setString(EXIT_TXT);
 
-	for(unsigned char i = 0; i < 3; ++i){
+	for(unsigned char i = 0; i < 4; ++i){
 		text[i].setFont(font);
 		text[i].setCharacterSize(MAIN_FONT_SIZE);
 		text[i].setOrigin(0,-TITLE_HEIGHT);
 		text[i].setColor(TXT_COLOR);
 		text[i].setPosition(static_cast<float>((MENU_X_RESOLUTION) - text[i].getGlobalBounds().width) / 2.0f, static_cast<float>(i * (MAIN_BUTTON_HEIGHT + MAIN_BUTTON_SPACE) + (MAIN_BUTTON_HEIGHT - MAIN_FONT_SIZE) / 2) + MAIN_BUTTON_SPACE - text[i].getGlobalBounds().height / 4.0f);
 	}
+
+	//sf::Thread about_thread(&this->aboutMenu);
+	//Menu about_menu;
+	sf::Thread about_thread(&Menu::aboutMenu, &(*this));
+	about_window_open = false;
 
 	char user_choice = 0;
 	char old_user_choice = 0;
@@ -134,8 +142,10 @@ void Menu::mainMenu(){
 		sf::sleep(sf::milliseconds(REFRESH_SLOWNESS));
 		while (window.pollEvent(event)){
 
-			if(event.type == sf::Event::Closed)
+			if(event.type == sf::Event::Closed){
 				window.close();
+				about_window_open = false;
+			}
 			else if(event.type == sf::Event::KeyPressed){
 				if(event.key.code == sf::Keyboard::Key::Up){
 					--user_choice;
@@ -254,8 +264,15 @@ void Menu::mainMenu(){
 						break;
 					}
 					case 2:{
+						if(!about_window_open)
+							about_thread.launch();
+						done = false;
+						break;
+					}
 					default:
+					case 3:{
 						window.close();
+						about_window_open = false;
 						break;
 					}
 				}
@@ -616,4 +633,29 @@ char Menu::networkMenu(){
 		old_user_choice = user_choice;
 	}
 	return user_choice;
+}
+
+void Menu::aboutMenu(){
+
+	about_window_open = true;
+	about_window.create(sf::VideoMode(ABOUT_X_RESOLUTION, ABOUT_Y_RESOLUTION), "PapraGame ~ About", sf::Style::Titlebar | sf::Style::Close);
+	about_window.draw(about_sprite);
+	about_window.display();
+
+	sf::Event about_event;
+	while (about_window.isOpen() && about_window_open){
+		about_window.clear();
+		about_window.draw(about_sprite);
+		about_window.display();
+		sf::sleep(sf::milliseconds(REFRESH_SLOWNESS));
+		while (about_window.pollEvent(about_event)){
+			if(about_event.type == sf::Event::Closed)
+				about_window.close();
+			else if(about_event.type == sf::Event::KeyPressed){
+				if(about_event.key.code == sf::Keyboard::Key::Escape)
+					about_window.close();
+			}
+		}
+	}
+	about_window_open = false;
 }

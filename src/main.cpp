@@ -7,9 +7,12 @@
 #include <Game.hpp>
 #include <Menu.hpp>
 #include <string>
+#include <X11/Xlib.h>
 
 int main(int argc, char* argv[]);
 int main(int argc, char* argv[]){
+
+	XInitThreads();
 	if (argc <= 1)  {
 		Menu menu;
 		menu.mainMenu();
