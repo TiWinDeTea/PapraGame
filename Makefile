@@ -26,6 +26,7 @@
 FILEIDENTIFIER = .cpp
 COMPILER       = g++
 COMPFLAGS      =  -Wdisabled-optimization -Winvalid-pch -Wunused -Wconversion -Wlogical-op -Wuninitialized -Wdouble-promotion -Wformat -Wmissing-include-dirs -Wall -pedantic -pedantic-errors -Wmain -Wswitch-default -Wunreachable-code -Winline -Wfloat-equal -Wundef -Wcast-align -Wredundant-decls -Winit-self -Wshadow -Wnon-virtual-dtor -O3 -Wswitch-enum -Wmissing-declarations
+DEFINES        =
 COMPSTANDARD   = -std=c++0x
 DEBUGGER       = gdb
 LEAKCHECKER    = valgrind --leak-check=full --show-leak-kinds=all
@@ -93,7 +94,7 @@ $(EXEFINALOBJ): $(OBJECTS)
 $(OBJDIR)%.o: %$(FILEIDENTIFIER)
 	@$(DISPLAY) "\n\033[1m\033[92m+\033[0m Building \033[33m$@\033[0m from \033[33m$^\033[0m..."
 	@$(MKDIR) $(OBJDIR)
-	$(COMPILER) $(COMPFLAGS) $(INCLUDEDIR) -c $^ -o $@
+	$(COMPILER) $(COMPFLAGS) $(INCLUDEDIR) $(DEFINES) -c $^ -o $@
 	@if [ $(SHOWDONES) -eq 1 ]; then for i in `seq 1 $(shell expr 65 - $(call STRLEN,$^) - $(call STRLEN,$@))`; do $(DISPLAY) " "; done; $(DISPLAY) " -> Done"; fi
 
 .PHONY: debug

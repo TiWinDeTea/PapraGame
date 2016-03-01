@@ -245,7 +245,6 @@ void Game::start(sf::RenderWindow& game_window)
 	game_map.popEgg(); // Map thuging
 
 	std::vector<Coord> explosions_coord;
-	game_window.requestFocus();
 
 	while (game_window.isOpen() && winner == 0)
 	{
@@ -271,8 +270,10 @@ void Game::start(sf::RenderWindow& game_window)
 					game_theme.play();
 				}
 			}
+#ifndef OLD_SFML_COMPAT
 			else if (!(game_window.hasFocus()))
 					this->pauseGame(game_window, false);
+#endif
 		}
 		sf::sleep(sf::milliseconds(game_speed));
 		--tmp;
@@ -479,6 +480,7 @@ bool Game::pauseGame(sf::RenderWindow& game_window, bool player_request){
 			}
 		}while(game_window.isOpen() && (sf::Event::KeyPressed != event.type || event.key.code != sf::Keyboard::Return));
 	}
+#ifndef OLD_SFML_COMPAT
 	else{
 		do{
 			sf::sleep(sf::milliseconds(20));
@@ -487,6 +489,7 @@ bool Game::pauseGame(sf::RenderWindow& game_window, bool player_request){
 			}
 		}while(!(game_window.hasFocus()));
 	}
+#endif
 	return true;
 }
 

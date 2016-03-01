@@ -13,7 +13,7 @@ Several biomes are available (changes the graphics), and maps can be easily modi
 You may change your keys settings within the ``keys.conf`` file
 
 /!\ Under developement. Latest version : v0.4 -- Crepitum Anatum
-We are currently working make this game fully graphical, together with a Network part. (Graphics are ready, networking is in a debug stage)
+We are currently working make this game fully graphical, together with a Network part. (version 1.0 ready, but in debug stage)
 <br/>
 
 ###Gameplay
@@ -67,7 +67,7 @@ Binaries and sources of the v0.4 are available on [github](https://github.com/Ti
 ##Compilation requirements
 <br/>
 + Platform : Linux, Windows, Mac OSX (MAC OSX support is theorical)
-+ SFML ≥ 2.2
++ SFML ≥ 2.0, SFML ≥ 2.3 recommended
 + A compiler that supports c++11
 <br/>
 
@@ -114,6 +114,12 @@ Extract 2 : Limitation of Liability
 In order to compile PapraGame executable, go to the project's root with a terminal, and use the command
 
 ``$ make`` (1 thread) or ``$ make fast`` (8 threads)
+
+If you are using an SFML version below 2.3, use instead
+
+``$ make -DEFINES=-DOLD_SFML_COMPAT`` or ``$ make -DEFINES=-DOLD_SFML_COMPAT fast``
+
+<br/>
 
 Note that you might need to configure the Makefile if you don't you g++, for instance
 
