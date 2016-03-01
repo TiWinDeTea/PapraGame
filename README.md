@@ -117,7 +117,9 @@ In order to compile PapraGame executable, go to the project's root with a termin
 
 If you are using an SFML version below 2.3, use instead
 
-``$ make -DEFINES=-DOLD_SFML_COMPAT`` or ``$ make -DEFINES=-DOLD_SFML_COMPAT fast``
+``$ make DEFINES=-DOLD_SFML_COMPAT`` or ``$ make DEFINES=-DOLD_SFML_COMPAT fast``
+
+(nb: The game won't pause upon losing focus when using OLD_SFML_COMPAT)
 
 <br/>
 
@@ -131,4 +133,4 @@ You may contribute easily by trying the game and having fun ! That would make us
 
 ##Thanks
 
-We would like to thanks the [SFML](http://www.sfml-dev.org/) dev team for their work, they're awesome, [Gimp](https://www.gimp.org/) for graphics, and [Guitar Pro](http://www.guitar-pro.com/en/index.php) (not free) for the music.
+We would like to thanks the [SFML](http://www.sfml-dev.org/) dev team for their work, they're awesome, [Gimp](https://www.gimp.org/) for graphics.

@@ -74,9 +74,9 @@
 #endif /* PAPRAGAME_PATHS_DEFINED */
 
 #define PORT                            7482
-#define CLIENT_CONNECTION_ATTEMPT_NBR   10    // How many time should the client look for a server ?
+#define CLIENT_CONNECTION_ATTEMPT_NBR   31    // How many time should the client look for a server ?
 #define CLIENT_CONNECTION_REFRESH_RATE  sf::milliseconds(200)     // At which rate should the client look for a server ?
-#define CLIENT_CONNECTION_TIMEOUT       sf::milliseconds(500)
+#define CLIENT_CONNECTION_TIMEOUT       sf::milliseconds(300)
 
 /**
  * @class GameServer NetworkGame.hpp

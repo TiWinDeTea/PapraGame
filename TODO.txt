@@ -1,8 +1,1 @@
-﻿Écran de victoire
-Écran 'En attente des joueurs' (réseau)
-Mettre à jour --version
-
-Bouton About
-Bouton Help > Create a Map / Keys / Change Keys
-
-Dépot Ubuntu / Debian - Multimédia // Arch >> downgrade to SFML 2-1
+﻿Écran 'En attente des joueurs' (réseau)

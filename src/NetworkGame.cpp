@@ -153,7 +153,28 @@ bool GameServer::getClients(sf::RenderWindow& window){
 
 	sf::Event event;
 
+    sf::Texture wait_texture;
+    sf::Sprite waiting;
+    wait_texture.loadFromFile("res/menu/Waiting.png");
+    waiting.setTexture(wait_texture);
+    window.setSize(sf::Vector2u(624, 424));
+    window.setView(sf::View(sf::FloatRect(0, 0, 624, 424)));
+    waiting.setPosition(0,0);
+
+    sf::Music please_wait;
+    please_wait.openFromFile("res/sounds/wait.ogg");
+    please_wait.setLoop(true);
+    please_wait.play();
+
+    // Dark magic
+    sf::sleep(sf::milliseconds(100));
+    for( unsigned char z(4); z-- ;){
+        window.draw(waiting);
+        window.display();
+    }
+
 	while(tmp_st > 0 && window.isOpen()){
+        window.display();
 		status = udp_client.receive(retrieved_data, 25, retrieved_data_size, client_ip, client_port);
 
 		if (status == sf::Socket::Done && retrieved_data_size == 25 && std::string(retrieved_data) == "PapraGame ~ Game Request" && client_port == (PORT + 1)) {
@@ -630,7 +651,28 @@ void GameClient::launch(sf::RenderWindow& game_window){
 	} else {
 		bool server_found(false);
 		unsigned char client_loopout(0);
+
+        sf::Music please_wait;
+        please_wait.openFromFile("res/sounds/wait.ogg");
+        please_wait.play();
+
+        sf::Texture wait_texture;
+        sf::Sprite waiting;
+        wait_texture.loadFromFile("res/menu/Waiting.png");
+        waiting.setTexture(wait_texture);
+        game_window.setSize(sf::Vector2u(624, 424));
+        game_window.setView(sf::View(sf::FloatRect(0, 0, 624, 424)));
+        waiting.setPosition(0,0);
+
+        // Some more dark magic
+        sf::sleep(sf::milliseconds(100));
+        for( unsigned char z(4) ; z--;){
+            game_window.draw(waiting);
+            game_window.display();
+        }
+
 		do{
+            game_window.display();
 			sf::Event event;
 			while(game_window.pollEvent(event)){
 				if (event.type == sf::Event::Closed){
@@ -651,7 +693,30 @@ void GameClient::launch(sf::RenderWindow& game_window){
 			else{
 				++client_loopout;
 				if (client_loopout > CLIENT_CONNECTION_ATTEMPT_NBR){
+                    bool end(false);
 					std::cout << "- No server found" << std::endl;
+                    sf::Texture no_server_texture;
+                    sf::Sprite no_server;
+                    no_server_texture.loadFromFile("res/menu/NoServer.png");
+                    no_server.setTexture(no_server_texture);
+                    no_server.setPosition(0,0);
+                    game_window.setSize(sf::Vector2u(424, 224));
+                    game_window.setView(sf::View(sf::FloatRect(0, 0, 424, 224)));
+                    game_window.draw(no_server);
+                    while (game_window.isOpen() && !end)
+                    {
+                        game_window.draw(no_server);
+                        game_window.display();
+                        while (game_window.pollEvent(event))
+                        {
+                            if(event.type == sf::Event::Closed)
+                                game_window.close();
+                            else if(event.type == sf::Event::KeyPressed || event.type == sf::Event::MouseButtonPressed){
+                                end = true;
+                            }
+                            sf::sleep(sf::milliseconds(20));
+                        }
+                    }
 					return;
 				}
 				else
