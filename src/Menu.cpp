@@ -288,6 +288,9 @@ void Menu::mainMenu(){
 
         sf::Event about_event;
         if (about_window.isOpen()){
+#ifndef OLD_SFML_COMPAT
+            about_window.requestFocus();
+#endif // OLD_SFML_COMPAT
             about_window.clear();
             about_window.draw(about_sprite);
             about_window.display();
