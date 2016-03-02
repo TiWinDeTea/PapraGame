@@ -507,27 +507,18 @@ void Game::printVictory(sf::RenderWindow& game_window){
 	victory_theme.setLoop(false);
 	victory_theme.play();
 
-	float pos(0);
 	sf::Sprite winner_sprite;
-	winner_sprite.setTexture(duck_texture[winner - 1][0][3]);
-	winner_sprite.setScale(3,3);
-	winner_sprite.setPosition(pos,243);
+	winner_sprite.setTexture(duck_texture[winner - 1][0][1]);
+	winner_sprite.setScale(4,4);
+	winner_sprite.setPosition(336,234);
 
 	bool end(false);
 	sf::Event event;
 	sf::Clock elapsed_time;
 	while (game_window.isOpen() && !end)
 	{
-		++pos;
-		if(pos > END_X_RESOLTION)
-			pos = 0;
 		game_window.draw(victory_sprite);
-		winner_sprite.setPosition(pos,243);
 		game_window.draw(winner_sprite);
-		if(pos > 704){
-			winner_sprite.setPosition(pos - END_X_RESOLTION,243);
-			game_window.draw(winner_sprite);
-		}
 		game_window.display();
 
 		while (game_window.pollEvent(event))
