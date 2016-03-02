@@ -1116,7 +1116,7 @@ static sf::Socket::Status receiveWithTimeout(sf::UdpSocket& socket, char* data, 
 
 static void victoryScreen(bool won, sf::Texture& winner_texture, sf::RenderWindow& game_window){
     std::string bg_path, music_path;
-    float y_pos(243.f), pos(0.f);;
+    float y_pos(234.f), pos(336.f);;
     if (won){
         bg_path="res/menu/VictoryMenu.png";
         music_path="res/sounds/victory_theme.ogg";
@@ -1146,7 +1146,10 @@ static void victoryScreen(bool won, sf::Texture& winner_texture, sf::RenderWindo
 
 	sf::Sprite winner_sprite;
 	winner_sprite.setTexture(winner_texture);
-	winner_sprite.setScale(3,3);
+	if (won)
+		winner_sprite.setScale(4,4);
+	else
+		winner_sprite.setScale(3,3);
 	winner_sprite.setPosition(pos,y_pos);
 
 	bool end(false);
@@ -1154,17 +1157,8 @@ static void victoryScreen(bool won, sf::Texture& winner_texture, sf::RenderWindo
 	sf::Clock elapsed_time;
 	while (game_window.isOpen() && !end)
 	{
-        if (won)
-    		++pos;
-		if(pos > END_X_RESOLTION)
-			pos = 0;
 		game_window.draw(victory_sprite);
-		winner_sprite.setPosition(pos,y_pos);
 		game_window.draw(winner_sprite);
-		if(pos > 704){
-			winner_sprite.setPosition(pos - END_X_RESOLTION,y_pos);
-			game_window.draw(winner_sprite);
-		}
 		game_window.display();
 
 		while (game_window.pollEvent(event))
