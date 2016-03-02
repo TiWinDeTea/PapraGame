@@ -116,11 +116,6 @@ void Menu::mainMenu(){
 		text[i].setPosition(static_cast<float>((MENU_X_RESOLUTION) - text[i].getGlobalBounds().width) / 2.0f, static_cast<float>(i * (MAIN_BUTTON_HEIGHT + MAIN_BUTTON_SPACE) + (MAIN_BUTTON_HEIGHT - MAIN_FONT_SIZE) / 2) + MAIN_BUTTON_SPACE - text[i].getGlobalBounds().height / 4.0f);
 	}
 
-	//sf::Thread about_thread(&this->aboutMenu);
-	//Menu about_menu;
-	sf::Thread about_thread(&Menu::aboutMenu, &(*this));
-	about_window_open = false;
-
 	char user_choice = 0;
 	char old_user_choice = 0;
 	char nbr_of_choices = static_cast<char>(rectangle.size());
@@ -144,7 +139,7 @@ void Menu::mainMenu(){
 
 			if(event.type == sf::Event::Closed){
 				window.close();
-				about_window_open = false;
+				about_window.close();
 			}
 			else if(event.type == sf::Event::KeyPressed){
 				if(event.key.code == sf::Keyboard::Key::Up){
@@ -194,6 +189,8 @@ void Menu::mainMenu(){
 				switch(user_choice){
 
 					case 0:{
+						if (about_window.isOpen())
+							about_window.close();
 						map_path = this->mapMenu();
 						if(map_path.size() > 0){
 
@@ -230,6 +227,9 @@ void Menu::mainMenu(){
 						break;
 					}
 					case 1:{
+						if (about_window.isOpen())
+							about_window.close();
+
 						bool network_done(false);
 						while(!network_done){
 							switch(this->networkMenu()){
@@ -263,15 +263,21 @@ void Menu::mainMenu(){
 						break;
 					}
 					case 2:{
-						if(!about_window_open)
-							about_thread.launch();
+						if(!about_window.isOpen()){
+                            about_window.create(sf::VideoMode(ABOUT_X_RESOLUTION, ABOUT_Y_RESOLUTION), "PapraGame ~ About", sf::Style::Titlebar | sf::Style::Close);
+                            about_window.draw(about_sprite);
+                            about_window.display();
+                        }
+                        else{
+                            about_window.close();
+                        }
 						done = false;
 						break;
 					}
-					default:
-					case 3:{
+					default:{
+						if (about_window.isOpen())
+							about_window.close();
 						window.close();
-						about_window_open = false;
 						break;
 					}
 				}
@@ -279,6 +285,21 @@ void Menu::mainMenu(){
 				window.setView(sf::View(sf::FloatRect(0, 0, MENU_X_RESOLUTION, MENU_Y_RESOLUTION)));
 			}
 		}
+
+        sf::Event about_event;
+        if (about_window.isOpen()){
+            about_window.clear();
+            about_window.draw(about_sprite);
+            about_window.display();
+            while (about_window.pollEvent(about_event)){
+                if(about_event.type == sf::Event::Closed)
+                    about_window.close();
+                else if(about_event.type == sf::Event::KeyPressed){
+                    if(about_event.key.code == sf::Keyboard::Key::Escape)
+                        about_window.close();
+                }
+            }
+        }
 
 		window.clear();
 		rectangle[old_user_choice].setOutlineColor(NORMAL_OUTLINE_COLOR);
@@ -634,27 +655,3 @@ char Menu::networkMenu(){
 	return user_choice;
 }
 
-void Menu::aboutMenu(){
-
-	about_window_open = true;
-	about_window.create(sf::VideoMode(ABOUT_X_RESOLUTION, ABOUT_Y_RESOLUTION), "PapraGame ~ About", sf::Style::Titlebar | sf::Style::Close);
-	about_window.draw(about_sprite);
-	about_window.display();
-
-	sf::Event about_event;
-	while (about_window.isOpen() && about_window_open){
-		about_window.clear();
-		about_window.draw(about_sprite);
-		about_window.display();
-		sf::sleep(sf::milliseconds(REFRESH_SLOWNESS));
-		while (about_window.pollEvent(about_event)){
-			if(about_event.type == sf::Event::Closed)
-				about_window.close();
-			else if(about_event.type == sf::Event::KeyPressed){
-				if(about_event.key.code == sf::Keyboard::Key::Escape)
-					about_window.close();
-			}
-		}
-	}
-	about_window_open = false;
-}

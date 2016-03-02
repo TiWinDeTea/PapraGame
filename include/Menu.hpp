@@ -101,13 +101,10 @@ class Menu{
 
 		std::string mapMenu();
 
-		void aboutMenu();
-
 		char networkMenu();
 
 	private:
 
-		bool about_window_open;
 		int bg_pos;
 		sf::Music title_theme;
 		sf::RenderWindow window, about_window;
