@@ -8,7 +8,7 @@
 
 static void printExplosion(sf::RenderWindow& game_window, Coord coord, sf::Sprite* explosion_sprite);
 static sf::Socket::Status receiveWithTimeout(sf::UdpSocket& socket, char* data, size_t max_received_size, size_t& received_size, sf::IpAddress& remote, unsigned short port, sf::Time timeout);
-static void victoryScreen(bool won, sf::Texture& winner_texture, sf::RenderWindow& game_window);
+static void victoryScreen(bool won, sf::Texture winner_texture[4], sf::RenderWindow& game_window);
 
 GameServer::~GameServer(){
 	for (size_t i = clients.size() - 1; i-- ;)
@@ -516,9 +516,9 @@ void GameServer::start(sf::RenderWindow& game_window){
 		packet.clear();
 	}while(winner == 0);
 
-	packet << true << true << false << (winner-1);
+	packet << true << true << false << winner;
     sf::Packet winner_p;
-    winner_p << true << true << true << (winner-1);
+    winner_p << true << true << true << winner;
 
     game_theme.stop();
 
@@ -533,7 +533,7 @@ void GameServer::start(sf::RenderWindow& game_window){
             clients[i]->disconnect();
     }
 
-    victoryScreen((unsigned)(winner-1) == clients.size(), duck_texture[winner-1][0][3], game_window);
+    victoryScreen((unsigned)(winner-1) == clients.size(), duck_texture[winner-1][0], game_window);
 
 	for (size_t i = duck_texture.size() ; i-- ;) {
 		free(duck_texture[i][0]);
@@ -1095,7 +1095,8 @@ void GameClient::start(sf::RenderWindow& game_window){
 
     game_theme.stop();
 
-    victoryScreen(won, duck_texture[winner][0][3], game_window);
+    victoryScreen(won, duck_texture[winner - 1][0], game_window);
+    std::cout << "Winner: Player " << int(winner);
 
 	return;
 }
@@ -1114,9 +1115,9 @@ static sf::Socket::Status receiveWithTimeout(sf::UdpSocket& socket, char* data, 
         return sf::Socket::NotReady;
 }
 
-static void victoryScreen(bool won, sf::Texture& winner_texture, sf::RenderWindow& game_window){
+static void victoryScreen(bool won, sf::Texture winner_texture[4], sf::RenderWindow& game_window){
     std::string bg_path, music_path;
-    float y_pos(234.f), pos(336.f);;
+    float y_pos(226.f), pos(336.f);;
     if (won){
         bg_path="res/menu/VictoryMenu.png";
         music_path="res/sounds/victory_theme.ogg";
@@ -1124,7 +1125,7 @@ static void victoryScreen(bool won, sf::Texture& winner_texture, sf::RenderWindo
     else{
         bg_path="res/menu/GameOver.png";
         music_path="res/sounds/game_over_theme.ogg";
-        y_pos = 316.f;
+        y_pos = 315.f;
         pos = 352.f;
     }
     sf::Texture bg_texture;
@@ -1144,22 +1145,36 @@ static void victoryScreen(bool won, sf::Texture& winner_texture, sf::RenderWindo
 	theme.setLoop(false);
 	theme.play();
 
-	sf::Sprite winner_sprite;
-	winner_sprite.setTexture(winner_texture);
-	if (won)
-		winner_sprite.setScale(4,4);
-	else
-		winner_sprite.setScale(3,3);
-	winner_sprite.setPosition(pos,y_pos);
+	sf::Sprite winner_sprite[4];
+
+    winner_sprite[0].setTexture(winner_texture[2]);
+    winner_sprite[1].setTexture(winner_texture[1]);
+	winner_sprite[2].setTexture(winner_texture[3]);
+	winner_sprite[3].setTexture(winner_texture[0]);
+
+    for (unsigned char i(4); i-- ;){
+        if (won)
+            winner_sprite[i].setScale(4,4);
+        else
+            winner_sprite[i].setScale(3,3);
+        winner_sprite[i].setPosition(pos,y_pos);
+    }
 
 	bool end(false);
 	sf::Event event;
 	sf::Clock elapsed_time;
+
+    unsigned char i(0), j(0);
+
 	while (game_window.isOpen() && !end)
 	{
+        game_window.clear();
 		game_window.draw(victory_sprite);
-		game_window.draw(winner_sprite);
+        game_window.draw(winner_sprite[j]);
 		game_window.display();
+
+        i = (unsigned char)((i + 1)%180);
+        j = (i+1)/45;
 
 		while (game_window.pollEvent(event))
 		{
@@ -1169,6 +1184,6 @@ static void victoryScreen(bool won, sf::Texture& winner_texture, sf::RenderWindo
 				end = true;
 			}
 		}
-		sf::sleep(sf::milliseconds(5));
+		sf::sleep(sf::milliseconds(10));
 	}
 }
