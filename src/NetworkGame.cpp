@@ -950,7 +950,10 @@ void GameClient::start(sf::RenderWindow& game_window){
 
 	game_window.setSize(sf::Vector2u(map_width*32, map_height*32));
 	game_window.setView(sf::View(sf::FloatRect(0, 0, static_cast<float>(map_width*32), static_cast<float>(map_height*32))));
+
+#ifndef OLD_SFML_COMPAT
 	game_window.requestFocus();
+#endif
 
 	packet.clear();
 	server.receive(packet);
@@ -1174,7 +1177,7 @@ static void victoryScreen(bool won, sf::Texture winner_texture[4], sf::RenderWin
 		game_window.display();
 
         i = (unsigned char)((i + 1)%180);
-        j = (i+1)/45;
+        j = (unsigned char)((i+1)/45);
 
 		while (game_window.pollEvent(event))
 		{
