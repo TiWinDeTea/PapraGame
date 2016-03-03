@@ -511,7 +511,7 @@ std::string Menu::mapMenu(){
 						text[i].setPosition(text_coord[i].x, text_coord[i].y - static_cast<float>(scrolling));
 					}
 				}
-				else if(event.mouseWheelScroll.delta < 0 && (rectangle[nbr_of_choices - 1].getPosition().y > (MENU_Y_RESOLUTION - TITLE_HEIGHT - MAP_BUTTON_SPACE))){
+				else if(event.MOUSEWHEELSCROLLDELTA < 0 && (rectangle[nbr_of_choices - 1].getPosition().y > (MENU_Y_RESOLUTION - TITLE_HEIGHT - MAP_BUTTON_SPACE))){
 					scrolling += (MAP_BUTTON_SPACE + MAP_BUTTON_HEIGHT);
 					for(unsigned char i = nbr_of_choices; i--;){
 						rectangle[i].setPosition(rect_coord[i].x, rect_coord[i].y - static_cast<float>(scrolling));
