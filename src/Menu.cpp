@@ -7,8 +7,8 @@
 #include <Menu.hpp>
 
 #ifdef OLD_SFML_COMPAT
-#define WHEELSCROLLEVENT        sf::Event::MouseWheelEvent
-#define MOUSEWHEELSCROLLDELTA   mouseWheelEvent.delta
+#define WHEELSCROLLEVENT        sf::Event::MouseWheelMoved
+#define MOUSEWHEELSCROLLDELTA   mouseWheel.delta
 #else
 #define WHEELSCROLLEVENT        sf::Event::MouseWheelScrolled
 #define MOUSEWHEELSCROLLDELTA   mouseWheelScroll.delta
@@ -503,7 +503,7 @@ std::string Menu::mapMenu(){
 					}
 				}
 			}
-			else if(event.type == WHEELSCROLLEVENT){
+			else if(event.type == (WHEELSCROLLEVENT)){
 				if(event.MOUSEWHEELSCROLLDELTA > 0 && (rectangle[0].getPosition().y < MAP_BUTTON_SPACE)){
 					scrolling -= (MAP_BUTTON_SPACE + MAP_BUTTON_HEIGHT);
 					for(unsigned char i = nbr_of_choices; i--;){
