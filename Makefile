@@ -80,7 +80,7 @@ $(EXENAME): $(EXEFINAL)
 $(EXEFINAL): $(EXEFINALOBJ)
 	@$(DISPLAY) "\n\033[1m\033[92m+\033[0m Building \033[33m$(EXEFINAL)\033[0m from \033[33m$(OBJDIR)$(EXENAME).o\033[0m..."
 	@$(MKDIR) $(BUILDDIR)
-	$(COMPILER) $(LIBSDIR) $(LINKS) $(EXEFINALOBJ) -o $(EXEFINAL)
+	$(COMPILER) $(EXEFINALOBJ) $(LIBSDIR) $(LINKS) -o $(EXEFINAL)
 	@if [ $(SHOWDONES) -eq 1 ]; then for i in `seq 1 $(shell expr 65 - $(call STRLEN,$(OBJDIR)$(EXENAME).o) - $(call STRLEN,$(EXEFINAL)))`; do $(DISPLAY) " "; done; $(DISPLAY) " -> Done"; fi
 	@$(DISPLAY) "\n\n"
 
