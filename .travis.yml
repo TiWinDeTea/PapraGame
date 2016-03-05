@@ -7,8 +7,6 @@ before_install:
  - echo "yes" | sudo add-apt-repository ppa:ubuntu-toolchain-r/test
  - sudo apt-get update
  - sudo apt-get -qq install gcc-4.9 g++-4.9 make libsfml-dev
- - sudo apt-get update
- - sudo apt-get upgrade
 
 script:
  - make DEFINES=-DOLD_SFML_COMPAT fast
