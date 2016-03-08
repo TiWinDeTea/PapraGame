@@ -11,7 +11,7 @@ static sf::Socket::Status receiveWithTimeout(sf::UdpSocket& socket, char* data, 
 static void victoryScreen(bool won, sf::Texture winner_texture[4], sf::RenderWindow& game_window);
 
 GameServer::~GameServer(){
-	for (size_t i = clients.size() - 1; i-- ;)
+	for (size_t i = clients.size(); i-- ;)
 		delete clients[i];
 }
 
@@ -1177,7 +1177,7 @@ static void victoryScreen(bool won, sf::Texture winner_texture[4], sf::RenderWin
 		game_window.display();
 
         i = (unsigned char)((i + 1)%180);
-        j = (unsigned char)((i+1)/45);
+        j = (unsigned char)(i/45);
 
 		while (game_window.pollEvent(event))
 		{
