@@ -327,7 +327,7 @@ void Game::start(sf::RenderWindow& game_window)
 
 							if (player[i].size() > 0 && !(player[i].isInvulnerable())){
 								player[j].powerUp();
-								if (player[i].size() == egg_victory && egg_victory != 0)
+								if (player[j].size() == egg_victory && egg_victory != 0)
 									winner = static_cast<unsigned char>(j + 1);
 							}
 							player[i].damaged(player_initial_dir[i]);

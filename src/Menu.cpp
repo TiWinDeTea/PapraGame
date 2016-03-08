@@ -63,7 +63,7 @@ Menu::Menu(){
 	title_theme.openFromFile("res/sounds/title_theme.ogg");
 	title_theme.setLoop(true);
 	title_theme.play();
-	window.create(sf::VideoMode(MENU_X_RESOLUTION, MENU_Y_RESOLUTION), "PapraGame ~ A game with Ducks !", sf::Style::Titlebar | sf::Style::Close);
+	window.create(sf::VideoMode(MENU_X_RESOLUTION, MENU_Y_RESOLUTION), "PapraGame ~ A game with Ducks !", sf::Style::Default);
 	window.setIcon( sfml_icon.width,  sfml_icon.height,  sfml_icon.pixel_data );
 
 	if (!font.loadFromFile("res/fonts/slkscr.ttf"))
