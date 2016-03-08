@@ -95,6 +95,7 @@ void Game::launch(sf::RenderWindow& game_window, std::string map_name){
 		std::cout << "Failed to load game ressources" << std::endl;
 	}
 	else {
+        victory_sprite.setTexture(victory_texture);
 		winner = 0;
 		game_window.setSize(sf::Vector2u(pxl_length, pxl_height));
 		game_window.setView(sf::View(sf::FloatRect(0, 0, static_cast<float>(pxl_length), static_cast<float>(pxl_height))));
@@ -495,31 +496,47 @@ bool Game::pauseGame(sf::RenderWindow& game_window, bool player_request){
 
 void Game::printVictory(sf::RenderWindow& game_window){
 
-	game_window.setSize(sf::Vector2u(END_X_RESOLTION, END_Y_RESOLTION));
-	game_window.setView(sf::View(sf::FloatRect(0, 0, END_X_RESOLTION, END_Y_RESOLTION)));
-	victory_sprite.setTexture(victory_texture);
-	victory_sprite.setPosition(0,0);
-	game_window.draw(victory_sprite);
-	game_window.display();
-
 	sf::Music victory_theme;
 	victory_theme.openFromFile("res/sounds/victory_theme.ogg");
 	victory_theme.setLoop(false);
 	victory_theme.play();
 
-	sf::Sprite winner_sprite;
-	winner_sprite.setTexture(duck_texture[winner - 1][0][1]);
-	winner_sprite.setScale(4,4);
-	winner_sprite.setPosition(336,234);
+	sf::Sprite winner_sprite[4];
+	winner_sprite[0].setTexture(duck_texture[winner - 1][0][2]);
+    winner_sprite[1].setTexture(duck_texture[winner - 1][0][1]);
+    winner_sprite[2].setTexture(duck_texture[winner - 1][0][3]);
+    winner_sprite[3].setTexture(duck_texture[winner - 1][0][0]);
+
+    float y_pos(226.f), pos(336.f);;
+
+    game_window.setSize(sf::Vector2u(800, 600));
+	game_window.setView(sf::View(sf::FloatRect(0, 0, 800, 600)));
+
+    victory_sprite.setPosition(0,0);
+	game_window.draw(victory_sprite);
+	game_window.display();
+
+    for (unsigned char i(4); i-- ;){
+        winner_sprite[i].setScale(4,4);
+        winner_sprite[i].setPosition(pos,y_pos);
+    }
 
 	bool end(false);
 	sf::Event event;
 	sf::Clock elapsed_time;
+
+    unsigned char i(0), j(0);
+
+
 	while (game_window.isOpen() && !end)
 	{
+        game_window.clear();
 		game_window.draw(victory_sprite);
-		game_window.draw(winner_sprite);
+        game_window.draw(winner_sprite[j]);
 		game_window.display();
+
+        i = (unsigned char)((i + 1)%180);
+        j = (unsigned char)(i/45);
 
 		while (game_window.pollEvent(event))
 		{
@@ -529,6 +546,6 @@ void Game::printVictory(sf::RenderWindow& game_window){
 				end = true;
 			}
 		}
-		sf::sleep(sf::milliseconds(5));
+		sf::sleep(sf::milliseconds(10));
 	}
 }
