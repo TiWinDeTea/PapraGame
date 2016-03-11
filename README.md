@@ -12,8 +12,7 @@ Several biomes are available (changes the graphics), and maps can be easily modi
 
 You may change your keys settings within the ``keys.conf`` file
 
-/!\ Under developement. Latest version : v0.4 -- Crepitum Anatum
-We are currently working make this game fully graphical, together with a Network part. (version 1.0 ready, but in debug stage)
+/!\ Under developement. Latest version : v1.0 -- Temerarium Anatum
 <br/>
 
 ###Gameplay
@@ -61,13 +60,14 @@ The file should be structured according to the following (line by line)
 <br/>
 You can get the game sources from the Time Winder Dev Team [github repo](https://github.com/TiWinDeTea/PapraGame).
 
-Binaries and sources of the v0.4 are available on [github](https://github.com/TiWinDeTea/PapraGame/releases/tag/v0.4) aswell
+Binaries and sources of the v0.4 are available on [github](https://github.com/TiWinDeTea/PapraGame/releases/tag/v0.4)
+Binaries and sources of the v1.0 are available on [github](https://github.com/TiWinDeTea/PapraGame/releases/tag/v1.0)
 <br/>
 
 ##Compilation requirements
 <br/>
 + Platform : Linux, Windows, Mac OSX (MAC OSX support is theorical)
-+ SFML ≥ 2.0, SFML ≥ 2.3 recommended
++ SFML ≥ 2.1, SFML ≥ 2.3 recommended
 + A compiler that supports c++11
 <br/>
 
@@ -133,4 +133,4 @@ You may contribute easily by trying the game and having fun ! That would make us
 
 ##Thanks
 
-We would like to thanks the [SFML](http://www.sfml-dev.org/) dev team for their work, they're awesome, [Gimp](https://www.gimp.org/) for graphics.
+We would like to thanks the [SFML](http://www.sfml-dev.org/) dev team for their work, they're awesome ; And [Gimp](https://www.gimp.org/) for graphics.

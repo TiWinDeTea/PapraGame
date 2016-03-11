@@ -41,7 +41,7 @@ OBJDIR         = $(BUILDDIR)obj/
 SOURCEDIR      = src/
 INCLUDEDIR     = -I/usr/include -Iinclude/
 LIBSDIR        = -L/usr/lib
-SOURCENAME     = Coord Ducky Duck Map Game NetworkGame Menu main
+SOURCENAME     = Coord Ducky Duck Map Game NetworkGame Menu MapEditor main
 EXENAME        = PapraGame
 LINKS          = -lstdc++ -lsfml-audio -lsfml-network -lsfml-graphics -lsfml-window -lsfml-system
 
@@ -109,5 +109,5 @@ memleak: $(EXEFINAL)
 clean:
 	@$(DISPLAY) "\033[0mCleaning files and folders...\n"
 	@$(RM) $(OBJECTS) $(EXEFINAL) $(EXEFINALOBJ)
-	@$(RMDIR) $(OBJDIR) $(BUILDDIR) $(VOIDECHO) || true
+	@$(RMDIR) $(OBJDIR) $(VOIDECHO) || true
 	@$(DISPLAY) "Done\n"
