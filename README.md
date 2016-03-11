@@ -127,6 +127,11 @@ Note that you might need to configure the Makefile if you don't you g++, for ins
 
 An executable named `PapraGame.elf` should be generated in the `build/` folder
 
+<br/>
+After compiling, you may decide to install it using ``# make install``. By default, the game is installed to ``/usr/local/share/PapraGame``
+
+To uninstall the game, simply use ``# make uninstall``
+
 ##Contribute
 
 You may contribute easily by trying the game and having fun ! That would make us very happy !

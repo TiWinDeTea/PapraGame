@@ -41,6 +41,7 @@ MapEditor::~MapEditor(){
 //////////////////////////////////////////////////////////////////////////////
 void MapEditor::start(sf::RenderWindow& window){}
 // static bool 	sf::Mouse::isButtonPressed (Button button)
+// TODO
 
 
 //////////////////////////////////////////////////////////////////////////////
@@ -160,6 +161,7 @@ void MapEditor::refreshScreen(sf::RenderWindow& window){
 
 //////////////////////////////////////////////////////////////////////////////
 void MapEditor::saveMap(){
+// TODO
 
     auto fileExist = [] (std::string& filename) -> bool {
         std::ifstream file (filename.c_str(), std::ios::in);

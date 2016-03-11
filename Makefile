@@ -34,9 +34,15 @@ DISPLAY        = printf
 MKDIR          = mkdir -p
 RMDIR          = rmdir
 RM             = rm -f
+RECURSERM      = rm -rf
 LD             = ld -r
+RECURSECP      = cp -r
+CD             = cd
+CHMOD          = chmod +x
 VOIDECHO       = > /dev/null 2>&1
 BUILDDIR       = build/
+INSTALLDIR     = /usr/local/share/PapraGame
+INSTALLCMD	   = /usr/local/bin/papragame
 OBJDIR         = $(BUILDDIR)obj/
 SOURCEDIR      = src/
 INCLUDEDIR     = -I/usr/include -Iinclude/
@@ -96,6 +102,23 @@ $(OBJDIR)%.o: %$(FILEIDENTIFIER)
 	@$(MKDIR) $(OBJDIR)
 	$(COMPILER) $(COMPFLAGS) $(INCLUDEDIR) $(DEFINES) -c $^ -o $@
 	@if [ $(SHOWDONES) -eq 1 ]; then for i in `seq 1 $(shell expr 65 - $(call STRLEN,$^) - $(call STRLEN,$@))`; do $(DISPLAY) " "; done; $(DISPLAY) " -> Done"; fi
+
+.PHONY: install
+install:
+	@$(DISPLAY) "Installing to $(INSTALLDIR)...\n"
+	@make --silent $(EXEFINAL)
+	@$(RECURSECP) $(BUILDDIR) $(INSTALLDIR)
+	@$(DISPLAY) "#!/bin/bash\n$(CD) $(INSTALLDIR)\n./$(EXENAME).elf \"$$" > $(INSTALLCMD)
+	@$(DISPLAY) "@\"\n" >> $(INSTALLCMD)
+	@$(CHMOD) $(INSTALLCMD)
+	@$(DISPLAY) "Done\n"
+
+.PHONY: uninstall
+uninstall:
+	@$(DISPLAY) "Deleting installed files\n"
+	@$(RECURSERM) $(INSTALLDIR)
+	@$(RM) $(INSTALLCMD)
+	@$(DISPLAY) "Done\n"
 
 .PHONY: debug
 debug: COMPFLAGS = -g $(COMPSTANDARD)
