@@ -7,8 +7,14 @@
 #ifndef MAPEDITOR_HPP_INCLUDED
 #define MAPEDITOR_HPP_INCLUDED
 
-#define N_BIOME_NBR  4
-#define N_BIOME_LIST {"ducks", "fonts", "menu", "sounds"}
+#define N_BIOME_LIST         {"ducks", "fonts", "menu", "sounds"}
+#define N_BIOME_NB           4
+#define GROUNDS_TILES_LIST   {"Obstacle.png", "EmptyTile.png", "WaterUR.png", "WaterRD.png", "WaterDL.png", "WaterLU.png", "WaterUD.png", "WaterLR.png", "Warp.png"}
+#define GROUNDS_TILES_NB     9
+#define DUCKS_SPRITES_LIST   {"DuckU_", "DuckD_", "DuckL_", "DuckR_"}
+#define DUCKS_FORMAT         ".png"
+#define RESOURCES_FOLDER     "res/"
+#define PLAYER_NBR_MAX       5
 
 #include <enum.hpp>
 #include <Coord.hpp>
@@ -46,7 +52,7 @@ class MapEditor {
 public :
 
     /**
-     * @brief allocs memory for ground_textures and initializes biome_names
+     * @brief allocs memory for ground_textures, ground_sprites and initializes biome_names
      */
     MapEditor();
 
@@ -65,15 +71,15 @@ public :
 private :
 
     /**
-     * @brief loads sprites
-     * @return true on success, false otherwise
-     */
-    bool loadSprites();
-
-    /**
      * @brief finds textures folder (every folder except those defined by N_BIOME_LIST)
      */
     void findTextures();
+
+   /**
+     * @brief loads textures
+     * @return true on success, false otherwise
+     */
+    bool loadTextures();
 
     /**
      * @brief poll events from the window
@@ -97,23 +103,21 @@ private :
 
 
 
-    sf::Texture ducks_textures[5][4][2];
-    std::vector<sf::Texture**> ground_textures;
+    sf::Texture ducks_textures[PLAYER_NBR_MAX][4];
+    std::vector<sf::Texture*> ground_textures;
 
-    sf::Sprite ducks_sprites[5][4];
-    std::vector<sf::Sprite**> ground_sprites;
+    sf::Sprite ducks_sprites[PLAYER_NBR_MAX][4];
+    std::vector<sf::Sprite*> ground_sprites;
 
     std::vector<std::string> biome_names;
-
-    Coord mouse_position;
 
     unsigned short selected_biome;
     unsigned short speed;
     unsigned char egg_nbr;
     unsigned char player_nbr;
 
-    Direction ducks_starting_dir[5];
-    Coord ducks_spawn[5];
+    Direction ducks_starting_dir[PLAYER_NBR_MAX];
+    Coord ducks_spawn[PLAYER_NBR_MAX];
 
     Coord map_size;
     bool is_visible;
@@ -121,6 +125,9 @@ private :
     std::vector<std::string> map;
     std::vector< std::vector<Area> > areas_map;
 
+    Coord mouse_position;
+    Coord mouse_press;
+    Coord mouse_release;
 };
 
 #endif /* MAPEDITOR_HPP_INCLUDED */
