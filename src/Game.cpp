@@ -452,9 +452,15 @@ std::vector<sf::Keyboard::Key> Game::loadKeys(std::string selected_player){
 		}
 		if (!key_loading_successful[0] || !key_loading_successful[1] || !key_loading_successful[2] || !key_loading_successful[3]) {
 			std::cout << "Failed to load keys for " << selected_player << std::endl;
+            for (unsigned char i(4) ; i--;) {
+                if (!key_loading_successful[i])
+                    answer.push_back(sf::Keyboard::Escape);
+                else
+                    answer.push_back(keys[i]);
+            }
 		}
 		else{
-			for (unsigned char i = 4 ; i-- ;) {
+			for (unsigned char i(4) ; i-- ;) {
 				answer.push_back(keys[i]);
 			}
 		}
