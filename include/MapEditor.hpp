@@ -16,6 +16,19 @@
 #define RESOURCES_FOLDER     "res/"
 #define PLAYER_NBR_MAX       5
 
+#ifndef PAPRAGAME_PATHS_DEFINED
+#define PAPRAGAME_PATHS_DEFINED
+	#define IDENTIFIER_WATER_UP_DOWN    '|'
+	#define IDENTIFIER_WATER_UP_RIGHT   '9'
+	#define IDENTIFIER_WATER_UP_LEFT    '7'
+	#define IDENTIFIER_WATER_LEFT_RIGHT '-'
+	#define IDENTIFIER_WATER_LEFT_DOWN  '1'
+	#define IDENTIFIER_WATER_RIGHT_DOWN '3'
+	#define IDENTIFIER_EMPTY_TILE       '.'
+	#define IDENTIFIER_WARP             'x'
+	#define IDENTIFIER_OBSTACLE         'o'
+#endif /* PAPRAGAME_PATHS_DEFINED */
+
 #include <enum.hpp>
 #include <Coord.hpp>
 #include <SFML/Graphics.hpp>
@@ -62,10 +75,11 @@ public :
     ~MapEditor();
 
     /**
-     * @ Starts the editor
+     * @brief Starts the editor
      * @param window A window
+     * @param original_file Edit this map instead of creating a brand new map (empty to start a new map)
      */
-    void start(sf::RenderWindow& window);
+    void start(sf::RenderWindow& window, std::string const& original_file);
 
 
 private :
@@ -97,8 +111,9 @@ private :
 
     /**
      * @brief saves the map
+     * @param original_file The original map (empty for no original map)
      */
-    void saveMap();
+    void saveMap(std::string const& original_file);
 
 
 
@@ -121,6 +136,7 @@ private :
 
     Coord map_size;
     bool is_visible;
+    bool los_is_looping;
     unsigned short los;
     std::vector<std::string> map;
     std::vector< std::vector<Area> > areas_map;

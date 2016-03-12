@@ -16,6 +16,7 @@ MapEditor::MapEditor():
     player_nbr(),
     map_size(),
     is_visible(),
+    los_is_looping(),
     los(),
     map(std::vector<std::string>()),
     areas_map(std::vector< std::vector<Area> >()),
@@ -39,9 +40,10 @@ MapEditor::~MapEditor(){
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void MapEditor::start(sf::RenderWindow& window){}
+void MapEditor::start(sf::RenderWindow& window, std::string const& original_file){}
 // static bool 	sf::Mouse::isButtonPressed (Button button)
 // TODO
+// -> Map testing
 
 
 //////////////////////////////////////////////////////////////////////////////
@@ -160,12 +162,127 @@ void MapEditor::refreshScreen(sf::RenderWindow& window){
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void MapEditor::saveMap(){
-// TODO
+void MapEditor::saveMap(std::string const& original_file){
+// TODO : GUI
 
-    auto fileExist = [] (std::string& filename) -> bool {
-        std::ifstream file (filename.c_str(), std::ios::in);
-        return !file.fail();
+    std::string filename;
+
+    auto selectName = [] () -> std::string {
+
+        auto fileExist = [] (std::string& file) -> bool {
+            std::ifstream fs (file, std::ios::in);
+            return !fs.fail();
+        };
+
+        bool done(false);
+        std::string file, ans;
+        do{
+            std::cout << "Save as: ";
+            std::cin >> file;
+            file += ".map";
+            if (fileExist(file)){
+                std::cout << "Overwrite " << file.substr(0, file.size() - 4) << " ? [Y/n]";
+                std::cin >> ans;
+                if (ans != "n" && ans != "N"){
+                    done = true;
+                }
+            }
+        }while(!done);
+
+        return file;
     };
-    // Do you really want to override ? blabla
+
+    if (original_file.size()){
+        std::cout << "Overwrite " << original_file.substr(0, original_file.size() - 4) << " ? [Y/n]";
+        std::cin >> filename;
+        if (filename == "n" || filename == "N"){
+            filename = selectName();
+        }
+        else {
+            filename = original_file;
+        }
+    }
+    else{
+        filename = selectName();
+    }
+
+    std::ofstream save (filename, std::ios::out | std::ios::trunc);
+    save << biome_names[selected_biome] << std::endl;
+    if (is_visible){
+        save << "visible" << std::endl;
+    }
+    else{
+        save << "blind " << los;
+        if (los_is_looping)
+            save << " loop" << std::endl;
+        else
+            save << " no-loop" << std::endl;
+    }
+
+    save << speed << std::endl;
+    save << (short)(egg_nbr) << std::endl;
+    save << map_size.x << " " << map_size.y << std::endl;
+
+    for (unsigned int i(0) ; i < map_size.y ; --i){
+        for (unsigned int j(0) ; j < map_size.x ; j--){
+            switch(areas_map[j][i]){
+                case OBSTACLE:
+                    save << IDENTIFIER_OBSTACLE;
+                    break;
+                case EMPTY_TILE:
+                    save << IDENTIFIER_EMPTY_TILE;
+                    break;
+                case WATER_UR:
+                    save << IDENTIFIER_WATER_UP_RIGHT;
+                    break;
+                case WATER_RD:
+                    save << IDENTIFIER_WATER_RIGHT_DOWN;
+                    break;
+                case WATER_DL:
+                    save << IDENTIFIER_WATER_LEFT_DOWN;
+                    break;
+                case WATER_LU:
+                    save << IDENTIFIER_WATER_UP_LEFT;
+                    break;
+                case WATER_UD:
+                    save << IDENTIFIER_WATER_UP_DOWN;
+                    break;
+                case WATER_LR:
+                    save << IDENTIFIER_WATER_LEFT_RIGHT;
+                    break;
+                case WARP:
+                    save << IDENTIFIER_WARP;
+                    break;
+                default:
+                    std::cout << "Unexpected error when saving the map (found value " << (short)areas_map[j][i] << " in the map)" << std::endl;
+                    std::cout << "The save may have failed..." << std::endl;
+                    break;
+            }
+        }
+        save << std::endl;
+    }
+
+    for (unsigned int i(0) ; i < player_nbr ; --i){
+        switch(ducks_starting_dir[i]){
+            case UP:
+                save << "up ";
+                break;
+            case DOWN:
+                save << "down ";
+                break;
+            case LEFT:
+                save << "left ";
+                break;
+            case RIGHT:
+                save << "right ";
+                break;
+            case NOPE:
+            default:
+                std::cout << "Unexpected error when saving the map (found value " << (short)ducks_starting_dir[i] << " in player's " << (short)(i + 1) << " direction" << std::endl;
+                std::cout << "The save may have failed..." << std::endl;
+                break;
+        }
+        save << ducks_spawn[i].x << " " << ducks_spawn[i].y << std::endl;
+    }
+    save << "eof" << std::endl;
 }
