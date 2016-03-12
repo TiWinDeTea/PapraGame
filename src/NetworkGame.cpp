@@ -9,6 +9,7 @@
 static void printExplosion(sf::RenderWindow& game_window, Coord coord, sf::Sprite* explosion_sprite);
 static sf::Socket::Status receiveWithTimeout(sf::UdpSocket& socket, char* data, size_t max_received_size, size_t& received_size, sf::IpAddress& remote, unsigned short port, sf::Time timeout);
 static void victoryScreen(bool won, sf::Texture winner_texture[4], sf::RenderWindow& game_window);
+static void squareThisDuck(sf::Vector2f coord_to_square, sf::RenderWindow& window);
 
 GameServer::~GameServer(){
 	for (size_t i = clients.size(); i-- ;)
@@ -333,7 +334,7 @@ void GameServer::start(sf::RenderWindow& game_window){
 		p_got_egg.push_back(false);
 	}
 
-	unsigned char winner(0);
+	unsigned char winner(0), mini_counter(0);
 	sf::Packet packet;
 
 	game_map.init();
@@ -341,8 +342,9 @@ void GameServer::start(sf::RenderWindow& game_window){
 	game_map.popEgg();
 	game_map.popEgg(); // Map thuging #2
 
-	packet << game_map.getEggCoord().x << game_map.getEggCoord().y;
 	for (size_t i = clients.size() ; i-- ;) {
+        packet.clear();
+        packet << static_cast<int>(i) << game_map.getEggCoord().x << game_map.getEggCoord().y;
 		clients[i]->send(packet);
 	}
 	packet.clear();
@@ -358,6 +360,9 @@ void GameServer::start(sf::RenderWindow& game_window){
 
 			if(game_map.isWarp(player[i].getCoord())){
 				player[i].warped(game_map.getWarp(player[i].getCoord()));
+                if (i == player.size() - 1){
+                    mini_counter = 60;
+                }
 				warp_sound.play();
 			}
 			player[i].move(player_dir[i], game_map.x_size, game_map.y_size);
@@ -383,7 +388,7 @@ void GameServer::start(sf::RenderWindow& game_window){
 				for (unsigned char k(player[j].size()) ; k-- && !p_damaged[i] ; ){
 					if(player[i].getCoord() == player[j].duckies[k].getCoord()){
 						explosions_coord.push_back(player[i].getCoord() - player[i].getDirection());
-						if (player[i].size() > 0 && !(player[i].isInvulnerable())){
+						if (player[i].size() > 0 && !(player[i].isInvulnerable()) && i != j){
 							player[j].powerUp();
 							p_ducky_stolen[i] = j;
 							if (player[j].size() == egg_victory && egg_victory != 0)
@@ -425,7 +430,7 @@ void GameServer::start(sf::RenderWindow& game_window){
 		for (unsigned char i((unsigned char)(player.size())) ; i-- ;){
             packet << player[i].getCoord().x << player[i].getCoord().y << p_damaged[i];
 			if (!p_damaged[i]){
-				packet << (int)player_dir[i] << p_got_egg[i];
+				packet << (int)player_dir[i] << p_got_egg[i] << player[i].wasWarped();
 				if (p_got_egg[i])
 					packet << game_map.getEggCoord().x << game_map.getEggCoord().y;
 			}
@@ -487,6 +492,12 @@ void GameServer::start(sf::RenderWindow& game_window){
 			}
 			else game_map.print(game_window);
 
+            if (mini_counter < 125){
+                squareThisDuck(player.back().getPxlPos(), game_window);
+                ++mini_counter;
+            }
+
+
 			for (unsigned int i = static_cast<unsigned int>(player.size()) ; i-- ;) {
 				if(player[i].isInvulnerable()){
 					if(w < 8)
@@ -499,6 +510,7 @@ void GameServer::start(sf::RenderWindow& game_window){
 
 			for(unsigned int i = static_cast<unsigned int>(explosions_coord.size()); i--;)
 				printExplosion(game_window, explosions_coord[i], &explosion_sprite);
+
 			game_window.display();
 			sf::sleep(sf::milliseconds(game_speed));
 		}
@@ -944,24 +956,10 @@ std::vector<sf::Keyboard::Key> GameClient::loadKeys(std::string selected_player)
 void GameClient::start(sf::RenderWindow& game_window){
 	sf::Packet packet;
 	sf::Event event;
-	bool ended, damaged, power_up, is_online, won;
-	unsigned char winner;
+	bool ended, damaged, power_up, is_online, won, warped;
+	unsigned char winner, mini_counter(0);
 	int tmpint, egg_x, egg_y;
-
-	game_window.setSize(sf::Vector2u(map_width*32, map_height*32));
-	game_window.setView(sf::View(sf::FloatRect(0, 0, static_cast<float>(map_width*32), static_cast<float>(map_height*32))));
-
-#ifndef OLD_SFML_COMPAT
-	game_window.requestFocus();
-#endif
-
-	packet.clear();
-	server.receive(packet);
-	packet >> egg_x >> egg_y;
-	game_map.popEgg(Coord(egg_x, egg_y));
-
-	std::vector<Coord> explosions_coord;
-	game_window.clear();
+    unsigned int duck_to_square;
 
 	sf::SoundBuffer damage_buffer, egg_buffer, warp_buffer;
 	damage_buffer.loadFromFile("res/sounds/damaged.ogg");
@@ -976,6 +974,24 @@ void GameClient::start(sf::RenderWindow& game_window){
 	sf::Music game_theme;
 	game_theme.openFromFile("res/sounds/game_theme.ogg");
 	game_theme.setLoop(true);
+
+
+	packet.clear();
+	server.receive(packet);
+	packet >> duck_to_square >> egg_x >> egg_y;
+	game_map.popEgg(Coord(egg_x, egg_y));
+
+    game_window.setSize(sf::Vector2u(map_width*32, map_height*32));
+	game_window.setView(sf::View(sf::FloatRect(0, 0, static_cast<float>(map_width*32), static_cast<float>(map_height*32))));
+
+#ifndef OLD_SFML_COMPAT
+	game_window.requestFocus();
+#endif
+
+
+	std::vector<Coord> explosions_coord;
+	game_window.clear();
+
 	game_theme.play();
 
 	do {
@@ -994,12 +1010,23 @@ void GameClient::start(sf::RenderWindow& game_window){
 				packet >> damaged;
 				if (!damaged){
 					Direction tmp_dir;
-					packet >> tmpint >> power_up;
+					packet >> tmpint >> power_up >> warped;
 					tmp_dir = static_cast<Direction>(tmpint);
+
+                    if (warped){
+						player[i].warped(Coord(x_coo, y_coo) - tmp_dir);
+                        if (i == duck_to_square){
+                            mini_counter = 60;
+                        }
+                    }
+                    
 					player[i].move(tmp_dir,map_width, map_height);
 
-					if (player[i].getCoord() != Coord(x_coo, y_coo)){
+                    if (player[i].getCoord() != Coord(x_coo, y_coo)){
 						player[i].warped(Coord(x_coo, y_coo));
+                        if (i == duck_to_square){
+                            mini_counter = 60;
+                        }
 					}
 
 					if (power_up){
@@ -1014,6 +1041,9 @@ void GameClient::start(sf::RenderWindow& game_window){
 						player[ducky_stolen].powerUp();
 					explosions_coord.push_back(player[i].getCoord() - player[i].getDirection());
 					player[i].damaged(player_initial_dir[i]);
+                    if (i == duck_to_square){
+                        direction = player[i].getDirection();
+                    }
 					damage_sound.play();
 				}
 			}
@@ -1054,6 +1084,12 @@ void GameClient::start(sf::RenderWindow& game_window){
 					game_map.printEgg(game_window);
 				}
 				else game_map.print(game_window);
+
+                if (mini_counter < 125){
+                    squareThisDuck(player[duck_to_square].getPxlPos(), game_window);
+                    ++mini_counter;
+                }
+
 
 				for (unsigned int i = static_cast<unsigned int>(player.size()) ; i-- ;) {
 					if(player[i].isInvulnerable()){
@@ -1189,4 +1225,13 @@ static void victoryScreen(bool won, sf::Texture winner_texture[4], sf::RenderWin
 		}
 		sf::sleep(sf::milliseconds(10));
 	}
+}
+
+static void squareThisDuck(sf::Vector2f coord_to_square, sf::RenderWindow& window){
+    sf::RectangleShape square(sf::Vector2f(32,32));
+    square.setFillColor(SQUAREINNERCOLOR);
+    square.setOutlineThickness(3);
+    square.setOutlineColor(SQUAREOUTERCOLOR);
+    square.setPosition(coord_to_square);
+    window.draw(square);
 }

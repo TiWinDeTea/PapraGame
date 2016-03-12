@@ -39,7 +39,9 @@
 #include <ctime>
 #include <dirent.h>
 
-#define DUCK_PATH                   std::string("ducks/")
+#define SQUAREINNERCOLOR                sf::Color(255,12,125,100)
+#define SQUAREOUTERCOLOR                sf::Color::Yellow
+#define DUCK_PATH                       std::string("ducks/")
 #ifndef PAPRAGAME_PATHS_DEFINED
 #define PAPRAGAME_PATHS_DEFINED
 	#define TEXTURE_DUCK_LEFT           std::string("DuckL_")

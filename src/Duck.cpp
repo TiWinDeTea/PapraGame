@@ -16,10 +16,10 @@ Duck::Duck(sf::Texture duck_textures[4], sf::Texture duckies_textures[4], Coord 
 		duck_sprite[i].setTexture(duck_textures[i]);
 	}
 	direction = initial_direction;
+    last_sprite_drawn = initial_direction;
 	for(unsigned char i = 4 ; i--;){
 		ducky_sprite[i].setTexture(duckies_textures[i]);
 	}
-	direction = initial_direction;
 
 	for(unsigned int i = DUCKIES_INITIAL_NUMBER; i--;){
 		duckies.push_back(Ducky(starting_coordinates, starting_coordinates, direction));
@@ -151,6 +151,7 @@ void Duck::print(sf::RenderWindow& window, float shift){
 			break;
 	}
 	window.draw(duck_sprite[direction]);
+    last_sprite_drawn = direction;
 }
 
 void Duck::print(sf::RenderWindow& window){

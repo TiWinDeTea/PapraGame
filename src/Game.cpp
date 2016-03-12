@@ -325,7 +325,7 @@ void Game::start(sf::RenderWindow& game_window)
 						if(player[i].getCoord() == player[j].duckies[k].getCoord()){
 							explosions_coord.push_back(player[i].getCoord() - player[i].getDirection());
 
-							if (player[i].size() > 0 && !(player[i].isInvulnerable())){
+							if (player[i].size() > 0 && !(player[i].isInvulnerable()) && i != j){
 								player[j].powerUp();
 								if (player[j].size() == egg_victory && egg_victory != 0)
 									winner = static_cast<unsigned char>(j + 1);

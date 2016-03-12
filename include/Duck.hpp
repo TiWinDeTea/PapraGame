@@ -92,7 +92,11 @@ class Duck : public Ducky{
 		 */
 		void warped(Coord warp_arrival);
 
-		bool isInvulnerable(){return !(invulnerability == 0);};
+		bool isInvulnerable(){return invulnerability != 0;}
+
+        sf::Vector2f getPxlPos(){return duck_sprite[last_sprite_drawn].getPosition();}
+
+        bool wasWarped(){return warped_at_this_turn;}
 
 		std::vector<sf::Keyboard::Key> keys; // keys order: up, down, left, right
 
@@ -100,6 +104,7 @@ class Duck : public Ducky{
 
 	private:
 
+        int last_sprite_drawn;
 		char invulnerability;
 		bool warped_at_this_turn;
 		sf::Sprite duck_sprite[4];
