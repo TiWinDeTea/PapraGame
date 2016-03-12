@@ -36,14 +36,14 @@ RMDIR          = rmdir
 RM             = rm -f
 RECURSERM      = rm -rf
 LD             = ld -r
-RECURSECP      = cp -r
+RECURSECP      = cp -rf
 CD             = cd
 CHMOD          = chmod +x
 VOIDECHO       = > /dev/null 2>&1
 BUILDDIR       = build/
 INSTALLDIR     = /usr/local/share/PapraGame
 INSTALLCMD	   = /usr/local/bin/papragame
-OBJDIR         = $(BUILDDIR)obj/
+OBJDIR         = obj/
 SOURCEDIR      = src/
 INCLUDEDIR     = -I/usr/include -Iinclude/
 LIBSDIR        = -L/usr/lib
@@ -105,9 +105,10 @@ $(OBJDIR)%.o: %$(FILEIDENTIFIER)
 
 .PHONY: install
 install:
-	@$(DISPLAY) "Installing to $(INSTALLDIR)...\n"
+	@$(DISPLAY) "\033[0mInstalling...\n"
 	@make --silent $(EXEFINAL)
 	@$(RECURSECP) $(BUILDDIR) $(INSTALLDIR)
+	@$(DISPLAY) "Copying files to \033[33m$(INSTALLDIR)\033[0m...\n"
 	@$(DISPLAY) "#!/bin/bash\n$(CD) $(INSTALLDIR)\n./$(EXENAME).elf \"$$" > $(INSTALLCMD)
 	@$(DISPLAY) "@\"\n" >> $(INSTALLCMD)
 	@$(CHMOD) $(INSTALLCMD)
