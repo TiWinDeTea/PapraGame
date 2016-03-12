@@ -19,7 +19,7 @@ You may change your keys settings within the ``keys.conf`` file
 <br/>
 You can choose the keys for each player in the res/keys.conf file. Default keys are the arrows for player 1
 
-Pause by pressing Escape (the game also pauses if it looses the focus).
+Pause by pressing Escape (the game also pauses if it looses the focus [sfml 2.3]).
 When you hit an obstacle, you will be unvulnerable for 5 turns. Strange violet stuff that may appears in a map are warps. Going into a warp will teleport you to another random warp. Beware the walls !
 
 ###Maps
@@ -61,7 +61,8 @@ The file should be structured according to the following (line by line)
 You can get the game sources from the Time Winder Dev Team [github repo](https://github.com/TiWinDeTea/PapraGame).
 
 Binaries and sources of the v0.4 are available on [github](https://github.com/TiWinDeTea/PapraGame/releases/tag/v0.4)
-Binaries and sources of the v1.0 are available on [github](https://github.com/TiWinDeTea/PapraGame/releases/tag/v1.0)
+
+v1.0 is downloadable [here](https://github.com/TiWinDeTea/PapraGame/releases/tag/v1.0)
 <br/>
 
 ##Compilation requirements
