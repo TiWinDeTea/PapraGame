@@ -271,10 +271,9 @@ void Game::start(sf::RenderWindow& game_window)
 					game_theme.play();
 				}
 			}
-#ifndef OLD_SFML_COMPAT
-			else if (!(game_window.hasFocus()))
-					this->pauseGame(game_window, false);
-#endif
+			else if (event.type == sf::Event::LostFocus)
+                if (!(this->pauseGame(game_window, false)))
+                    return;
 		}
 		sf::sleep(sf::milliseconds(game_speed));
 		--tmp;
@@ -481,22 +480,22 @@ bool Game::pauseGame(sf::RenderWindow& game_window, bool player_request){
 		do{
 			if (game_window.waitEvent(event) && sf::Event::Closed == event.type) {
 				game_window.close();
+                return false;
 			}
 			else if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape) {
 				return false;
 			}
-		}while(game_window.isOpen() && (sf::Event::KeyPressed != event.type || event.key.code != sf::Keyboard::Return));
+		}while(sf::Event::KeyPressed != event.type || event.key.code != sf::Keyboard::Return);
 	}
-#ifndef OLD_SFML_COMPAT
 	else{
 		do{
 			sf::sleep(sf::milliseconds(20));
 			if (game_window.waitEvent(event) && sf::Event::Closed == event.type) {
 				game_window.close();
+                return false;
 			}
-		}while(!(game_window.hasFocus()));
+		}while(event.type != sf::Event::GainedFocus);
 	}
-#endif
 	return true;
 }
 

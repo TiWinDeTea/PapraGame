@@ -19,7 +19,7 @@ You may change your keys settings within the ``keys.conf`` file
 <br/>
 You can choose the keys for each player in the res/keys.conf file. Default keys are the arrows for player 1
 
-Pause by pressing Escape (the game also pauses if it looses the focus [sfml 2.3]).
+Pause by pressing Escape (the game also pauses if it looses the focus).
 When you hit an obstacle, you will be unvulnerable for 5 turns. Strange violet stuff that may appears in a map are warps. Going into a warp will teleport you to another random warp. Beware the walls !
 
 ###Maps

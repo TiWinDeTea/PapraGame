@@ -258,6 +258,7 @@ bool MapEditor::pollEvent(sf::RenderWindow& window, sf::Event& event){
                 event.mouseButton.button = sf::Mouse::Left;
                 lButton_pressed = false;
             }
+            return true;
         }
         else
             return true;
