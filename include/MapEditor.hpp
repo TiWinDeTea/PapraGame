@@ -7,14 +7,26 @@
 #ifndef MAPEDITOR_HPP_INCLUDED
 #define MAPEDITOR_HPP_INCLUDED
 
-#define N_BIOME_LIST         {"ducks", "fonts", "menu", "sounds"}
-#define N_BIOME_NB           4
-#define GROUNDS_TILES_LIST   {"Obstacle.png", "EmptyTile.png", "WaterUR.png", "WaterRD.png", "WaterDL.png", "WaterLU.png", "WaterUD.png", "WaterLR.png", "Warp.png"}
-#define GROUNDS_TILES_NB     9
-#define DUCKS_SPRITES_LIST   {"DuckU_", "DuckD_", "DuckL_", "DuckR_"}
-#define DUCKS_FORMAT         ".png"
-#define RESOURCES_FOLDER     "res/"
-#define PLAYER_NBR_MAX       5
+#define N_BIOME_LIST            {"ducks", "fonts", "menu", "sounds"}
+#define N_BIOME_NB              4
+#define GROUNDS_TILES_LIST      {"Obstacle.png", "EmptyTile.png", "WaterUR.png", "WaterRD.png", "WaterDL.png", "WaterLU.png", "WaterUD.png", "WaterLR.png", "Warp.png"}
+#define GROUNDS_TILES_NB        9
+#define DUCKS_SPRITES_LIST      {"DuckU_", "DuckD_", "DuckL_", "DuckR_"}
+#define DUCKS_FORMAT            ".png"
+#define RESOURCES_FOLDER        "res/"
+#define PLAYER_NBR_MAX          5
+#define HIGHLIGHTER_INNERCOLOR  sf::Color(0,0,0,0)
+#define HIGHLIGHTER_OUTERCOLOR  sf::Color(175,175,175,255)
+#define HIGHLIGHTER_THICKNESS   2
+
+#define AREA_LIST               {OBSTACLE, EMPTY_TILE, WARP, WATER_UR, WATER_RD, WATER_DL, WATER_LU, WATER_UD, WATER_LR}
+#define KEY_LIST                {sf::Keyboard::Key::O, sf::Keyboard::BackSpace, sf::Keyboard::Key::W, sf::Keyboard::Key::Num9, sf::Keyboard::Key::Num3, \
+                                sf::Keyboard::Key::Num1, sf::Keyboard::Key::Num7, sf::Keyboard::Key::Add, sf::Keyboard::Key::Subtract}
+#define SECONDARY_KEY_LIST      {sf::Keyboard::Key::O, sf::Keyboard::E, sf::Keyboard::Key::X, sf::Keyboard::Key::Numpad9, sf::Keyboard::Key::Numpad3, \
+                                sf::Keyboard::Key::Numpad1, sf::Keyboard::Key::Numpad7, sf::Keyboard::Key::Add, sf::Keyboard::Key::Subtract}
+#define SHORTCUTS_QTT           3
+
+#define REFRESH_RATE            sf::milliseconds(50)
 
 #ifndef PAPRAGAME_PATHS_DEFINED
 #define PAPRAGAME_PATHS_DEFINED
@@ -91,12 +103,12 @@ private :
 
    /**
      * @brief loads textures
-     * @return true on success, false otherwise
+     * @return true on success, false otherwise ; for each texture pack + one for the ducks
      */
-    bool loadTextures();
+    std::vector<bool> loadTextures();
 
     /**
-     * @brief poll events from the window
+     * @brief poll events from the window and pre-treats them
      * @param window A window
      * @param event  Event that will be modified to store the new event, if any
      * @return true if there was an event, false otherwise
@@ -114,6 +126,28 @@ private :
      * @param original_file The original map (empty for no original map)
      */
     void saveMap(std::string const& original_file);
+
+    /**
+     * @brief loads the map
+     * @param map_path Path to the map
+     * @return         True on successful loading, false otherwise
+     */
+    bool loadMap(std::string const& map_path);
+
+    /**
+     * @brief highlights a tile
+     * @param tile   Coordinates of the tile to highlight
+     * @param window A window
+     */
+    void highlightTile(Coord tile, sf::RenderWindow& window);
+
+    /**
+     * @brief returns the subscript where str can be find
+     * @param biomes Array to scan
+     * @param str    String to find
+     * @return       The subscript where str is, or -1 if not found
+     */
+   short match(std::vector<std::string> biomes, std::string const& str);
 
 
 
@@ -138,12 +172,13 @@ private :
     bool is_visible;
     bool los_is_looping;
     unsigned short los;
-    std::vector<std::string> map;
     std::vector< std::vector<Area> > areas_map;
 
     Coord mouse_position;
+    Coord mouse_prev_position;
     Coord mouse_press;
     Coord mouse_release;
+    bool lButton_pressed;
 };
 
 #endif /* MAPEDITOR_HPP_INCLUDED */
