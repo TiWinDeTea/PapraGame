@@ -6,6 +6,17 @@
 
 #include <MapEditor.hpp>
 
+#if !defined(WHEELSCROLLEVENT) && !defined(MOUSEWHEELSCROLLDELTA)
+    #ifdef OLD_SFML_COMPAT
+    #define WHEELSCROLLEVENT        sf::Event::MouseWheelMoved
+    #define MOUSEWHEELSCROLLDELTA   mouseWheel.delta
+    #else
+    #define WHEELSCROLLEVENT        sf::Event::MouseWheelScrolled
+    #define MOUSEWHEELSCROLLDELTA   mouseWheelScroll.delta
+    #endif
+#endif
+
+
 MapEditor::MapEditor():
     ground_textures(std::vector<sf::Texture*>()),
     ground_sprites(std::vector<sf::Sprite*>()),
@@ -14,13 +25,14 @@ MapEditor::MapEditor():
     speed(25),
     egg_nbr(10),
     player_nbr(1),
-    map_size(10, 10),
+    map_size(30, 30),
     is_visible(true),
     los_is_looping(false),
     los(3),
     areas_map(std::vector< std::vector<Area> >()),
     mouse_position(),
     mouse_prev_position(),
+    mouse_prev_prev_position(),
     mouse_press(),
     mouse_release(),
     lButton_pressed(false)
@@ -66,39 +78,176 @@ void MapEditor::start(sf::RenderWindow& window, std::string const& original_file
                 areas_map[j].push_back(EMPTY_TILE);
     }
 
+    window.setSize(sf::Vector2u(map_size.x * 32, map_size.y * 32));
+    window.setView(sf::View(sf::FloatRect(0, 0, static_cast<float>(map_size.x * 32), static_cast<float>(map_size.y * 32))));
+
     bool keep_going(true);
+    Mode mode(Mode::Normal);
+    unsigned char selection(0);
     sf::Event event;
+
+    auto isRiver = [](Area area) -> bool{
+        switch (area) {
+            case OBSTACLE:
+            case EMPTY_TILE:
+            case WARP:
+                return false;
+            case WATER_DL:
+            case WATER_LR:
+            case WATER_LU:
+            case WATER_RD:
+            case WATER_UD:
+            case WATER_UR:
+            default:
+                return true;
+        }
+    };
+
+    auto riverLinkIt = [this, isRiver](Coord departure, Area& departure_area, Coord arrival, Area& arrival_area) -> void {
+        if (arrival.x == departure.x){
+            arrival_area = WATER_UD;
+
+            if (departure_area != WATER_UD){
+                if (arrival.y < departure.y){
+                    if (mouse_prev_position.x < mouse_prev_prev_position.x){
+                        departure_area = WATER_UR;
+                    }
+                    else{
+                        departure_area = WATER_LU;
+                    }
+                }
+                else{
+                    if (mouse_prev_position.x < mouse_prev_prev_position.x){
+                        departure_area = WATER_RD;
+                    }
+                    else{
+                        departure_area = WATER_DL;
+                    }
+                }
+            }
+        }
+        else if (arrival.y == departure.y){
+            arrival_area = WATER_LR;
+
+            if (departure_area != WATER_LR){
+                if (arrival.x < departure.x){
+                    if (mouse_prev_position.y < mouse_prev_prev_position.y){
+                        departure_area = WATER_DL;
+                    }
+                    else{
+                        departure_area = WATER_LU;
+                    }
+                }
+                else{
+                    if (mouse_prev_position.y < mouse_prev_prev_position.y){
+                        departure_area = WATER_RD;
+                    }
+                    else{
+                        departure_area = WATER_UR;
+                    }
+                }
+            }
+        }
+        else{
+            // diagonal ? Well, this will be programmed someday
+            arrival_area = WATER_RD;
+        }
+    };
+
+    bool ignore;
 
     do{
 
         window.clear();
 
-        while (this->pollEvent(window, event)){
-            if (event.type == sf::Event::Closed)
-                window.close();
-            else if (event.type == sf::Event::MouseMoved){
-            }
-            else if (event.type == sf::Event::MouseButtonPressed){
-            
-            }
-            else if (event.type == sf::Event::KeyPressed){
-                if (event.key.code == sf::Keyboard::Escape){
+        while (this->pollEvent(window, event, ignore)){
+            if(!ignore){
+
+                if (event.type == sf::Event::Closed){
+                    window.close();
+                    return;
+                }
+
+                else if (event.type == sf::Event::MouseMoved){
+                    if (mode == Mode::Continuous || lButton_pressed){
+                        if (isRiver(area_list[selection])){
+
+                            riverLinkIt(mouse_prev_position, areas_map[mouse_prev_position.x][mouse_prev_position.y],
+                                    mouse_position, areas_map[mouse_position.x][mouse_position.y]);
+                        }
+                        else
+                            areas_map[mouse_position.x][mouse_position.y] = area_list[selection];
+                    }
 
                 }
-                else{
-                    for (unsigned char i(SHORTCUTS_QTT) ; i-- ;)
-                        if (key_list[i] == event.key.code || secondary_key_list[i] == event.key.code){
-                            areas_map[mouse_position.x][mouse_position.y] = area_list[i];
-                            break;
+
+                else if (event.type == sf::Event::MouseButtonPressed){
+                    if (event.mouseButton.button == sf::Mouse::Left)
+                        areas_map[mouse_position.x][mouse_position.y] = area_list[selection];
+                    else if (event.mouseButton.button == sf::Mouse::Right)
+                        selection = match(AREAS_QTT, area_list, areas_map[mouse_position.x][mouse_position.y]);
+                            //TODO : stuff
+                }
+
+                else if (event.type == sf::Event::KeyPressed){
+
+                    if (event.key.code == sf::Keyboard::Escape){
+                            //TODO : menu (biomes, test, help, ...)
+                    }
+                    else if (event.key.code == MODE_TOGGLE){
+                        if (mode == Mode::Continuous){
+                            mode = Mode::Normal;
                         }
+                        else{
+                            mode = Mode::Continuous;
+                            areas_map[mouse_position.x][mouse_position.y] = area_list[selection];
+                        }
+                    }
+                    else{
+                        for (unsigned char i(AREAS_QTT) ; i-- ;)
+                            if (key_list[i] == event.key.code || secondary_key_list[i] == event.key.code){
+                                selection = i;
+                                break;
+                            }
+                    }
                 }
             }
         }
 
+
+
+
+        //Display
+
         sf::sleep(REFRESH_RATE);
+        /*
+        if (window.getSize().x%32 || window.getSize().y%32){
+
+            if(window.getSize().x > map_size.x * 32)
+                map_size.x = window.getSize().x / 32 + 1;
+            else{
+                map_size.x = window.getSize().x / 32;
+                if (!map_size.x)
+                    map_size.x = 1;
+            }
+            if(window.getSize().y > map_size.y * 32)
+                map_size.y = window.getSize().y / 32 + 1;
+            else{
+                map_size.y = window.getSize().y / 32;
+                if(!map_size.y)
+                    map_size.y = 1;
+            }
+            window.setSize(sf::Vector2u(map_size.x * 32, map_size.y * 32));
+            window.setView(sf::View(sf::FloatRect(0, 0, static_cast<float>(map_size.x * 32), static_cast<float>(map_size.y * 32))));
+        }
+        // TODO : resize areas_map
+        */
         this->refreshScreen(window);
-        this->highlightTile(mouse_position, window);
+        this->highlightTile(mouse_position, mode == Mode::Continuous ? 255 : selection,
+                window, mode == Mode::Continuous ? HIGHLIGHTER_OUTERCOLOR2 : HIGHLIGHTER_OUTERCOLOR1);
         window.display();
+
+
     }while(keep_going && window.isOpen());
 
 // TODO
@@ -139,8 +288,8 @@ void MapEditor::findTextures(){
 
 		while ((redfile = readdir(directory)) != nullptr){
 			std::string tmp( redfile->d_name );
-			if (isFolder(RESOURCES_FOLDER + tmp) && !notATexture(tmp)) {
-				biome_names.push_back(tmp);
+			if (isFolder(RESOURCES_FOLDER + tmp) && !notATexture(tmp) && tmp[0] != '.') {
+				biome_names.push_back(RESOURCES_FOLDER + tmp + "/");
 			}
 		}
 	}
@@ -174,7 +323,7 @@ std::vector<bool> MapEditor::loadTextures(){
     for (unsigned char i(PLAYER_NBR_MAX) ; i-- ;){
         for (unsigned char j(4) ; j-- ;){
 
-            if (!ducks_textures[i][j].loadFromFile(RESOURCES_FOLDER + duck_sprite_name[j] + std::to_string(i) + DUCKS_FORMAT)){
+            if (!ducks_textures[i][j].loadFromFile(std::string(RESOURCES_FOLDER) + "ducks/" + duck_sprite_name[j] + std::to_string(i) + DUCKS_FORMAT)){
                 ret[i] = false;
             }
             ducks_sprites[i][j].setTexture(ducks_textures[i][j]);
@@ -188,18 +337,23 @@ std::vector<bool> MapEditor::loadTextures(){
 }
 
 //////////////////////////////////////////////////////////////////////////////
-bool MapEditor::pollEvent(sf::RenderWindow& window, sf::Event& event){
+bool MapEditor::pollEvent(sf::RenderWindow& window, sf::Event& event, bool& ignore){
 
+    ignore = false;
     if(window.pollEvent(event)){
         if(event.type == sf::Event::MouseMoved){
             sf::Vector2i mouse_current_pos = sf::Mouse::getPosition(window);
             if ((unsigned)(mouse_current_pos.x / 32) == mouse_position.x && (unsigned)(mouse_current_pos.y / 32) == mouse_position.y)
-                return false;
+                ignore = true;
             else{
+                mouse_prev_prev_position = mouse_prev_position;
                 mouse_prev_position = mouse_position;
                 mouse_position.x = mouse_current_pos.x / 32;
+                if (mouse_position.x > map_size.x - 1)
+                    mouse_position.x = map_size.x - 1;
                 mouse_position.y = mouse_current_pos.y / 32;
-                return true;
+                if (mouse_position.y > map_size.y - 1)
+                    mouse_position.y = map_size.y - 1;
             }
         }
         else if (event.type == sf::Event::MouseButtonPressed){
@@ -207,61 +361,64 @@ bool MapEditor::pollEvent(sf::RenderWindow& window, sf::Event& event){
                 lButton_pressed = true;
             mouse_press.x = event.mouseButton.x / 32;
             mouse_press.y = event.mouseButton.y / 32;
-            return true;
         }
         else if (event.type == sf::Event::MouseButtonReleased){
             if (event.mouseButton.button == sf::Mouse::Left)
                 lButton_pressed = false;
             mouse_release.x = event.mouseButton.x / 32;
             mouse_release.y = event.mouseButton.y / 32;
-            return true;
         }
         else if (event.type == sf::Event::KeyPressed){
-            if (event.key.code == sf::Keyboard::Key::LShift){
+            if (event.key.code == sf::Keyboard::Key::Return){
                 event.type = sf::Event::MouseButtonPressed;
                 event.mouseButton.button = sf::Mouse::Left;
                 lButton_pressed = true;
             }
             else if (event.key.code == sf::Keyboard::Key::Up){
-                if (mouse_position.y > 0){
-                    event.type = sf::Event::MouseMoved;
-                    mouse_prev_position = mouse_position;
+                event.type = sf::Event::MouseMoved;
+                mouse_prev_prev_position = mouse_prev_position;
+                mouse_prev_position = mouse_position;
+                if (mouse_position.y > 0)
                     --mouse_position.y;
-                }
+                else
+                    mouse_position.y = map_size.y - 1;
             }
             else if (event.key.code == sf::Keyboard::Key::Down){
-                if (mouse_position.y < map_size.y - 1){
-                    event.type = sf::Event::MouseMoved;
-                    mouse_prev_position = mouse_position;
+                event.type = sf::Event::MouseMoved;
+                mouse_prev_prev_position = mouse_prev_position;
+                mouse_prev_position = mouse_position;
+                if (mouse_position.y < map_size.y - 1)
                     ++mouse_position.y;
-                }
+                else
+                    mouse_position.y = 0;
             }
             else if (event.key.code == sf::Keyboard::Key::Left){
-                if (mouse_position.x > 0){
-                    event.type = sf::Event::MouseMoved;
-                    mouse_prev_position = mouse_position;
+                event.type = sf::Event::MouseMoved;
+                mouse_prev_prev_position = mouse_prev_position;
+                mouse_prev_position = mouse_position;
+                if (mouse_position.x > 0)
                     --mouse_position.x;
-                }
+                else
+                    mouse_position.x = map_size.x - 1;
             }
             else if (event.key.code == sf::Keyboard::Key::Right){
-                if (mouse_position.x < map_size.x - 1){
-                    event.type = sf::Event::MouseMoved;
-                    mouse_prev_position = mouse_position;
-                    ++mouse_position.y;
-                }
+                event.type = sf::Event::MouseMoved;
+                mouse_prev_prev_position = mouse_prev_position;
+                mouse_prev_position = mouse_position;
+                if (mouse_position.x < map_size.x - 1)
+                    ++mouse_position.x;
+                else
+                    mouse_position.x = 0;
             }
-            return true;
         }
         else if (event.type == sf::Event::KeyReleased){
-            if (event.key.code == sf::Keyboard::Key::LShift){
+            if (event.key.code == sf::Keyboard::Key::Return){
                 event.type = sf::Event::MouseButtonReleased;
                 event.mouseButton.button = sf::Mouse::Left;
                 lButton_pressed = false;
             }
-            return true;
         }
-        else
-            return true;
+        return true;
     }
     else
         return false;
@@ -532,15 +689,20 @@ bool MapEditor::loadMap(std::string const& map_path){
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void MapEditor::highlightTile(Coord tile, sf::RenderWindow& window){
+void MapEditor::highlightTile(Coord tile, unsigned char area, sf::RenderWindow& window, sf::Color color){
+
+    if (area != 255){
+        ground_sprites[selected_biome][area].setPosition(sf::Vector2f(static_cast<float>(tile.x * 32), static_cast<float>(tile.y * 32)));
+        ground_sprites[selected_biome][area].setColor(sf::Color(255,255,255,100));
+        window.draw(ground_sprites[selected_biome][area]);
+        ground_sprites[selected_biome][area].setColor(sf::Color(255,255,255,255));
+    }
 
     sf::RectangleShape highlighter(sf::Vector2f(32,32));
-
     highlighter.setOutlineThickness(HIGHLIGHTER_THICKNESS);
     highlighter.setFillColor(HIGHLIGHTER_INNERCOLOR);
-    highlighter.setOutlineColor(HIGHLIGHTER_OUTERCOLOR);
-    highlighter.setPosition(sf::Vector2f(static_cast<float>(tile.x), static_cast<float>(tile.y)));
-
+    highlighter.setOutlineColor(color);
+    highlighter.setPosition(sf::Vector2f(static_cast<float>(tile.x * 32), static_cast<float>(tile.y * 32)));
     window.draw(highlighter);
 }
 
@@ -551,4 +713,12 @@ short MapEditor::match(std::vector<std::string> biomes, std::string const& str){
             return i;
     }
     return -1;
+}
+
+unsigned char MapEditor::match(unsigned char area_nbr, Area area[], Area expr){
+    for (unsigned char i(area_nbr) ; i-- ;){
+        if (area[i] == expr)
+            return i;
+    }
+    return 0;
 }

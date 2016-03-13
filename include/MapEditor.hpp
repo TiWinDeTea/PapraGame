@@ -16,29 +16,32 @@
 #define RESOURCES_FOLDER        "res/"
 #define PLAYER_NBR_MAX          5
 #define HIGHLIGHTER_INNERCOLOR  sf::Color(0,0,0,0)
-#define HIGHLIGHTER_OUTERCOLOR  sf::Color(175,175,175,255)
+#define HIGHLIGHTER_OUTERCOLOR1 sf::Color(175,175,175,255)
+#define HIGHLIGHTER_OUTERCOLOR2 sf::Color(255,125,125,255)
 #define HIGHLIGHTER_THICKNESS   2
 
-#define AREA_LIST               {OBSTACLE, EMPTY_TILE, WARP, WATER_UR, WATER_RD, WATER_DL, WATER_LU, WATER_UD, WATER_LR}
-#define KEY_LIST                {sf::Keyboard::Key::O, sf::Keyboard::BackSpace, sf::Keyboard::Key::W, sf::Keyboard::Key::Num9, sf::Keyboard::Key::Num3, \
-                                sf::Keyboard::Key::Num1, sf::Keyboard::Key::Num7, sf::Keyboard::Key::Add, sf::Keyboard::Key::Subtract}
-#define SECONDARY_KEY_LIST      {sf::Keyboard::Key::O, sf::Keyboard::E, sf::Keyboard::Key::X, sf::Keyboard::Key::Numpad9, sf::Keyboard::Key::Numpad3, \
-                                sf::Keyboard::Key::Numpad1, sf::Keyboard::Key::Numpad7, sf::Keyboard::Key::Add, sf::Keyboard::Key::Subtract}
-#define SHORTCUTS_QTT           3
+#define AREA_LIST               {OBSTACLE, EMPTY_TILE, WATER_UR, WATER_RD, WATER_DL, WATER_LU, WATER_UD, WATER_LR, WARP}
+#define KEY_LIST                {sf::Keyboard::Key::O, sf::Keyboard::BackSpace, sf::Keyboard::Key::Num9, sf::Keyboard::Key::Num3, \
+                                sf::Keyboard::Key::Num1, sf::Keyboard::Key::Num7, sf::Keyboard::Key::Add, sf::Keyboard::Key::Subtract, sf::Keyboard::Key::W}
+#define SECONDARY_KEY_LIST      {sf::Keyboard::Key::O, sf::Keyboard::E, sf::Keyboard::Key::Numpad9, sf::Keyboard::Key::Numpad3, \
+                            sf::Keyboard::Key::Numpad1, sf::Keyboard::Key::Numpad7, sf::Keyboard::Key::R, sf::Keyboard::Key::Subtract, sf::Keyboard::Key::X}
+#define AREAS_QTT               9
+
+#define MODE_TOGGLE             sf::Keyboard::Key::C
 
 #define REFRESH_RATE            sf::milliseconds(50)
 
 #ifndef PAPRAGAME_PATHS_DEFINED
 #define PAPRAGAME_PATHS_DEFINED
-	#define IDENTIFIER_WATER_UP_DOWN    '|'
-	#define IDENTIFIER_WATER_UP_RIGHT   '9'
-	#define IDENTIFIER_WATER_UP_LEFT    '7'
-	#define IDENTIFIER_WATER_LEFT_RIGHT '-'
-	#define IDENTIFIER_WATER_LEFT_DOWN  '1'
-	#define IDENTIFIER_WATER_RIGHT_DOWN '3'
-	#define IDENTIFIER_EMPTY_TILE       '.'
-	#define IDENTIFIER_WARP             'x'
-	#define IDENTIFIER_OBSTACLE         'o'
+#define IDENTIFIER_WATER_UP_DOWN    '|'
+#define IDENTIFIER_WATER_UP_RIGHT   '9'
+#define IDENTIFIER_WATER_UP_LEFT    '7'
+#define IDENTIFIER_WATER_LEFT_RIGHT '-'
+#define IDENTIFIER_WATER_LEFT_DOWN  '1'
+#define IDENTIFIER_WATER_RIGHT_DOWN '3'
+#define IDENTIFIER_EMPTY_TILE       '.'
+#define IDENTIFIER_WARP             'x'
+#define IDENTIFIER_OBSTACLE         'o'
 #endif /* PAPRAGAME_PATHS_DEFINED */
 
 #include <enum.hpp>
@@ -65,6 +68,11 @@
  * @license Mozilla Public License, v. 2.0
  * @brief Define the MapEditor class
  */
+
+enum Mode : unsigned char {
+    Normal,
+    Continuous
+};
 
 /**
  * @class MapEditor MapEditor.hpp
@@ -111,9 +119,10 @@ private :
      * @brief poll events from the window and pre-treats them
      * @param window A window
      * @param event  Event that will be modified to store the new event, if any
+     * @param ignore This parameter is set to true if the event should be ignored
      * @return true if there was an event, false otherwise
      */
-    bool pollEvent(sf::RenderWindow& window, sf::Event& event);
+    bool pollEvent(sf::RenderWindow& window, sf::Event& event, bool& ignore);
 
     /**
      * @brief refreshes the screen
@@ -135,11 +144,13 @@ private :
     bool loadMap(std::string const& map_path);
 
     /**
-     * @brief highlights a tile
+     * @brief highlights a tile and prints an area
      * @param tile   Coordinates of the tile to highlight
+     * @param area   Index of the area to print in the sprite vector
+     * @param color  Color of the outer line
      * @param window A window
      */
-    void highlightTile(Coord tile, sf::RenderWindow& window);
+    void highlightTile(Coord tile, unsigned char area, sf::RenderWindow& window, sf::Color color);
 
     /**
      * @brief returns the subscript where str can be find
@@ -148,6 +159,15 @@ private :
      * @return       The subscript where str is, or -1 if not found
      */
    short match(std::vector<std::string> biomes, std::string const& str);
+
+   /**
+     * @brief returns the subscript where expr can be find
+     * @param area_nbr Lenght of the array
+     * @param area     Array to scan
+     * @param expr     Area to find
+     * @return         The subscript where str is, or -1 if not found
+     */
+   unsigned char match(unsigned char area_nbr, Area area[], Area expr);
 
 
 
@@ -176,6 +196,7 @@ private :
 
     Coord mouse_position;
     Coord mouse_prev_position;
+    Coord mouse_prev_prev_position; // useful for rivers
     Coord mouse_press;
     Coord mouse_release;
     bool lButton_pressed;
