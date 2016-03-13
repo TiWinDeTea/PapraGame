@@ -209,6 +209,9 @@ void MapEditor::start(sf::RenderWindow& window, std::string const& original_file
                                 selection = i;
                                 break;
                             }
+                        if (mode == Mode::Continuous){
+                            areas_map[mouse_position.x][mouse_position.y] = area_list[selection];
+                        }
                     }
                 }
             }

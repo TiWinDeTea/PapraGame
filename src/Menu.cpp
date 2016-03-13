@@ -229,7 +229,7 @@ void Menu::mainMenu(){
 								if(elapsed_time.getElapsedTime().asSeconds() > 1.0f){
 									--i;
 									countdown.setString(std::string() + i);
-									countdown.setPosition(static_cast<float>((MENU_X_RESOLUTION) - countdown.getGlobalBounds().width) / 2.0f, static_cast<float>(MENU_Y_RESOLUTION - countdown.getGlobalBounds().height) / 2.0f);
+									countdown.setPosition((MENU_X_RESOLUTION) - countdown.getGlobalBounds().width / 2.0f, MENU_Y_RESOLUTION - countdown.getGlobalBounds().height / 2.0f);
 									elapsed_time.restart();
 								}
 							}
