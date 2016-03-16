@@ -62,4 +62,8 @@ Coord operator+(const Coord& coo, const Direction& dir);
 
 Coord operator-(const Coord& coo, const Direction& dir);
 
+Coord operator+(const Coord& coo, const Coord& coo2);
+
+Coord operator-(const Coord& coo, const Coord& coo2);
+
 #endif /*COORD_HPP_INCLUDED*/

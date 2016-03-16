@@ -83,3 +83,12 @@ Coord operator-(const Coord& coord, const Direction& dir)
 	}
 	return new_coord;
 }
+
+Coord operator+(const Coord& coo, const Coord& coo2){
+	return Coord(coo.x + coo2.x, coo.y + coo2.y);
+}
+
+Coord operator-(const Coord& coo, const Coord& coo2)
+{
+	return Coord(coo.x - coo2.x, coo.y - coo2.y);
+}

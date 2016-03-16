@@ -60,19 +60,21 @@ void Game::launch(sf::RenderWindow& game_window, std::string map_name){
 		ducks_path + TEXTURE_DUCKY_RIGHT
 	};
 	std::string map_textures_path[9] = {
-		biome_path + TEXTURE_OBSTACLE,
-		biome_path + TEXTURE_EMPTY_TILE,
-		biome_path + TEXTURE_WATER_UP_RIGHT,
-		biome_path + TEXTURE_WATER_RIGHT_DOWN,
-		biome_path + TEXTURE_WATER_LEFT_DOWN,
-		biome_path + TEXTURE_WATER_UP_LEFT,
-		biome_path + TEXTURE_WATER_UP_DOWN,
-		biome_path + TEXTURE_WATER_LEFT_RIGHT,
-		biome_path + TEXTURE_WARP
+		TEXTURE_OBSTACLE,
+		TEXTURE_EMPTY_TILE,
+		TEXTURE_WATER_UP_RIGHT,
+		TEXTURE_WATER_RIGHT_DOWN,
+		TEXTURE_WATER_LEFT_DOWN,
+		TEXTURE_WATER_UP_LEFT,
+		TEXTURE_WATER_UP_DOWN,
+		TEXTURE_WATER_LEFT_RIGHT,
+		TEXTURE_WARP
 	};
 	bool loading_success = true;
 	for (unsigned char i = 9 ; i-- ;) {
-		loading_success = loading_success && map_texture[i].loadFromFile(path + map_textures_path[i] + FILETYPE);
+		if (!map_texture[i].loadFromFile(path + biome_path + map_textures_path[i] + FILETYPE)){
+            loading_success = loading_success && map_texture[i].loadFromFile(path + "default/" + map_textures_path[i] + FILETYPE);
+        }
 	}
 
 
@@ -135,8 +137,8 @@ bool Game::loadMap(){
 		map_file >> egg_victory;
 		map_file >> x_map_size;
 		map_file >> y_map_size;
-		pxl_height = 32*y_map_size;
-		pxl_length = 32*x_map_size;
+		pxl_height = 32 * y_map_size;
+		pxl_length = 32 * x_map_size;
 
 		std::vector< std::vector<Area> > map_interpreted;
 		for(unsigned int i = 0; i < x_map_size; ++i)

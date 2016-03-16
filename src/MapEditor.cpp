@@ -30,9 +30,12 @@ MapEditor::MapEditor():
     los_is_looping(false),
     los(3),
     areas_map(std::vector< std::vector<Area> >()),
-    mouse_position(),
-    mouse_prev_position(),
-    mouse_prev_prev_position(),
+    mouse_position(0,0),
+    mouse_relative_movmnt(LEFT),
+    mouse_relative_movmnt_2(NOPE),
+    mouse_prev_position(0,1),
+    mouse_prev_relative_movmnt(LEFT),
+    mouse_prev_relative_movmnt_2(NOPE),
     mouse_press(),
     mouse_release(),
     lButton_pressed(false)
@@ -47,8 +50,8 @@ MapEditor::MapEditor():
 //////////////////////////////////////////////////////////////////////////////
 MapEditor::~MapEditor(){
     for (unsigned char i(static_cast<unsigned char>(biome_names.size())) ; i-- ;){
-        delete ground_textures[i];
-        delete ground_sprites[i];
+        delete[] ground_textures[i];
+        delete[] ground_sprites[i];
     }
 }
 
@@ -103,57 +106,6 @@ void MapEditor::start(sf::RenderWindow& window, std::string const& original_file
         }
     };
 
-    auto riverLinkIt = [this, isRiver](Coord departure, Area& departure_area, Coord arrival, Area& arrival_area) -> void {
-        if (arrival.x == departure.x){
-            arrival_area = WATER_UD;
-
-            if (departure_area != WATER_UD){
-                if (arrival.y < departure.y){
-                    if (mouse_prev_position.x < mouse_prev_prev_position.x){
-                        departure_area = WATER_UR;
-                    }
-                    else{
-                        departure_area = WATER_LU;
-                    }
-                }
-                else{
-                    if (mouse_prev_position.x < mouse_prev_prev_position.x){
-                        departure_area = WATER_RD;
-                    }
-                    else{
-                        departure_area = WATER_DL;
-                    }
-                }
-            }
-        }
-        else if (arrival.y == departure.y){
-            arrival_area = WATER_LR;
-
-            if (departure_area != WATER_LR){
-                if (arrival.x < departure.x){
-                    if (mouse_prev_position.y < mouse_prev_prev_position.y){
-                        departure_area = WATER_DL;
-                    }
-                    else{
-                        departure_area = WATER_LU;
-                    }
-                }
-                else{
-                    if (mouse_prev_position.y < mouse_prev_prev_position.y){
-                        departure_area = WATER_RD;
-                    }
-                    else{
-                        departure_area = WATER_UR;
-                    }
-                }
-            }
-        }
-        else{
-            // diagonal ? Well, this will be programmed someday
-            arrival_area = WATER_RD;
-        }
-    };
-
     bool ignore;
 
     do{
@@ -172,8 +124,8 @@ void MapEditor::start(sf::RenderWindow& window, std::string const& original_file
                     if (mode == Mode::Continuous || lButton_pressed){
                         if (isRiver(area_list[selection])){
 
-                            riverLinkIt(mouse_prev_position, areas_map[mouse_prev_position.x][mouse_prev_position.y],
-                                    mouse_position, areas_map[mouse_position.x][mouse_position.y]);
+                            riverLinkIt(areas_map[mouse_prev_position.x][mouse_prev_position.y],
+                                    areas_map[mouse_position.x][mouse_position.y]);
                         }
                         else
                             areas_map[mouse_position.x][mouse_position.y] = area_list[selection];
@@ -192,15 +144,29 @@ void MapEditor::start(sf::RenderWindow& window, std::string const& original_file
                 else if (event.type == sf::Event::KeyPressed){
 
                     if (event.key.code == sf::Keyboard::Escape){
+                        return;
                             //TODO : menu (biomes, test, help, ...)
                     }
-                    else if (event.key.code == MODE_TOGGLE){
+                    else if (event.key.code == CONTINUOUS_TOGGLE){
                         if (mode == Mode::Continuous){
                             mode = Mode::Normal;
                         }
                         else{
                             mode = Mode::Continuous;
                             areas_map[mouse_position.x][mouse_position.y] = area_list[selection];
+                        }
+                    }
+                    else if (event.key.code == DUCK_TOGGLE){
+                        if (mode == Mode::Duck){
+                            mode = Mode::Normal;
+                        }
+                        else{
+                            mode = Mode::Duck;
+                            if (player_nbr < PLAYER_NBR_MAX){
+                                selection = static_cast<unsigned char>(player_nbr + 1);
+                            }
+                            else
+                                selection = PLAYER_NBR_MAX;
                         }
                     }
                     else{
@@ -222,7 +188,7 @@ void MapEditor::start(sf::RenderWindow& window, std::string const& original_file
 
         //Display
 
-        sf::sleep(REFRESH_RATE);
+        sf::sleep(sf::milliseconds(REFRESH_RATE_MS / 10));
         /*
         if (window.getSize().x%32 || window.getSize().y%32){
 
@@ -349,14 +315,74 @@ bool MapEditor::pollEvent(sf::RenderWindow& window, sf::Event& event, bool& igno
             if ((unsigned)(mouse_current_pos.x / 32) == mouse_position.x && (unsigned)(mouse_current_pos.y / 32) == mouse_position.y)
                 ignore = true;
             else{
-                mouse_prev_prev_position = mouse_prev_position;
                 mouse_prev_position = mouse_position;
+                mouse_prev_relative_movmnt = mouse_relative_movmnt;
+
+                
+                mouse_prev_relative_movmnt = mouse_relative_movmnt;
+                mouse_prev_relative_movmnt_2 = mouse_relative_movmnt_2;
+
                 mouse_position.x = mouse_current_pos.x / 32;
+                mouse_position.y = mouse_current_pos.y / 32;
+
+                if (mouse_position.x == mouse_prev_position.x){
+                    if (mouse_position.y < mouse_prev_position.y){
+                        mouse_relative_movmnt = UP;
+                        mouse_relative_movmnt_2 = NOPE;
+                    }
+                    else if (mouse_position.y > mouse_prev_position.y){
+                        mouse_relative_movmnt = DOWN;
+                        mouse_relative_movmnt_2 = NOPE;
+                    }
+                    else
+                        mouse_relative_movmnt = NOPE;
+                }
+                else if (mouse_position.y == mouse_prev_position.y){
+                    if (mouse_position.x < mouse_prev_position.x){
+                        mouse_relative_movmnt = LEFT;
+                        mouse_relative_movmnt_2 = NOPE;
+                    }
+                    else if (mouse_position.x > mouse_prev_position.x){
+                        mouse_relative_movmnt = RIGHT;
+                        mouse_relative_movmnt_2 = NOPE;
+                    }
+                    else
+                        mouse_relative_movmnt = NOPE;
+                }
+                else{
+                    if (mouse_position.y > mouse_prev_position.y){
+                        if (mouse_position.x < mouse_prev_position.x){
+                            mouse_relative_movmnt = DOWN;
+                            mouse_relative_movmnt_2 = LEFT;
+                        }
+                        else if (mouse_position.x > mouse_prev_position.x){
+                            mouse_relative_movmnt = DOWN;
+                            mouse_relative_movmnt_2 = RIGHT;
+                        }
+                        else
+                            mouse_relative_movmnt = NOPE;
+                    }
+                    else if (mouse_position.y < mouse_prev_position.y){
+                        if (mouse_position.x < mouse_prev_position.x){
+                            mouse_relative_movmnt = UP;
+                            mouse_relative_movmnt_2 = LEFT;
+                        }
+                        else if (mouse_position.x > mouse_prev_position.x){
+                            mouse_relative_movmnt = UP;
+                            mouse_relative_movmnt = RIGHT;
+                        }
+                        else
+                            mouse_relative_movmnt = NOPE;
+                    }
+                    else
+                        mouse_relative_movmnt = NOPE;
+                }
+
                 if (mouse_position.x > map_size.x - 1)
                     mouse_position.x = map_size.x - 1;
-                mouse_position.y = mouse_current_pos.y / 32;
                 if (mouse_position.y > map_size.y - 1)
                     mouse_position.y = map_size.y - 1;
+
             }
         }
         else if (event.type == sf::Event::MouseButtonPressed){
@@ -378,8 +404,11 @@ bool MapEditor::pollEvent(sf::RenderWindow& window, sf::Event& event, bool& igno
                 lButton_pressed = true;
             }
             else if (event.key.code == sf::Keyboard::Key::Up){
+                mouse_prev_relative_movmnt = mouse_relative_movmnt;
+                mouse_prev_relative_movmnt_2 = mouse_relative_movmnt_2;
+                mouse_relative_movmnt_2 = NOPE;
+                mouse_relative_movmnt = UP;
                 event.type = sf::Event::MouseMoved;
-                mouse_prev_prev_position = mouse_prev_position;
                 mouse_prev_position = mouse_position;
                 if (mouse_position.y > 0)
                     --mouse_position.y;
@@ -387,8 +416,11 @@ bool MapEditor::pollEvent(sf::RenderWindow& window, sf::Event& event, bool& igno
                     mouse_position.y = map_size.y - 1;
             }
             else if (event.key.code == sf::Keyboard::Key::Down){
+                mouse_prev_relative_movmnt = mouse_relative_movmnt;
+                mouse_prev_relative_movmnt_2 = mouse_relative_movmnt_2;
+                mouse_relative_movmnt_2 = NOPE;
+                mouse_relative_movmnt = DOWN;
                 event.type = sf::Event::MouseMoved;
-                mouse_prev_prev_position = mouse_prev_position;
                 mouse_prev_position = mouse_position;
                 if (mouse_position.y < map_size.y - 1)
                     ++mouse_position.y;
@@ -396,8 +428,11 @@ bool MapEditor::pollEvent(sf::RenderWindow& window, sf::Event& event, bool& igno
                     mouse_position.y = 0;
             }
             else if (event.key.code == sf::Keyboard::Key::Left){
+                mouse_prev_relative_movmnt = mouse_relative_movmnt;
+                mouse_prev_relative_movmnt_2 = mouse_relative_movmnt_2;
+                mouse_relative_movmnt_2 = NOPE;
+                mouse_relative_movmnt = LEFT;
                 event.type = sf::Event::MouseMoved;
-                mouse_prev_prev_position = mouse_prev_position;
                 mouse_prev_position = mouse_position;
                 if (mouse_position.x > 0)
                     --mouse_position.x;
@@ -405,8 +440,11 @@ bool MapEditor::pollEvent(sf::RenderWindow& window, sf::Event& event, bool& igno
                     mouse_position.x = map_size.x - 1;
             }
             else if (event.key.code == sf::Keyboard::Key::Right){
+                mouse_prev_relative_movmnt = mouse_relative_movmnt;
+                mouse_prev_relative_movmnt_2 = mouse_relative_movmnt_2;
+                mouse_relative_movmnt_2 = NOPE;
+                mouse_relative_movmnt = RIGHT;
                 event.type = sf::Event::MouseMoved;
-                mouse_prev_prev_position = mouse_prev_position;
                 mouse_prev_position = mouse_position;
                 if (mouse_position.x < map_size.x - 1)
                     ++mouse_position.x;
@@ -423,8 +461,10 @@ bool MapEditor::pollEvent(sf::RenderWindow& window, sf::Event& event, bool& igno
         }
         return true;
     }
-    else
+    else{
+        sf::sleep(sf::milliseconds(9 * REFRESH_RATE_MS / 10));
         return false;
+    }
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -432,6 +472,10 @@ void MapEditor::refreshScreen(sf::RenderWindow& window){
 
 	for(unsigned int x(map_size.x) ; x-- ;){
 		for (unsigned int y(map_size.y) ; y-- ;){
+            if (areas_map[x][y] != EMPTY_TILE){
+                ground_sprites[selected_biome][EMPTY_TILE].setPosition(static_cast<float>(32*x), static_cast<float>(32*y));
+                window.draw(ground_sprites[selected_biome][EMPTY_TILE]);
+            }
             ground_sprites[selected_biome][areas_map[x][y]].setPosition(static_cast<float>(32*x), static_cast<float>(32*y));
             window.draw(ground_sprites[selected_biome][areas_map[x][y]]);
 		}
@@ -572,7 +616,7 @@ void MapEditor::saveMap(std::string const& original_file){
 //////////////////////////////////////////////////////////////////////////////
 bool MapEditor::loadMap(std::string const& map_path){
 
-	std::ifstream map_file(map_path, std::ios::in | std::ios::binary);
+	std::ifstream map_file("maps/" + map_path, std::ios::in | std::ios::binary);
 	unsigned int x_map_size, y_map_size;
     short biome;
 	std::string value;
@@ -582,6 +626,8 @@ bool MapEditor::loadMap(std::string const& map_path){
 	if (map_file) {
 
 		map_file >> value;
+        value.append("/");
+        value = RESOURCES_FOLDER + value;
         biome = match(biome_names, value);
         if (biome < 0){
             std::cout << "Bad map: Unknown biome " << value << std::endl;
@@ -590,7 +636,6 @@ bool MapEditor::loadMap(std::string const& map_path){
         }
         else
             selected_biome = (unsigned)biome;
-
 
 		map_file >> value;
 		if (value ==  "blind" || value == "true" || value == "1"){
@@ -606,7 +651,8 @@ bool MapEditor::loadMap(std::string const& map_path){
             is_visible = true;
 
 		map_file >> speed;
-		map_file >> egg_nbr;
+		map_file >> x_map_size;
+        egg_nbr = static_cast<unsigned char>(x_map_size);
 		map_file >> x_map_size;
 		map_file >> y_map_size;
 
@@ -675,13 +721,13 @@ bool MapEditor::loadMap(std::string const& map_path){
 				ducks_starting_dir[player_nbr] = RIGHT;
 			else{
 				std::cout << "Not a valid direction : " << value << std::endl;
-				std::cout << "(On player " << player_nbr << ")" << std::endl;
+				std::cout << "(On player " << std::to_string(player_nbr+1) << ")" << std::endl;
                 ducks_starting_dir[player_nbr] = RIGHT;
                 ret = false;
 			}
 			++player_nbr;
 			map_file >> value;
-		}while (value != "eof");
+		}while (value != "eof" && player_nbr < PLAYER_NBR_MAX);
 
 		return ret;
 	}
@@ -696,14 +742,14 @@ void MapEditor::highlightTile(Coord tile, unsigned char area, sf::RenderWindow& 
 
     if (area != 255){
         ground_sprites[selected_biome][area].setPosition(sf::Vector2f(static_cast<float>(tile.x * 32), static_cast<float>(tile.y * 32)));
-        ground_sprites[selected_biome][area].setColor(sf::Color(255,255,255,100));
+        ground_sprites[selected_biome][area].setColor(HIGHLIGHTER_INNERCOLOR);
         window.draw(ground_sprites[selected_biome][area]);
         ground_sprites[selected_biome][area].setColor(sf::Color(255,255,255,255));
     }
 
     sf::RectangleShape highlighter(sf::Vector2f(32,32));
     highlighter.setOutlineThickness(HIGHLIGHTER_THICKNESS);
-    highlighter.setFillColor(HIGHLIGHTER_INNERCOLOR);
+    highlighter.setFillColor(sf::Color(0,0,0,0));
     highlighter.setOutlineColor(color);
     highlighter.setPosition(sf::Vector2f(static_cast<float>(tile.x * 32), static_cast<float>(tile.y * 32)));
     window.draw(highlighter);
@@ -718,10 +764,103 @@ short MapEditor::match(std::vector<std::string> biomes, std::string const& str){
     return -1;
 }
 
+//////////////////////////////////////////////////////////////////////////////
 unsigned char MapEditor::match(unsigned char area_nbr, Area area[], Area expr){
     for (unsigned char i(area_nbr) ; i-- ;){
         if (area[i] == expr)
             return i;
     }
     return 0;
+}
+
+void MapEditor::riverLinkIt(Area& departure_area, Area& arrival_area){
+    switch (mouse_relative_movmnt){
+        case UP:
+            arrival_area = WATER_UD;
+            switch (mouse_prev_relative_movmnt){
+            case UP:
+                departure_area = WATER_UD;
+                break;
+            case LEFT:
+                departure_area = WATER_UR;
+                break;
+            case DOWN:
+                departure_area = WATER_UD;
+                break;
+            case RIGHT:
+                departure_area = WATER_LU;
+                break;
+            case NOPE:
+            default:
+                break;
+                departure_area = EMPTY_TILE;
+            }
+            break;
+        case LEFT:
+            arrival_area = WATER_LR;
+            switch (mouse_prev_relative_movmnt){
+            case UP:
+                departure_area = WATER_DL;
+                break;
+            case LEFT:
+                departure_area = WATER_LR;
+                break;
+            case DOWN:
+                departure_area = WATER_LU;
+                break;
+            case RIGHT:
+                departure_area = WATER_LR;
+                break;
+            case NOPE:
+            default:
+                departure_area = EMPTY_TILE;
+                break;
+            }
+            break;
+        case DOWN:
+            arrival_area = WATER_UD;
+            switch (mouse_prev_relative_movmnt){
+            case UP:
+                departure_area = WATER_UD;
+                break;
+            case LEFT:
+                departure_area = WATER_RD;
+                break;
+            case DOWN:
+                departure_area = WATER_UD;
+                break;
+            case RIGHT:
+                departure_area = WATER_DL;
+                break;
+            case NOPE:
+            default:
+                departure_area = EMPTY_TILE;
+                break;
+            }
+            break;
+        case RIGHT:
+            arrival_area = WATER_LR;
+            switch (mouse_prev_relative_movmnt){
+            case UP:
+                departure_area = WATER_RD;
+                break;
+            case LEFT:
+                break;
+            case DOWN:
+                departure_area = WATER_UR;
+                break;
+            case RIGHT:
+                departure_area = WATER_LR;
+                break;
+            case NOPE:
+            default:
+                departure_area = EMPTY_TILE;
+                break;
+            }
+            break;
+        case NOPE:
+        default:
+            arrival_area = EMPTY_TILE;
+            break;
+    }
 }

@@ -7,15 +7,15 @@
 #ifndef MAPEDITOR_HPP_INCLUDED
 #define MAPEDITOR_HPP_INCLUDED
 
-#define N_BIOME_LIST            {"ducks", "fonts", "menu", "sounds"}
-#define N_BIOME_NB              4
+#define N_BIOME_LIST            {"ducks", "fonts", "menu", "sounds", "default"}
+#define N_BIOME_NB              5
 #define GROUNDS_TILES_LIST      {"Obstacle.png", "EmptyTile.png", "WaterUR.png", "WaterRD.png", "WaterDL.png", "WaterLU.png", "WaterUD.png", "WaterLR.png", "Warp.png"}
 #define GROUNDS_TILES_NB        9
 #define DUCKS_SPRITES_LIST      {"DuckU_", "DuckD_", "DuckL_", "DuckR_"}
 #define DUCKS_FORMAT            ".png"
 #define RESOURCES_FOLDER        "res/"
 #define PLAYER_NBR_MAX          5
-#define HIGHLIGHTER_INNERCOLOR  sf::Color(0,0,0,0)
+#define HIGHLIGHTER_INNERCOLOR  sf::Color(255,255,255,150)
 #define HIGHLIGHTER_OUTERCOLOR1 sf::Color(175,175,175,255)
 #define HIGHLIGHTER_OUTERCOLOR2 sf::Color(255,125,125,255)
 #define HIGHLIGHTER_THICKNESS   2
@@ -27,9 +27,10 @@
                             sf::Keyboard::Key::Numpad1, sf::Keyboard::Key::Numpad7, sf::Keyboard::Key::R, sf::Keyboard::Key::Subtract, sf::Keyboard::Key::X}
 #define AREAS_QTT               9
 
-#define MODE_TOGGLE             sf::Keyboard::Key::C
+#define CONTINUOUS_TOGGLE       sf::Keyboard::Key::C
+#define DUCK_TOGGLE             sf::Keyboard::Key::D
 
-#define REFRESH_RATE            sf::milliseconds(50)
+#define REFRESH_RATE_MS         50
 
 #ifndef PAPRAGAME_PATHS_DEFINED
 #define PAPRAGAME_PATHS_DEFINED
@@ -71,7 +72,8 @@
 
 enum Mode : unsigned char {
     Normal,
-    Continuous
+    Continuous,
+    Duck
 };
 
 /**
@@ -169,6 +171,13 @@ private :
      */
    unsigned char match(unsigned char area_nbr, Area area[], Area expr);
 
+   /**
+    * @brief Links rivers together
+    * @param departure_area Area where the cursor was just before
+    * @param arrival_area   Area where the cursor is
+    */
+   void riverLinkIt(Area& departure_area, Area& arrival_area);
+
 
 
 
@@ -195,8 +204,11 @@ private :
     std::vector< std::vector<Area> > areas_map;
 
     Coord mouse_position;
+    Direction mouse_relative_movmnt;
+    Direction mouse_relative_movmnt_2;
     Coord mouse_prev_position;
-    Coord mouse_prev_prev_position; // useful for rivers
+    Direction mouse_prev_relative_movmnt;
+    Direction mouse_prev_relative_movmnt_2;
     Coord mouse_press;
     Coord mouse_release;
     bool lButton_pressed;

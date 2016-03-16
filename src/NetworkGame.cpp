@@ -236,19 +236,21 @@ void GameServer::launch(sf::RenderWindow& game_window){
 	};
 	biome_path.append("/");
 	std::string map_textures_path[9] = {
-		biome_path + TEXTURE_OBSTACLE,
-		biome_path + TEXTURE_EMPTY_TILE,
-		biome_path + TEXTURE_WATER_UP_RIGHT,
-		biome_path + TEXTURE_WATER_RIGHT_DOWN,
-		biome_path + TEXTURE_WATER_LEFT_DOWN,
-		biome_path + TEXTURE_WATER_UP_LEFT,
-		biome_path + TEXTURE_WATER_UP_DOWN,
-		biome_path + TEXTURE_WATER_LEFT_RIGHT,
-		biome_path + TEXTURE_WARP
+		TEXTURE_OBSTACLE,
+		TEXTURE_EMPTY_TILE,
+		TEXTURE_WATER_UP_RIGHT,
+		TEXTURE_WATER_RIGHT_DOWN,
+		TEXTURE_WATER_LEFT_DOWN,
+		TEXTURE_WATER_UP_LEFT,
+		TEXTURE_WATER_UP_DOWN,
+		TEXTURE_WATER_LEFT_RIGHT,
+		TEXTURE_WARP
 	};
 	bool loading_success = true;
 	for (unsigned char i = 9 ; i-- ;) {
-		loading_success = loading_success && map_texture[i].loadFromFile(ressources + map_textures_path[i] + FILETYPE);
+		if (!map_texture[i].loadFromFile(ressources + biome_path + map_textures_path[i] + FILETYPE)){
+            loading_success = loading_success && map_texture[i].loadFromFile(ressources + "res/" + map_textures_path[i] + FILETYPE);
+        }
 	}
 
 	loading_success = loading_success && egg_texture.loadFromFile(ressources + DUCK_PATH + TEXTURE_EGG + FILETYPE);

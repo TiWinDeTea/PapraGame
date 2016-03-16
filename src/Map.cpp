@@ -108,6 +108,10 @@ void Map::printEgg(sf::RenderWindow& window){
 
 void Map::print (Coord tile, sf::RenderWindow& window){
 
+    if (map[tile.x][tile.y] != EMPTY_TILE){
+        sprites[EMPTY_TILE].setPosition(static_cast<float>(tile.x*32), static_cast<float>(tile.y*32));
+        window.draw(sprites[EMPTY_TILE]);
+    }
 	sprites[map[tile.x][tile.y]].setPosition(static_cast<float>(tile.x*RESOLUTION_X_IMAGE), static_cast<float>(tile.y*RESOLUTION_Y_IMAGE));
 	window.draw(sprites[map[tile.x][tile.y]]);
 
