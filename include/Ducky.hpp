@@ -19,6 +19,7 @@
 #include <Coord.hpp>
 #include <SFML/Graphics.hpp>
 #include <enum.hpp>
+#include "Coord.hpp"
 
 /**
  * @class Ducky Ducky.hpp

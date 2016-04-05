@@ -33,10 +33,7 @@ GameServer::GameServer(std::string ressources_path, std::string biome_path_, std
 		is_blind = true;
 		map_file >> los;
 		map_file >> tmpstr;
-		if (tmpstr == "loop" || tmpstr == "true" || tmpstr == "1")
-			loop = true;
-		else
-			loop = false;
+		loop = tmpstr == "loop" || tmpstr == "true" || tmpstr == "1";
 	}
 	else{
 		los = 100;
@@ -105,8 +102,10 @@ GameServer::GameServer(std::string ressources_path, std::string biome_path_, std
 			player_initial_dir.push_back(LEFT);
 		else if (tmpstr == "right")
 			player_initial_dir.push_back(RIGHT);
-		else
+		else {
 			player_initial_dir.push_back(RIGHT);
+			std::cout << "Bad direction (on player " << (short) (nbr_player + 1) << ")" << std::endl;
+		}
 		++nbr_player;
 		map_file >> tmpstr;
 	}while(tmpstr != "eof");
@@ -182,7 +181,7 @@ bool GameServer::getClients(sf::RenderWindow& window){
 
 			std::cout << "Request from " << client_ip << ":" << client_port << std::endl;
 			sf::TcpSocket* client = new sf::TcpSocket;
-			status = udp_client.send("PapraGame ~ Client Accepted", 28, client_ip, client_port);
+			udp_client.send("PapraGame ~ Client Accepted", 28, client_ip, client_port);
 
 			if (listener.accept(*client) == sf::Socket::Done) {
 
@@ -249,7 +248,7 @@ void GameServer::launch(sf::RenderWindow& game_window){
 	bool loading_success = true;
 	for (unsigned char i = 9 ; i-- ;) {
 		if (!map_texture[i].loadFromFile(ressources + biome_path + map_textures_path[i] + FILETYPE)){
-            loading_success = loading_success && map_texture[i].loadFromFile(ressources + "res/" + map_textures_path[i] + FILETYPE);
+            loading_success = loading_success && map_texture[i].loadFromFile(ressources + "default/" + map_textures_path[i] + FILETYPE);
         }
 	}
 
@@ -958,10 +957,11 @@ std::vector<sf::Keyboard::Key> GameClient::loadKeys(std::string selected_player)
 void GameClient::start(sf::RenderWindow& game_window){
 	sf::Packet packet;
 	sf::Event event;
-	bool ended, damaged, power_up, is_online, won, warped;
-	unsigned char winner, mini_counter(0);
-	int tmpint, egg_x, egg_y;
-    unsigned int duck_to_square;
+	bool ended, damaged, power_up, is_online, won(false), warped;
+	unsigned char winner(0), mini_counter(0);
+	int tmpint;
+	unsigned int egg_y, egg_x;
+	unsigned int duck_to_square;
 
 	sf::SoundBuffer damage_buffer, egg_buffer, warp_buffer;
 	damage_buffer.loadFromFile("res/sounds/damaged.ogg");
@@ -1006,7 +1006,8 @@ void GameClient::start(sf::RenderWindow& game_window){
 			packet >> won >> winner;
 		} else if (is_online) {
 			int ducky_stolen;
-			int x_coo, y_coo;
+			unsigned int y_coo;
+			unsigned int x_coo;
 			for (unsigned int i = static_cast<int>(player.size()); i--;){
 				packet >> x_coo >> y_coo;
 				packet >> damaged;

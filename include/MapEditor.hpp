@@ -113,9 +113,8 @@ private :
 
    /**
      * @brief loads textures
-     * @return true on success, false otherwise ; for each texture pack + one for the ducks
      */
-    std::vector<bool> loadTextures();
+    void loadTextures();
 
     /**
      * @brief poll events from the window and pre-treats them

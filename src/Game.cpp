@@ -94,7 +94,7 @@ void Game::launch(sf::RenderWindow& game_window, std::string map_name){
 	}
 
 	if (!loading_success) {
-		std::cout << "Failed to load game ressources" << std::endl;
+		std::cout << "Failed to load game resources" << std::endl;
 	}
 	else {
         victory_sprite.setTexture(victory_texture);
@@ -142,7 +142,7 @@ bool Game::loadMap(){
 
 		std::vector< std::vector<Area> > map_interpreted;
 		for(unsigned int i = 0; i < x_map_size; ++i)
-			map_interpreted.push_back(std::vector<Area>());
+			map_interpreted.emplace_back();
 
 		for (unsigned int i = 0 ; i < y_map_size ; ++i) {
 			map_file >> value;
@@ -179,7 +179,6 @@ bool Game::loadMap(){
 					default:
 						std::cout << "Bad map (found character " << value[j] << ")" << std::endl;
 						return false;
-						break;
 				}
 			}
 		}

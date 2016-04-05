@@ -72,9 +72,6 @@
 	#define IDENTIFIER_EMPTY_TILE       '.'
 	#define IDENTIFIER_WARP             'x'
 	#define IDENTIFIER_OBSTACLE         'o'
-
- 	#define END_X_RESOLTION             800
- 	#define END_Y_RESOLTION             600
 #endif /* PAPRAGAME_PATHS_DEFINED */
 
 /**
@@ -92,10 +89,8 @@ public:
 
 private:
 
-	void getMapFile();
 	bool loadMap();
 	void start(sf::RenderWindow& game_window);
-	bool someoneWon();
 	std::vector<sf::Keyboard::Key> loadKeys(std::string selected_player);
 	void printExplosion(sf::RenderWindow& game_window, Coord coord);
 	bool pauseGame(sf::RenderWindow& game_window, bool player_request);

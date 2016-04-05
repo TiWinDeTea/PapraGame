@@ -58,7 +58,7 @@ MapEditor::~MapEditor(){
 //////////////////////////////////////////////////////////////////////////////
 void MapEditor::start(sf::RenderWindow& window, std::string const& original_file){
 
-    std::vector<bool> textures_state(this->loadTextures());
+    this->loadTextures();
 
     Area area_list[] = AREA_LIST;
     sf::Keyboard::Key key_list[] = KEY_LIST;
@@ -212,7 +212,7 @@ void MapEditor::start(sf::RenderWindow& window, std::string const& original_file
         // TODO : resize areas_map
         */
         this->refreshScreen(window);
-        this->highlightTile(mouse_position, mode == Mode::Continuous ? 255 : selection,
+        this->highlightTile(mouse_position, mode == Mode::Continuous ? (unsigned char)255 : selection,
                 window, mode == Mode::Continuous ? HIGHLIGHTER_OUTERCOLOR2 : HIGHLIGHTER_OUTERCOLOR1);
         window.display();
 
@@ -242,7 +242,7 @@ void MapEditor::findTextures(){
 			#else
 				struct stat s;
 				if(stat(local_path.c_str(), &s) == 0)
-					return s.st_mode & S_IFDIR;
+					return (bool) (s.st_mode & S_IFDIR);
 				else
 					return false;
 			#endif
@@ -258,14 +258,14 @@ void MapEditor::findTextures(){
 		while ((redfile = readdir(directory)) != nullptr){
 			std::string tmp( redfile->d_name );
 			if (isFolder(RESOURCES_FOLDER + tmp) && !notATexture(tmp) && tmp[0] != '.') {
-				biome_names.push_back(RESOURCES_FOLDER + tmp + "/");
+				biome_names.push_back(tmp);
 			}
 		}
 	}
 }
 
 //////////////////////////////////////////////////////////////////////////////
-std::vector<bool> MapEditor::loadTextures(){
+void MapEditor::loadTextures(){
 
     std::string ground_tile_name[] = GROUNDS_TILES_LIST;
     std::vector<bool> ret;
@@ -276,13 +276,13 @@ std::vector<bool> MapEditor::loadTextures(){
     for (unsigned char i(static_cast<unsigned char>(biome_names.size())) ; i-- ;){
         for (unsigned char j (GROUNDS_TILES_NB) ; j-- ;){
 
-            if (!ground_textures[i][j].loadFromFile(biome_names[i] + ground_tile_name[j])){
+            if (!ground_textures[i][j].loadFromFile(RESOURCES_FOLDER + biome_names[i] + "/" + ground_tile_name[j])){
                 ret[i] = false;
             }
             ground_sprites[i][j].setTexture(ground_textures[i][j]);
         }
         if (!ret[i]){
-            std::cout << biome_names[i] << ": Failed to load biome's textures" << std::endl;
+            std::cout << RESOURCES_FOLDER + biome_names[i] + "/" << ": Failed to load biome's textures" << std::endl;
         }
     }
 
@@ -301,8 +301,6 @@ std::vector<bool> MapEditor::loadTextures(){
             std::cout << "Player " << std::to_string(i + 1) << ": Failed to load textures" << std::endl;
         }
     }
-
-    return ret;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -322,8 +320,8 @@ bool MapEditor::pollEvent(sf::RenderWindow& window, sf::Event& event, bool& igno
                 mouse_prev_relative_movmnt = mouse_relative_movmnt;
                 mouse_prev_relative_movmnt_2 = mouse_relative_movmnt_2;
 
-                mouse_position.x = mouse_current_pos.x / 32;
-                mouse_position.y = mouse_current_pos.y / 32;
+                mouse_position.x = static_cast<unsigned int>(mouse_current_pos.x / 32);
+                mouse_position.y = static_cast<unsigned int>(mouse_current_pos.y / 32);
 
                 if (mouse_position.x == mouse_prev_position.x){
                     if (mouse_position.y < mouse_prev_position.y){
@@ -388,14 +386,14 @@ bool MapEditor::pollEvent(sf::RenderWindow& window, sf::Event& event, bool& igno
         else if (event.type == sf::Event::MouseButtonPressed){
             if (event.mouseButton.button == sf::Mouse::Left)
                 lButton_pressed = true;
-            mouse_press.x = event.mouseButton.x / 32;
-            mouse_press.y = event.mouseButton.y / 32;
+            mouse_press.x = static_cast<unsigned int>(event.mouseButton.x / 32);
+            mouse_press.y = static_cast<unsigned int>(event.mouseButton.y / 32);
         }
         else if (event.type == sf::Event::MouseButtonReleased){
             if (event.mouseButton.button == sf::Mouse::Left)
                 lButton_pressed = false;
-            mouse_release.x = event.mouseButton.x / 32;
-            mouse_release.y = event.mouseButton.y / 32;
+            mouse_release.x = static_cast<unsigned int>(event.mouseButton.x / 32);
+            mouse_release.y = static_cast<unsigned int>(event.mouseButton.y / 32);
         }
         else if (event.type == sf::Event::KeyPressed){
             if (event.key.code == sf::Keyboard::Key::Return){
@@ -450,6 +448,9 @@ bool MapEditor::pollEvent(sf::RenderWindow& window, sf::Event& event, bool& igno
                     ++mouse_position.x;
                 else
                     mouse_position.x = 0;
+            }
+            else if (event.key.code == sf::Keyboard::Key::Escape){
+                this->saveMap("maps/test.map");
             }
         }
         else if (event.type == sf::Event::KeyReleased){
@@ -513,6 +514,8 @@ void MapEditor::saveMap(std::string const& original_file){
                     done = true;
                 }
             }
+            else
+                done = true;
         }while(!done);
 
         return file;
@@ -549,8 +552,8 @@ void MapEditor::saveMap(std::string const& original_file){
     save << (short)(egg_nbr) << std::endl;
     save << map_size.x << " " << map_size.y << std::endl;
 
-    for (unsigned int i(0) ; i < map_size.y ; --i){
-        for (unsigned int j(0) ; j < map_size.x ; j--){
+    for (unsigned int i(0) ; i < map_size.y ; ++i){
+        for (unsigned int j(0) ; j < map_size.x ; ++j){
             switch(areas_map[j][i]){
                 case OBSTACLE:
                     save << IDENTIFIER_OBSTACLE;
@@ -635,17 +638,14 @@ bool MapEditor::loadMap(std::string const& map_path){
             ret = false;
         }
         else
-            selected_biome = (unsigned)biome;
+            selected_biome = static_cast<unsigned short>(biome);
 
 		map_file >> value;
 		if (value ==  "blind" || value == "true" || value == "1"){
 			is_visible = false;
 			map_file >> los;
 			map_file >> value;
-			if (value == "loop" || value == "true" || value == "1")
-				los_is_looping = true;
-			else
-				los_is_looping = false;
+            los_is_looping = value == "loop" || value == "true" || value == "1";
 		}
         else
             is_visible = true;
@@ -793,7 +793,6 @@ void MapEditor::riverLinkIt(Area& departure_area, Area& arrival_area){
             case NOPE:
             default:
                 break;
-                departure_area = EMPTY_TILE;
             }
             break;
         case LEFT:
