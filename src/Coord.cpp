@@ -6,42 +6,39 @@
 
 #include <Coord.hpp>
 
-Coord::Coord(unsigned int initial_x, unsigned int initial_y){
-    
-    x = initial_x;
-    y = initial_y;
+Coord::Coord(unsigned int initial_x, unsigned int initial_y) {
+
+	x = initial_x;
+	y = initial_y;
 }
 
-bool operator==(const Coord& a, const Coord& b)
-{
-    return (a.x == b.x && a.y == b.y);
+bool operator==(const Coord& a, const Coord& b) {
+	return (a.x == b.x && a.y == b.y);
 }
 
-bool operator!=(const Coord& a, const Coord& b)
-{
-    return !(a == b);
+bool operator!=(const Coord& a, const Coord& b) {
+	return !(a == b);
 }
 
-Coord& Coord::operator=(const Coord& coord){
+Coord& Coord::operator=(const Coord& coord) {
 	x = coord.x;
 	y = coord.y;
 	return *this;
 }
 
-Coord& Coord::operator+=(const Direction& dir){
+Coord& Coord::operator+=(const Direction& dir) {
 	*this = *this + dir;
 	return *this;
 }
 
-Coord& Coord::operator-=(const Direction& dir){
+Coord& Coord::operator-=(const Direction& dir) {
 	*this = *this - dir;
 	return *this;
 }
 
-Coord operator+(const Coord& coord, const Direction& dir)
-{
+Coord operator+(const Coord& coord, const Direction& dir) {
 	Coord new_coord = coord;
-	switch(dir){
+	switch (dir) {
 		case UP:
 			--new_coord.y;
 			break;
@@ -61,10 +58,9 @@ Coord operator+(const Coord& coord, const Direction& dir)
 	return new_coord;
 }
 
-Coord operator-(const Coord& coord, const Direction& dir)
-{
+Coord operator-(const Coord& coord, const Direction& dir) {
 	Coord new_coord = coord;
-	switch(dir){
+	switch (dir) {
 		case UP:
 			++new_coord.y;
 			break;
@@ -84,11 +80,10 @@ Coord operator-(const Coord& coord, const Direction& dir)
 	return new_coord;
 }
 
-Coord operator+(const Coord& coo, const Coord& coo2){
+Coord operator+(const Coord& coo, const Coord& coo2) {
 	return Coord(coo.x + coo2.x, coo.y + coo2.y);
 }
 
-Coord operator-(const Coord& coo, const Coord& coo2)
-{
+Coord operator-(const Coord& coo, const Coord& coo2) {
 	return Coord(coo.x - coo2.x, coo.y - coo2.y);
 }

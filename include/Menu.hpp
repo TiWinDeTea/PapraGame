@@ -1,8 +1,8 @@
- /***********************************************************************
- * This Source Code Form is subject to the terms of the Mozilla Public *
- * License, v. 2.0. If a copy of the MPL was not distributed with this *
- * file, You can obtain one at http://mozilla.org/MPL/2.0/.            *
- ***********************************************************************/
+/***********************************************************************
+* This Source Code Form is subject to the terms of the Mozilla Public *
+* License, v. 2.0. If a copy of the MPL was not distributed with this *
+* file, You can obtain one at http://mozilla.org/MPL/2.0/.            *
+***********************************************************************/
 
 #ifndef MENU_HPP_INCLUDED
 #define MENU_HPP_INCLUDED
@@ -27,14 +27,17 @@
 #include <Game.hpp>
 #include <NetworkGame.hpp>
 #include <dirent.h>
+
 #if defined(_WIN32) || defined(_WIN64) || defined(WIN32) || defined(WIN64)
-	#include <windows.h>
-	#define OS_WINDOWS
+#include <windows.h>
+#define OS_WINDOWS
 #else
-	#include <unistd.h>
-	#include <iostream>
-	#include <sys/stat.h>
-	#include <sys/types.h>
+
+#include <unistd.h>
+#include <iostream>
+#include <sys/stat.h>
+#include <sys/types.h>
+
 #endif
 
 #define MINIMAL_Y_MOUSE               205
@@ -87,36 +90,36 @@
  * @class Menu Menu.hpp
  * @brief Defines the Menu Class
  */
-class Menu{
+class Menu {
 
-	public:
+public:
 
-		Menu();
+	Menu( );
 
-		void setBiome(std::string chosen_biome);
+	void setBiome(std::string chosen_biome);
 
-		~Menu(){};
+	~Menu( ) { };
 
-		void mainMenu();
+	void mainMenu( );
 
-		std::string mapMenu();
+	std::string mapMenu( );
 
-		char networkMenu();
+	char networkMenu( );
 
-	private:
+private:
 
-		int bg_pos;
-		sf::Music title_theme;
-		sf::RenderWindow window, about_window;
-		sf::Font font;
-		sf::Texture title_texture;
-		sf::Texture background_texture;
-		sf::Texture about_texture;
-		sf::Sprite title_sprite;
-		sf::Sprite background_sprite;
-		sf::Sprite about_sprite;
+	int bg_pos;
+	sf::Music title_theme;
+	sf::RenderWindow window, about_window;
+	sf::Font font;
+	sf::Texture title_texture;
+	sf::Texture background_texture;
+	sf::Texture about_texture;
+	sf::Sprite title_sprite;
+	sf::Sprite background_sprite;
+	sf::Sprite about_sprite;
 
-		std::string res_path, biome_path, ducks_path, maps_path, map_path, menu_path;
+	std::string res_path, biome_path, ducks_path, maps_path, map_path, menu_path;
 };
 
 #endif /* MENU_HPP_INCLUDED */

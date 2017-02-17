@@ -16,15 +16,15 @@
 
 enum Area : unsigned char {
 
-    OBSTACLE = 0,
-    EMPTY_TILE,
-    WATER_UR, /*!< up -> right */
-    WATER_RD, /*!< right -> down */
-    WATER_DL, /*!< down -> left */
-    WATER_LU, /*!< left -> up */
-    WATER_UD, /*!< up -> down */
-    WATER_LR, /*!< left-> right */
-    WARP
+	OBSTACLE = 0,
+	EMPTY_TILE,
+	WATER_UR, /*!< up -> right */
+	WATER_RD, /*!< right -> down */
+	WATER_DL, /*!< down -> left */
+	WATER_LU, /*!< left -> up */
+	WATER_UD, /*!< up -> down */
+	WATER_LR, /*!< left-> right */
+	WARP
 };
 
 /**
@@ -33,10 +33,10 @@ enum Area : unsigned char {
 
 enum Direction : unsigned char {
 
-    UP = 0,
-    DOWN,
-    LEFT,
-    RIGHT,
+	UP = 0,
+	DOWN,
+	LEFT,
+	RIGHT,
 	NOPE
 };
 

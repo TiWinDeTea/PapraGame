@@ -9,40 +9,40 @@
 
 #include <enum.hpp>
 
- /**
- * @file Coord.hpp
- * @author Maxime PINARD
- * @version 0.0
- * @license Mozilla Public License, v. .2.0
- * @brief Defines the Coord Class
- */
+/**
+* @file Coord.hpp
+* @author Maxime PINARD
+* @version 0.0
+* @license Mozilla Public License, v. .2.0
+* @brief Defines the Coord Class
+*/
 
 /**
  * @class Coord Coord.hpp
  * @brief Defines the Coord Class
  */
-class Coord{
+class Coord {
 
-	public:
-		unsigned int x;
-		unsigned int y;
+public:
+	unsigned int x;
+	unsigned int y;
 
-		/**
-		 * @brief Constructor with coordinates initialisation
-		 */
-		
-                Coord(unsigned int initial_x, unsigned int initial_y);
+	/**
+	 * @brief Constructor with coordinates initialisation
+	 */
 
-		/**
-		 * @brief Default constructor
-		 */
-		Coord(){};
+	Coord(unsigned int initial_x, unsigned int initial_y);
 
-		Coord& operator=(const Coord& coo);
+	/**
+	 * @brief Default constructor
+	 */
+	Coord( ) { };
 
-		Coord& operator+=(const Direction& dir);
+	Coord& operator=(const Coord& coo);
 
-		Coord& operator-=(const Direction& dir);
+	Coord& operator+=(const Direction& dir);
+
+	Coord& operator-=(const Direction& dir);
 };
 
 /**

@@ -6,35 +6,37 @@
 
 #include <Duck.hpp>
 
-Duck::Duck(sf::Texture duck_textures[4], sf::Texture duckies_textures[4], Coord starting_coordinates, Direction initial_direction, std::vector<sf::Keyboard::Key> control_keys){
+Duck::Duck(sf::Texture duck_textures[4], sf::Texture duckies_textures[4], Coord starting_coordinates,
+           Direction initial_direction, std::vector<sf::Keyboard::Key> control_keys) {
 
 	warped_at_this_turn = false;
 	keys = control_keys;
 	st_coordinates = starting_coordinates;
 	coordinates = starting_coordinates;
-	for(unsigned char i = 4 ; i--;){
+	for (unsigned char i = 4 ; i-- ;) {
 		duck_sprite[i].setTexture(duck_textures[i]);
 	}
 	direction = initial_direction;
-    last_sprite_drawn = initial_direction;
-	for(unsigned char i = 4 ; i--;){
+	last_sprite_drawn = initial_direction;
+	for (unsigned char i = 4 ; i-- ;) {
 		ducky_sprite[i].setTexture(duckies_textures[i]);
 	}
 
-	for(unsigned int i = DUCKIES_INITIAL_NUMBER; i--;){
+	for (unsigned int i = DUCKIES_INITIAL_NUMBER ; i-- ;) {
 		duckies.push_back(Ducky(starting_coordinates, starting_coordinates, direction));
 	}
 	invulnerability = MOVES_INVULNERABLE;
 }
 
-void Duck::damaged(Direction initial_dir){
+void Duck::damaged(Direction initial_dir) {
 
-	if(this->size() > 0){
+	if (this->size() > 0) {
 
-		if(!invulnerability)
+		if (!invulnerability) {
 			duckies.pop_back();
+		}
 
-		for(unsigned int i = 0; i < static_cast<unsigned int>(duckies.size()); ++i){
+		for (unsigned int i = 0 ; i < static_cast<unsigned int>(duckies.size()) ; ++i) {
 			duckies[i].resetCoord();
 			duckies[i].direction = initial_dir;
 		}
@@ -44,87 +46,102 @@ void Duck::damaged(Direction initial_dir){
 	direction = initial_dir;
 }
 
-void Duck::powerUp(){
+void Duck::powerUp( ) {
 
-	if(duckies.size() > 0)
+	if (duckies.size() > 0) {
 		duckies.push_back(Ducky(duckies.back().coordinates, st_coordinates, duckies.back().direction));
-	else
+	} else {
 		duckies.push_back(Ducky(coordinates, st_coordinates, direction));
-	ducky_sprite[duckies.back().direction].setPosition(static_cast<float>(duckies.back().coordinates.x * 32), static_cast<float>(duckies.back().coordinates.y * 32));
+	}
+	ducky_sprite[duckies.back().direction].setPosition(static_cast<float>(duckies.back().coordinates.x * 32),
+	                                                   static_cast<float>(duckies.back().coordinates.y * 32));
 }
 
-void Duck::move(Direction new_direction, unsigned int x_map_size, unsigned int y_map_size){
+void Duck::move(Direction new_direction, unsigned int x_map_size, unsigned int y_map_size) {
 
-	if(duckies.size() > 0){
-		for(unsigned int i = static_cast<unsigned int>(duckies.size() - 1); i > 0 ; i--){
-			if(duckies[i].coordinates != duckies[i - 1].coordinates)
+	if (duckies.size() > 0) {
+		for (unsigned int i = static_cast<unsigned int>(duckies.size() - 1) ; i > 0 ; i--) {
+			if (duckies[i].coordinates != duckies[i - 1].coordinates) {
 				duckies[i].move(duckies[i - 1].direction, duckies[i - 1].coordinates);
+			}
 		}
-		if(duckies.front().coordinates != coordinates){
-			if (warped_at_this_turn){
+		if (duckies.front().coordinates != coordinates) {
+			if (warped_at_this_turn) {
 				duckies.front().move(direction, x_map_size, y_map_size);
 				warped_at_this_turn = false;
-			}
-			else{
+			} else {
 				duckies.front().move(direction, coordinates);
 			}
 		}
 	}
 
-	switch(new_direction){
+	switch (new_direction) {
 		case UP:
-			if(coordinates.y == 0)
+			if (coordinates.y == 0) {
 				coordinates.y = y_map_size - 1;
-			else
+			} else {
 				--coordinates.y;
+			}
 			break;
 		case LEFT:
-			if(coordinates.x == 0)
+			if (coordinates.x == 0) {
 				coordinates.x = x_map_size - 1;
-			else
+			} else {
 				--coordinates.x;
+			}
 			break;
 		case DOWN:
-			if(coordinates.y == y_map_size - 1)
+			if (coordinates.y == y_map_size - 1) {
 				coordinates.y = 0;
-			else
+			} else {
 				++coordinates.y;
+			}
 			break;
 		case RIGHT:
-			if(coordinates.x == x_map_size - 1)
+			if (coordinates.x == x_map_size - 1) {
 				coordinates.x = 0;
-			else
+			} else {
 				++coordinates.x;
+			}
 			break;
 		case NOPE:
 		default:
 			break;
 	}
 	direction = new_direction;
-	if(invulnerability > 0)
+	if (invulnerability > 0) {
 		--invulnerability;
+	}
 }
 
-unsigned char Duck::size(){
+unsigned char Duck::size( ) {
 
 	return static_cast<unsigned char>(duckies.size());
 }
 
-void Duck::print(sf::RenderWindow& window, float shift){
+void Duck::print(sf::RenderWindow& window, float shift) {
 
-	for(unsigned int i = static_cast<unsigned int>(duckies.size()); i--;){
-		switch (duckies[i].direction){
+	for (unsigned int i = static_cast<unsigned int>(duckies.size()) ; i-- ;) {
+		switch (duckies[i].direction) {
 			case UP:
-				ducky_sprite[duckies[i].direction].setPosition(static_cast<float>(duckies[i].coordinates.x * 32), static_cast<float>(duckies[i].coordinates.y * 32) - shift);
+				ducky_sprite[duckies[i].direction].setPosition(static_cast<float>(duckies[i].coordinates.x * 32),
+				                                               static_cast<float>(duckies[i].coordinates.y * 32) -
+				                                               shift);
 				break;
 			case LEFT:
-				ducky_sprite[duckies[i].direction].setPosition(static_cast<float>(duckies[i].coordinates.x * 32) - shift, static_cast<float>(duckies[i].coordinates.y * 32));
+				ducky_sprite[duckies[i].direction].setPosition(
+						static_cast<float>(duckies[i].coordinates.x * 32) - shift,
+						static_cast<float>(duckies[i].coordinates.y * 32));
 				break;
 			case DOWN:
-				ducky_sprite[duckies[i].direction].setPosition(static_cast<float>(duckies[i].coordinates.x * 32), static_cast<float>(duckies[i].coordinates.y * 32) + shift);
+				ducky_sprite[duckies[i].direction].setPosition(static_cast<float>(duckies[i].coordinates.x * 32),
+				                                               static_cast<float>(duckies[i].coordinates.y * 32) +
+				                                               shift);
 				break;
 			case RIGHT:
-				ducky_sprite[duckies[i].direction].setPosition(static_cast<float>(duckies[i].coordinates.x * 32) + shift, static_cast<float>(duckies[i].coordinates.y * 32));
+				ducky_sprite[duckies[i].direction].setPosition(
+						static_cast<float>(duckies[i].coordinates.x * 32) + shift,
+						static_cast<float>(duckies[i].coordinates.y * 32));
 				break;
 			case NOPE:
 			default:
@@ -133,32 +150,36 @@ void Duck::print(sf::RenderWindow& window, float shift){
 		window.draw(ducky_sprite[duckies[i].direction]);
 	}
 
-	switch (direction){
+	switch (direction) {
 		case UP:
-			duck_sprite[direction].setPosition(static_cast<float>(coordinates.x * 32), static_cast<float>(coordinates.y * 32) - shift);
+			duck_sprite[direction].setPosition(static_cast<float>(coordinates.x * 32),
+			                                   static_cast<float>(coordinates.y * 32) - shift);
 			break;
 		case LEFT:
-			duck_sprite[direction].setPosition(static_cast<float>(coordinates.x * 32) - shift, static_cast<float>(coordinates.y * 32));
+			duck_sprite[direction].setPosition(static_cast<float>(coordinates.x * 32) - shift,
+			                                   static_cast<float>(coordinates.y * 32));
 			break;
 		case DOWN:
-			duck_sprite[direction].setPosition(static_cast<float>(coordinates.x * 32), static_cast<float>(coordinates.y * 32) + shift);
+			duck_sprite[direction].setPosition(static_cast<float>(coordinates.x * 32),
+			                                   static_cast<float>(coordinates.y * 32) + shift);
 			break;
 		case RIGHT:
-			duck_sprite[direction].setPosition(static_cast<float>(coordinates.x * 32) + shift, static_cast<float>(coordinates.y * 32));
+			duck_sprite[direction].setPosition(static_cast<float>(coordinates.x * 32) + shift,
+			                                   static_cast<float>(coordinates.y * 32));
 			break;
 		case NOPE:
 		default:
 			break;
 	}
 	window.draw(duck_sprite[direction]);
-    last_sprite_drawn = direction;
+	last_sprite_drawn = direction;
 }
 
-void Duck::print(sf::RenderWindow& window){
+void Duck::print(sf::RenderWindow& window) {
 	this->print(window, -32);
 }
 
-void Duck::warped(Coord warp_arrival){
+void Duck::warped(Coord warp_arrival) {
 	coordinates = warp_arrival;
 	warped_at_this_turn = true;
 }
